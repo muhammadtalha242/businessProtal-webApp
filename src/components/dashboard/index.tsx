@@ -1,11 +1,9 @@
-import React from 'react';
+import React from "react";
 
-interface Props{}
+interface Props {}
 
-const Dashboard: React.FC<Props>=(Props)=>{
-    return<>
-        This is DashBoard
-    </>
-}
+const Dashboard: React.FC<Props> = (Props) => {
+  return <>This is DashBoard</>;
+};
 
-export default Dashboard
+export default Dashboard;

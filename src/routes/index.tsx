@@ -1,8 +1,10 @@
 import React from "react";
-import {Route, Navigate, useRoutes, Routes } from "react-router-dom";
+import { Route, Navigate, useRoutes, Routes } from "react-router-dom";
 
 import Login from "../pages/auth/login";
 import Register from "../pages/auth/register";
+import Dashboard from "../pages/home";
+import Entity from "../pages/entity";
 
 interface props {}
 
@@ -51,14 +53,34 @@ const PAGES: IPage[] = [
     isProtected: false,
     component: Login,
   },
+  {
+    key: "dashboard",
+    path: "/dashboard",
+    exact: true,
+    isProtected: false,
+    component: Dashboard,
+  },
+  {
+    key: "entity",
+    path: "/entity",
+    exact: true,
+    isProtected: false,
+    component: Entity,
+  },
 ];
 
 const Router: React.FC<props> = (props) => {
-  const filteredPages = PAGES.filter((page: IPage) => !page.isProtected );
+  const filteredPages = PAGES.filter((page: IPage) => !page.isProtected);
 
-  const Components =filteredPages.map((page: IPage)=>{
-    return <Route key={page.key} path={page.path} element={<page.component {...props} />} />;
-  })
+  const Components = filteredPages.map((page: IPage) => {
+    return (
+      <Route
+        key={page.key}
+        path={page.path}
+        element={<page.component {...props} />}
+      />
+    );
+  });
 
   return <Routes>{Components}</Routes>;
 };
