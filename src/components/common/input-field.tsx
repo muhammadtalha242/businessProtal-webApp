@@ -1,57 +1,3 @@
-// import React from "react";
-// import { Input } from "antd";
-// import styled from "styled-components";
-
-// const { TextArea } = Input;
-
-// interface props {
-//   label?: React.ReactNode | string;
-//   value?: string | number;
-//   defaultValue?: string;
-//   setValue: Function;
-//   type: string;
-//   name?: string;
-//   placeholder?: string;
-//   link?: string;
-//   linkLabel?: string;
-//   inputFieldContainerProps?: IInputFieldContainerProps;
-// }
-// interface IInputFieldContainerProps {}
-
-// const InputFieldContainer = styled.div<IInputFieldContainerProps>``;
-
-// const InputField: React.FC<props> = (props) => {
-//   const onChange = (
-//     e:
-//       | React.ChangeEvent<HTMLInputElement>
-//       | React.ChangeEvent<HTMLTextAreaElement>
-//   ): void => {
-//     if (props.setValue)
-//       props.setValue({
-//         name: props.name,
-//         value: (e.target as HTMLInputElement).value,
-//       });
-//   };
-
-//   const InputFeild =
-//     props.type === "TextArea" ? (
-//       <TextArea
-//         onChange={onChange}
-//         value={props.value}
-//         defaultValue={props.defaultValue}
-//       />
-//     ) : (
-//       <Input
-//         onChange={onChange}
-//         value={props.value}
-//         defaultValue={props.defaultValue}
-//       />
-//     );
-
-//   return <InputFieldContainer>{InputFeild}</InputFieldContainer>;
-// };
-
-// export default InputField;
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -164,7 +110,7 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
   }
 
   TextArea {
-    border: none;
+    border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
     height: 48px;
     width: ${(props) =>
       props.inputWidth || props.inputWidth === 0
@@ -173,7 +119,7 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
     overflow: hidden;
     outline: none;
     color: ${GREY_SECONDARY};
-    background-color: ${GREY_QUATERNARY};
+    
 
     &::placeholder {
       color: #bfbfbf;

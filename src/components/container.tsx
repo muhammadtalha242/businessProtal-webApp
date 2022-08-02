@@ -93,3 +93,40 @@ export const LoginFormContainer = styled.div`
     }
   }
 `;
+
+
+export const DashboardHeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+
+  .left-col {
+    display: flex;
+    align-items: center;
+
+    .header-text {
+      margin: 0 16px 0 0;
+      font-weight: bold;
+      font-size: 28px;
+      line-height: 42px;
+      color: ${NAVY_PRIMARY};
+    }
+  }
+
+  .right-col {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+
+    .date {
+      font-size: 16px;
+      margin-right: 16px;
+    }
+
+    .time {
+      font-size: 28px;
+      line-height: 42px;
+      color: ${GREEN_PRIMARY};
+    }
+  }
+`;
