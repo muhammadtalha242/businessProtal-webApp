@@ -1,18 +1,10 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import classNames from "classnames";
-import { Input } from "antd";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import { Input } from 'antd';
 
-import {
-  GREY_PRIMARY,
-  GREEN_PRIMARY,
-  GREY_SECONDARY,
-  RED_PRIMARY,
-  GREY_QUATERNARY,
-  WHITE,
-  BLUE_TERTIARY,
-} from "../../styles/colors";
+import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, GREY_QUATERNARY, WHITE, BLUE_TERTIARY } from '../../styles/colors';
 
 const { TextArea } = Input;
 
@@ -52,8 +44,7 @@ interface IInputFieldProps {
 }
 
 const InputFieldContainer = styled.div<IInputFieldProps>`
-  margin-bottom: ${(props) =>
-    props.marginBottom || props.marginBottom === 0 ? props.marginBottom : 32}px;
+  margin-bottom: ${(props) => (props.marginBottom || props.marginBottom === 0 ? props.marginBottom : 32)}px;
   font-size: 14px;
 
   .label-container {
@@ -67,25 +58,18 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
 
   .icon {
     position: absolute;
-    --widthIcon: ${(props) =>
-      props.iconWidth || props.iconWidth === 0 ? props.iconWidth : 20}px;
+    --widthIcon: ${(props) => (props.iconWidth || props.iconWidth === 0 ? props.iconWidth : 20)}px;
     width: var(--widthIcon);
     height: 16px;
     margin-top: 16px;
-    margin-left: calc(
-      0px - calc(var(--widthIcon) + ${(props) => props.iconLeft || 16}px)
-    );
+    margin-left: calc(0px - calc(var(--widthIcon) + ${(props) => props.iconLeft || 16}px));
   }
 
   input {
     border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
     border-radius: 8px;
-    height: ${(props) =>
-      props.height || props.height === 0 ? props.height : 48}px;
-    width: ${(props) =>
-      props.inputWidth || props.inputWidth === 0
-        ? props.inputWidth + "px"
-        : "100%"};
+    height: ${(props) => (props.height || props.height === 0 ? props.height : 48)}px;
+    width: ${(props) => (props.inputWidth || props.inputWidth === 0 ? props.inputWidth + 'px' : '100%')};
     padding: ${(props) => (props.padding ? props.padding : `16px 12px`)};
     outline: none;
     color: ${GREY_SECONDARY};
@@ -112,14 +96,10 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
   TextArea {
     border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
     height: 48px;
-    width: ${(props) =>
-      props.inputWidth || props.inputWidth === 0
-        ? props.inputWidth + "px"
-        : "100%"};
+    width: ${(props) => (props.inputWidth || props.inputWidth === 0 ? props.inputWidth + 'px' : '100%')};
     overflow: hidden;
     outline: none;
     color: ${GREY_SECONDARY};
-    
 
     &::placeholder {
       color: #bfbfbf;
@@ -156,11 +136,7 @@ const InputField: React.FC<Props> = (props) => {
   const [iconActive, setIconActive] = useState(false);
   const inputProps = { ...props };
 
-  const onChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ): void => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>): void => {
     if (props.setValue)
       props.setValue({
         name: props.name,
@@ -169,29 +145,13 @@ const InputField: React.FC<Props> = (props) => {
   };
 
   if (props.activeIcon && iconActive) {
-    inputProps.type = "text";
+    inputProps.type = 'text';
   }
   const InputField =
-    inputProps.type === "TextArea" ? (
-      <TextArea
-        autoSize
-        className={classNames({ error: props.error })}
-        placeholder={props.placeholder}
-        name={props.name}
-        autoComplete="off"
-        onChange={onChange}
-        {...inputProps}
-      />
+    inputProps.type === 'TextArea' ? (
+      <TextArea autoSize className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} autoComplete="off" onChange={onChange} {...inputProps} />
     ) : (
-      <Input
-        className={classNames({ error: props.error })}
-        placeholder={props.placeholder}
-        name={props.name}
-        onChange={onChange}
-        bordered={props.bordered}
-        autoComplete="off"
-        {...inputProps}
-      />
+      <Input className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} onChange={onChange} bordered={props.bordered} autoComplete="off" {...inputProps} />
     );
   return (
     <InputFieldContainer {...props.inputFieldContainerProps}>
@@ -203,21 +163,10 @@ const InputField: React.FC<Props> = (props) => {
       )}
       <div>
         {InputField}
-        {props.activeIcon && props.deactiveIcon && (
-          <img
-            src={iconActive ? props.deactiveIcon : props.activeIcon}
-            onClick={() => setIconActive(!iconActive)}
-            className="icon"
-            alt="input-icon"
-          />
-        )}
-        {props.icon && (
-          <img src={props.icon} className="icon" alt="input-icon" />
-        )}
+        {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
+        {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}
       </div>
-      {props.errorMessage && (
-        <div className="error-message">{props.errorMessage}</div>
-      )}
+      {props.errorMessage && <div className="error-message">{props.errorMessage}</div>}
     </InputFieldContainer>
   );
 };

@@ -1,5 +1,5 @@
-import { Alert, Popover, Switch } from 'antd';
 import React, { useState } from 'react';
+import { Alert, Popover, Switch, Divider } from 'antd';
 
 import entity from '../../services/entity';
 import { GREEN_PRIMARY, RED_PRIMARY, WHITE } from '../../styles/colors';
@@ -11,18 +11,21 @@ import EntitySettingsModal from './entity-settings-modal';
 import { EntityFormContainer, IFieldRowContainer, PopoverContent } from './container';
 
 const DATA_TYPES: IOptionType[] = [
-  {
-    value: 'Auto Number',
-    label: 'Auto Number',
-  },
-  {
-    value: 'Email',
-    label: 'Email',
-  },
-  {
-    value: 'Currency',
-    label: 'Currency',
-  },
+  { value: 'Auto Number', label: 'Auto Number' },
+  { value: 'Email', label: 'Email' },
+  { value: 'Currency', label: 'Currency' },
+  { value: 'Progress', label: 'Progress' },
+  { value: 'Duration', label: 'Duration' },
+  { value: 'Link', label: 'Link' },
+  { value: 'Date', label: 'Date' },
+  { value: 'Location', label: 'Location' },
+  { value: 'Document', label: 'Document' },
+  { value: 'Image', label: 'Image' },
+  { value: 'Section', label: 'Section' },
+  { value: 'Number', label: 'Number' },
+  { value: 'Text Single Line', label: 'Text Single Line' },
+  { value: 'Text Multi Line', label: 'Text Multi Line' },
+  { value: 'Yes/No', label: 'Yes/No' },
 ];
 
 interface IValues {
@@ -47,6 +50,8 @@ export interface IEntity {
   name: string;
   description: string;
   fields: IFeild[];
+  isDisplayonMenu: boolean;
+  isPublish: boolean;
 }
 const defaultValue: IValues = { recordId: '', value: '' };
 
@@ -62,6 +67,8 @@ const defaultEntityValues: IEntity = {
   name: '',
   description: '',
   fields: [{ ...defaultField }],
+  isDisplayonMenu: false,
+  isPublish: false,
 };
 
 interface Props {
@@ -82,8 +89,16 @@ export interface IDatatypeField {
   type?: string;
   defaultValue?: string;
 }
+
+export interface IDatatypeFieldType {
+  defaultCheckBoxes: IDatatypeField[];
+  checkbox?: IDatatypeField[];
+  input?: IDatatypeField[];
+  select?: IDatatypeField[];
+}
+
 export interface IDatatypeFieldSettings {
-  [key: string]: { defaultCheckBoxes: IDatatypeField[]; checkbox?: IDatatypeField[]; input?: IDatatypeField[]; select?: IDatatypeField[] };
+  [key: string]: IDatatypeFieldType;
 }
 
 const DEFAULT_CHECKBOX_FIELDS = [
@@ -103,33 +118,85 @@ const datatypeFieldSettings: IDatatypeFieldSettings = {
   },
   Currency: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    checkbox: [{ name: 'isRegenerate', label: 'Regenerate' }],
     input: [
       { name: 'prefix', label: 'Prefix' },
-      { name: 'digits', label: 'Digits', type: 'number' },
+      { name: 'decimals', label: 'Decimals', type: 'number' },
     ],
+  },
+  Phone: {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    input: [{ name: 'format', label: 'Format' }],
+  },
+  'Text Single Line': {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    input: [{ name: 'fieldLength', label: 'Field Length' }],
+  },
+  'Text Multi Line': {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    input: [{ name: 'fieldLength', label: 'Field Length' }],
+  },
+  Number: {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    input: [
+      { name: 'prefix', label: 'Prefix' },
+      { name: 'decimals', label: 'Decimals', type: 'number' },
+    ],
+    checkbox: [{ name: 'isDisplayPercetage', label: 'Display %' }],
   },
   Email: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
   },
+  Progress: {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+  },
+  Link: {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+  },
+  Date: {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    checkbox: [{ name: 'isTime', label: 'Time' }],
+  },
+  Location: {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    checkbox: [{ name: 'isShowMap', label: 'Show map' }],
+  },
+  Document: {
+    defaultCheckBoxes: [
+      { name: 'isRequired', label: 'Required' },
+      { name: 'isComment', label: 'Comment' },
+      { name: 'isPublic', label: 'Public' },
+    ],
+  },
+  Image: {
+    defaultCheckBoxes: [
+      { name: 'isRequired', label: 'Required' },
+      { name: 'isComment', label: 'Comment' },
+      { name: 'isPublic', label: 'Public' },
+    ],
+  },
+  Section: {
+    defaultCheckBoxes: [
+      { name: 'isRequired', label: 'Required' },
+      { name: 'isComment', label: 'Comment' },
+      { name: 'isPublic', label: 'Public' },
+    ],
+  },
+  'Yes/No': {
+    defaultCheckBoxes: [
+      { name: 'isComment', label: 'Comment' },
+      { name: 'isPublic', label: 'Public' },
+    ],
+  },
+  Duration: {
+    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    checkbox: [
+      { name: 'isDays', label: 'Display Day' },
+      { name: 'isHours', label: 'Display Hours' },
+      { name: 'isMints', label: 'Display minutes' },
+      { name: 'isSeconds', label: 'Display seconds' },
+    ],
+  },
 };
-
-const content = (
-  <PopoverContent>
-    <div onClick={() => {}} className="option">
-      <div className="left-col">
-        <Switch checked={false} size="small" loading={false} />
-      </div>
-      <div className="right-col apply">Display in menu</div>
-    </div>
-    <div onClick={() => {}} className="option">
-      <div className="left-col">
-        <Switch checked={false} size="small" loading={false} />
-      </div>
-      <div className="right-col apply">Publish to mobile</div>
-    </div>
-  </PopoverContent>
-);
 
 const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFieldSettingSave }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -141,7 +208,7 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
         dataType={field.dataType}
         values={field.settings}
         setModalVisible={setModalVisible}
-        settingFields={datatypeFieldSettings}
+        settingFields={datatypeFieldSettings[field.dataType]}
         onFieldSettingSave={onFieldSettingSave}
       />
 
@@ -222,12 +289,36 @@ const EntityForm: React.FC<Props> = (props) => {
   const onSave = async () => {
     console.log('values: ', values);
     try {
-      const res = await entity.createEntities(values);
-      console.log('res: ', res);
+      // const res = await entity.createEntities(values);
+      // console.log('res: ', res);
     } catch (error: any) {
       console.log(error.message);
     }
   };
+
+  const DisplayonMenu = (checked: boolean) => {
+    setValues({ ...values, isDisplayonMenu: checked });
+  };
+  const PublishMobile = (checked: boolean) => {
+    setValues({ ...values, isPublish: checked });
+  };
+
+  const content = (
+    <PopoverContent>
+      <div onClick={() => {}} className="option">
+        <div className="left-col">
+          <Switch checked={values.isDisplayonMenu} onChange={DisplayonMenu} size="small" loading={false} />
+        </div>
+        <div className="right-col apply">Display in menu</div>
+      </div>
+      <div onClick={() => {}} className="option">
+        <div className="left-col">
+          <Switch checked={values.isPublish} onChange={PublishMobile} size="small" loading={false} />
+        </div>
+        <div className="right-col apply">Publish to mobile</div>
+      </div>
+    </PopoverContent>
+  );
 
   return (
     <EntityFormContainer>
@@ -260,11 +351,11 @@ const EntityForm: React.FC<Props> = (props) => {
       <div className="form">
         <div className="form-inputs">
           <div className="form-input-left">
-            <InputField setValue={onInputChange} value={values.name} name="name" type="input" label="Name" placeholder="Name" marginBottom={15} />
+            <InputField setValue={onInputChange} value={values.name} name="name" type="input" label="Name" placeholder="Name" marginBottom={0} />
           </div>
           <HorizontalSpace width={12} />
           <div className="form-input-center">
-            <InputField setValue={onInputChange} value={values.description} name="description" type="input" label="Description" placeholder="Description" marginBottom={15} />
+            <InputField setValue={onInputChange} value={values.description} name="description" type="input" label="Description" placeholder="Description" marginBottom={0} />
           </div>
           <HorizontalSpace width={12} />
           <div className="form-input-right">
@@ -275,6 +366,8 @@ const EntityForm: React.FC<Props> = (props) => {
             </Popover>
           </div>
         </div>
+        <Divider orientation="left">Fields</Divider>
+
         {values.fields.map((field: IFeild, index: number) => (
           <FieldRows field={field} onInputChange={onFieldsSet(index)} index={index} onFieldSettingSave={onFieldSettingsSave(index)} />
         ))}
@@ -284,7 +377,7 @@ const EntityForm: React.FC<Props> = (props) => {
           </FilledButton>
         </div>
         <VerticalSpace height={16} />
-        
+        <Divider />
         <div className="footer">
           <div className="footer-left">
             <OutlinedButton color={RED_PRIMARY} onClick={() => props.setShowForm(false)}>

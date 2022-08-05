@@ -8,13 +8,13 @@ import SelectField, { IOptionType } from '../common/select';
 import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
 import { EntitySettingsModalContainer } from './container';
-import { IDatatypeField, IDatatypeFieldSettings, ISettings } from './form';
+import { IDatatypeField, IDatatypeFieldType, ISettings } from './form';
 import { values } from 'lodash';
 
 interface props {
   modalVisible: boolean;
   setModalVisible: (e: boolean) => void;
-  settingFields: IDatatypeFieldSettings;
+  settingFields: IDatatypeFieldType;
   dataType: string;
   onFieldSettingSave: (settings: ISettings) => void;
   values: ISettings;
@@ -23,20 +23,20 @@ interface props {
 export type IEntitySettingsModalKeys = 'name';
 
 const EntitySettingsModal: React.FC<props> = (props) => {
-  const [state, setState] = useState<ISettings>(props.values);
+  const [state, setState] = useState<ISettings>({});
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (values) {
-      setState(values);
+      setState({ ...values });
     }
   }, [values]);
 
-  const onInputChange = ({ name, val }: { name: string; val: string }) => {
-    const update: any = state;
-    update[name] = val;
+  const onInputChange = ({ name, value }: { name: string; value: any }) => {
+    const update: any = { ...state };
+    update[name] = value;
     setState(update);
   };
 
@@ -53,9 +53,9 @@ const EntitySettingsModal: React.FC<props> = (props) => {
     }
   };
 
-  const onChange = (name: string, val: any) => {
-    const update: any = state;
-    update[name] = val;
+  const onChange = (name: string, value: any) => {
+    const update: any = { ...state };
+    update[name] = value;
     setState(update);
   };
 
@@ -94,27 +94,29 @@ const EntitySettingsModal: React.FC<props> = (props) => {
       <EntitySettingsModalContainer>
         <Row align={'middle'} gutter={[24, 24]}>
           {props.dataType &&
-            props.settingFields[props.dataType].defaultCheckBoxes.map((val: IDatatypeField, index: number) => {
-              console.log(typeof state[val.name]);
-              console.log(state[val.name]);
-
-              return (
-                <Col span={3}>
-                  <Checkbox
-                    name={val.name}
-                    checked={state[val.name] ? state[val.name] : false}
-                    onChange={(e: CheckboxChangeEvent) => onChange(e.target.name ? e.target.name : val.name, e.target.checked)}
-                  >
-                    {val.label}
-                  </Checkbox>
-                </Col>
-              );
-            })}
+            props.settingFields.defaultCheckBoxes.map((val: IDatatypeField, index: number) => (
+              <Col span={3}>
+                <Checkbox value={val.name} name={val.name} checked={state[val.name]} onChange={(e: CheckboxChangeEvent) => onChange(e.target.name ? e.target.name : val.name, e.target.checked)}>
+                  {val.label}
+                </Checkbox>
+              </Col>
+            ))}
+        </Row>
+        <VerticalSpace height={16} />
+        <Row align={'middle'} gutter={[24, 24]}>
+          {props.dataType &&
+            props.settingFields.checkbox?.map((val: IDatatypeField, index: number) => (
+              <Col span={3}>
+                <Checkbox name={val.name} checked={state[val.name]} onChange={(e: CheckboxChangeEvent) => onChange(e.target.name ? e.target.name : val.name, e.target.checked)}>
+                  {val.label}
+                </Checkbox>
+              </Col>
+            ))}
         </Row>
         <VerticalSpace height={16} />
         <Row gutter={[24, 24]} align={'middle'}>
           {props.dataType &&
-            props.settingFields[props.dataType].input?.map((val: IDatatypeField, index: number) => (
+            props.settingFields.input?.map((val: IDatatypeField, index: number) => (
               <Col span={8}>
                 <InputField
                   type="input"

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { BLUE_TERTIARY, GREEN_PRIMARY, GREY_PRIMARY, GREY_QUATERNARY, GREY_QUINARY, GREY_SECONDARY, RED_PRIMARY, WHITE } from '../../styles/colors';
+import { BLUE_TERTIARY, GREEN_PRIMARY, GREY_PRIMARY, GREY_QUATERNARY, GREY_QUINARY, GREY_SECONDARY, NAVY_PRIMARY, RED_PRIMARY, WHITE } from '../../styles/colors';
 
 export const EntityComponenetContainer = styled.div``;
 
@@ -8,6 +8,7 @@ export const EntityFormContainer = styled.div`
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
   border-radius: 16px;
   padding: 12px 16px 16px 16px;
+  margin-bottom: 64px;
 
   .header {
     display: flex;
@@ -179,5 +180,68 @@ export const EntitySettingsModalContainer = styled.div`
 
   .width-48 {
     width: 48%;
+  }
+`;
+
+export const EntityListHeaderContainer = styled.div`
+  padding: 4px 16px;
+  display: inline-flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: ${GREY_PRIMARY};
+  width: 100%;
+
+  .checkbox {
+    width: 2%;
+  }
+
+  .name {
+    width: 30%;
+  }
+
+  .description {
+    width: 50%;
+  }
+
+  .actions {
+    width: 18%;
+  }
+`;
+
+export const EntityListContainer = styled.div`
+  padding-bottom: 12px;
+`;
+
+export const EntityItemContainer = styled.div`
+  background: ${GREY_QUATERNARY};
+  border-radius: 8px;
+  height: 48px;
+  margin-bottom: 8px;
+  padding: 16px 12px;
+  align-items: center;
+  font-size: 14px;
+  color: ${NAVY_PRIMARY};
+
+  .flex {
+    display: flex;
+
+    .checkbox {
+      width: 2%;
+    }
+
+    .name {
+      width: 30%;
+    }
+
+    .description {
+      width: 50%;
+    }
+
+    .actions {
+      width: 18%;
+    }
   }
 `;
