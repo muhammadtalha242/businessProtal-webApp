@@ -289,8 +289,8 @@ const EntityForm: React.FC<Props> = (props) => {
   const onSave = async () => {
     console.log('values: ', values);
     try {
-      // const res = await entity.createEntities(values);
-      // console.log('res: ', res);
+      const res = await entity.createEntities(values);
+      console.log('res: ', res);
     } catch (error: any) {
       console.log(error.message);
     }
