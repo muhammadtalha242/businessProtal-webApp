@@ -1,6 +1,6 @@
 import { Table } from 'antd';
 import update from 'immutability-helper';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -47,7 +47,13 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }: Dr
 };
 
 const App: React.FC<props> = ({ columns, data }) => {
-  const [tableData, setTableData] = useState(data);
+  const [tableData, setTableData] = useState<any>();
+  const [tableColumns, setTableColumns] = useState();
+
+  useEffect(() => {
+    setTableData(data);
+    setTableColumns(columns);
+  }, [columns, data]);
 
   const components = {
     body: {
@@ -73,7 +79,7 @@ const App: React.FC<props> = ({ columns, data }) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <Table
-        columns={columns}
+        columns={tableColumns}
         dataSource={tableData}
         components={components}
         onRow={(_, index) => {
@@ -83,6 +89,7 @@ const App: React.FC<props> = ({ columns, data }) => {
           };
           return attr as React.HTMLAttributes<any>;
         }}
+        pagination={false}
       />
     </DndProvider>
   );

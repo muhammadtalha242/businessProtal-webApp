@@ -1,12 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
+import { Layout, Menu } from 'antd';
 
-import {
-  GREEN_PRIMARY,
-  GREY_QUATERNARY,
-  NAVY_PRIMARY,
-  WHITE,
-} from "../../styles/colors";
-import { sidebar } from "../../styles/constants";
+import { GREEN_PRIMARY, GREY_QUATERNARY, NAVY_PRIMARY, WHITE } from '../../styles/colors';
+
+import { sidebar } from '../../styles/constants';
+const { Sider } = Layout;
 
 interface ISidebarListContainerProps {
   collapsed: boolean;
@@ -20,15 +18,20 @@ interface ISidebarHeaderContainerProps {
   collapsed: boolean;
 }
 
-export const SidebarContainer = styled.div<ISidebarContainerProps>`
-  position: fixed;
+export const SidebarContainer = styled(Sider)<ISidebarContainerProps>`
   left: 0;
   top: 0;
   min-height: 100vh;
-  width: ${(props) =>
-    props.collapsed ? sidebar.collapsed.width : sidebar.width}px;
-  border: 4px solid ${GREEN_PRIMARY};
-  border-radius: 0 16px 16px 0;
-  box-sizing: border-box;
+  width: ${(props) => (props.collapsed ? sidebar.collapsed.width : sidebar.width)}px;
   background: ${WHITE};
+`;
+
+export const LogoContainer = styled.div``;
+
+
+export const SidebarHeaderContainer = styled.div<ISidebarHeaderContainerProps>`
+  margin: 24px 16px 32px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;

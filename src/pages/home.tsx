@@ -1,7 +1,7 @@
 import React from "react";
 
 import withDashboardLayout from "../higher-order-components/with-dashboard-layout";
-import Dashboard from "../components/dashboard";
+import Dashboard from "../components/Dashboard";
 import { DashBoardContainer } from "../components/container";
 
 interface Props {}

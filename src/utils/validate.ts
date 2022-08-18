@@ -8,6 +8,6 @@ export const validateEmail = (email: string) => {
   };
   
   export const validatePassword = (password: string): boolean => {
-    return /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(password);
+    return /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,}$/.test(password);
   };
   

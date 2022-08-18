@@ -1,34 +1,36 @@
 import React, { useState } from 'react';
 import { Alert, Popover, Switch, Divider } from 'antd';
 
-import entity from '../../services/entity';
 import { GREEN_PRIMARY, RED_PRIMARY, WHITE } from '../../styles/colors';
 import { FilledButton, OutlinedButton } from '../common/button';
 import InputField from '../common/input-field';
-import SelectField, { IOptionType } from '../common/select';
+import SelectField from '../common/select';
 import { HorizontalSpace, VerticalSpace } from '../common/space';
 import EntitySettingsModal from './entity-settings-modal';
 import { EntityFormContainer, IFieldRowContainer, PopoverContent } from './container';
+import { DATA_TYPES, datatypeFieldSettings } from '../../constants/entiy';
+import { getRandom, incrementNumber } from '../../utils/helper';
 
-const DATA_TYPES: IOptionType[] = [
-  { value: 'Auto Number', label: 'Auto Number' },
-  { value: 'Email', label: 'Email' },
-  { value: 'Currency', label: 'Currency' },
-  { value: 'Progress', label: 'Progress' },
-  { value: 'Duration', label: 'Duration' },
-  { value: 'Link', label: 'Link' },
-  { value: 'Date', label: 'Date' },
-  { value: 'Location', label: 'Location' },
-  { value: 'Document', label: 'Document' },
-  { value: 'Image', label: 'Image' },
-  { value: 'Section', label: 'Section' },
-  { value: 'Number', label: 'Number' },
-  { value: 'Text Single Line', label: 'Text Single Line' },
-  { value: 'Text Multi Line', label: 'Text Multi Line' },
-  { value: 'Yes/No', label: 'Yes/No' },
-];
+interface Props {
+  setShowForm: (e: boolean) => void;
+  onSave: (entity: IEntity) => void;
+  onUpdate: (updatedEnitiy: IEditEntity) => void;
 
-interface IValues {
+  isEdit: boolean;
+  editEntity: IEntity;
+  setIsEdit: (e: boolean) => void;
+}
+
+interface IFeildRowProps {
+  field: IFeild;
+  onInputChange: ({ name, value }: { name: IEntityFieldKeys; value: string }) => void;
+  index: number;
+  onFieldSettingSave: (settings: ISettings) => void;
+  isEditMode: boolean;
+  onFieldDelete: () => void;
+}
+
+export interface IValues {
   recordId: string;
   value: string;
 }
@@ -38,22 +40,39 @@ export interface ISettings {
 }
 
 export interface IFeild {
-  id?: number;
+  fieldRecord?: number;
   name: string;
   dataType: string;
   defaultValue: string;
   settings: ISettings;
   values: IValues[];
+  isEditable?: boolean;
 }
+
+export interface IFeilds {
+  [key: string]: IFeild;
+}
+
 export interface IEntity {
   id?: number;
   name: string;
+  databaseName: string;
   description: string;
-  fields: IFeild[];
+  fields: IFeilds;
   isDisplayonMenu: boolean;
   isPublish: boolean;
 }
+
+export interface IEditEntity {
+  entity: IEntity;
+  deletedFields?: string[];
+  addedFields?: IFeilds;
+}
+
 const defaultValue: IValues = { recordId: '', value: '' };
+
+const entityRandomName = getRandom('entity')('0123456789', 5, 1);
+const fieldRandomName = getRandom('field')('0123456789', 5, 1);
 
 export const defaultField: IFeild = {
   name: '',
@@ -63,144 +82,17 @@ export const defaultField: IFeild = {
   values: [defaultValue],
 };
 
-const defaultEntityValues: IEntity = {
+export const defaultEntityValues: IEntity = {
   name: '',
   description: '',
-  fields: [{ ...defaultField }],
+  databaseName: entityRandomName(),
+  fields: { [fieldRandomName()]: { ...defaultField } },
   isDisplayonMenu: false,
   isPublish: false,
 };
 
-interface Props {
-  setShowForm: (e: boolean) => void;
-}
-
-interface IFeildRowProps {
-  field: IFeild;
-  onInputChange: ({ name, value }: { name: IEntityFieldKeys; value: string }) => void;
-  index: number;
-  onFieldSettingSave: (settings: ISettings) => void;
-}
-
-export interface IDatatypeField {
-  name: string;
-  placeholder?: string;
-  label: string;
-  type?: string;
-  defaultValue?: string;
-}
-
-export interface IDatatypeFieldType {
-  defaultCheckBoxes: IDatatypeField[];
-  checkbox?: IDatatypeField[];
-  input?: IDatatypeField[];
-  select?: IDatatypeField[];
-}
-
-export interface IDatatypeFieldSettings {
-  [key: string]: IDatatypeFieldType;
-}
-
-const DEFAULT_CHECKBOX_FIELDS = [
-  { name: 'isRequired', label: 'Required' },
-  { name: 'isUnique', label: 'Unique' },
-  { name: 'isComment', label: 'Comment' },
-  { name: 'isPublic', label: 'Public' },
-];
-const datatypeFieldSettings: IDatatypeFieldSettings = {
-  'Auto Number': {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    checkbox: [{ name: 'isRegenerate', label: 'Regenerate' }],
-    input: [
-      { name: 'prefix', label: 'Prefix' },
-      { name: 'digits', label: 'Digits', type: 'number' },
-    ],
-  },
-  Currency: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    input: [
-      { name: 'prefix', label: 'Prefix' },
-      { name: 'decimals', label: 'Decimals', type: 'number' },
-    ],
-  },
-  Phone: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    input: [{ name: 'format', label: 'Format' }],
-  },
-  'Text Single Line': {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    input: [{ name: 'fieldLength', label: 'Field Length' }],
-  },
-  'Text Multi Line': {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    input: [{ name: 'fieldLength', label: 'Field Length' }],
-  },
-  Number: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    input: [
-      { name: 'prefix', label: 'Prefix' },
-      { name: 'decimals', label: 'Decimals', type: 'number' },
-    ],
-    checkbox: [{ name: 'isDisplayPercetage', label: 'Display %' }],
-  },
-  Email: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-  },
-  Progress: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-  },
-  Link: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-  },
-  Date: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    checkbox: [{ name: 'isTime', label: 'Time' }],
-  },
-  Location: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    checkbox: [{ name: 'isShowMap', label: 'Show map' }],
-  },
-  Document: {
-    defaultCheckBoxes: [
-      { name: 'isRequired', label: 'Required' },
-      { name: 'isComment', label: 'Comment' },
-      { name: 'isPublic', label: 'Public' },
-    ],
-  },
-  Image: {
-    defaultCheckBoxes: [
-      { name: 'isRequired', label: 'Required' },
-      { name: 'isComment', label: 'Comment' },
-      { name: 'isPublic', label: 'Public' },
-    ],
-  },
-  Section: {
-    defaultCheckBoxes: [
-      { name: 'isRequired', label: 'Required' },
-      { name: 'isComment', label: 'Comment' },
-      { name: 'isPublic', label: 'Public' },
-    ],
-  },
-  'Yes/No': {
-    defaultCheckBoxes: [
-      { name: 'isComment', label: 'Comment' },
-      { name: 'isPublic', label: 'Public' },
-    ],
-  },
-  Duration: {
-    defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
-    checkbox: [
-      { name: 'isDays', label: 'Display Day' },
-      { name: 'isHours', label: 'Display Hours' },
-      { name: 'isMints', label: 'Display minutes' },
-      { name: 'isSeconds', label: 'Display seconds' },
-    ],
-  },
-};
-
-const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFieldSettingSave }) => {
+const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFieldSettingSave, isEditMode, onFieldDelete }) => {
   const [modalVisible, setModalVisible] = useState(false);
-
   return (
     <IFieldRowContainer key={index}>
       <EntitySettingsModal
@@ -232,6 +124,7 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
               lineHeight={0}
               marginBottom={0}
               defaultValue={DATA_TYPES[0].value}
+              disabled={field.isEditable ? !field.isEditable : isEditMode}
             />
           </div>
           <HorizontalSpace width={12} />
@@ -248,6 +141,17 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
               <img src={`/images/icons/settings.svg`} alt="click" />
             </span>
           </div>
+
+          <div
+            className="field-settings"
+            onClick={() => {
+              onFieldDelete();
+            }}
+          >
+            <span className="icon-dots">
+              <img src={`/images/icons/trash.svg`} alt="click" />
+            </span>
+          </div>
         </div>
       </div>
     </IFieldRowContainer>
@@ -258,9 +162,11 @@ type IEntityKeys = 'name' | 'despription';
 type IEntityFieldKeys = 'name' | 'dataType';
 
 const EntityForm: React.FC<Props> = (props) => {
-  const [values, setValues] = useState<IEntity>(defaultEntityValues);
+  const [values, setValues] = useState<IEntity>(props.isEdit ? props.editEntity : defaultEntityValues);
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
+  const [deletedFieldsNames, setDeletedFields] = useState<string[]>([]);
+  const [addedFieldsNames, setAddedFields] = useState<string[]>([]);
 
   const onInputChange = ({ name, value }: { name: IEntityKeys; value: string }) => {
     const updateState: any = { ...values };
@@ -270,35 +176,78 @@ const EntityForm: React.FC<Props> = (props) => {
 
   const addField = () => {
     const currentFields = values.fields;
-    setValues({ ...values, fields: [...currentFields, { ...defaultField }] });
+    const fieldName = fieldRandomName();
+    if (props.isEdit) {
+      const currenetAddedField = [...addedFieldsNames, fieldName];
+      setAddedFields([...currenetAddedField]);
+      setValues({ ...values, fields: { ...currentFields, [fieldName]: { ...defaultField, isEditable: true } } });
+    } else {
+      setValues({ ...values, fields: { ...currentFields, [fieldName]: { ...defaultField } } });
+    }
   };
 
   const onFieldsSet =
-    (index: number) =>
+    (fieldName: string) =>
     ({ name, value }: { name: IEntityFieldKeys; value: string }) => {
-      const currentFields = [...values.fields];
-      currentFields[index][name] = value;
-      setValues({ ...values, fields: [...currentFields] });
+      const currentFields = { ...values.fields };
+      currentFields[fieldName][name] = value;
+      setValues({ ...values, fields: { ...currentFields } });
     };
 
-  const onFieldSettingsSave = (index: number) => (settings: ISettings) => {
-    const currentFields = [...values.fields];
-    currentFields[index].settings = settings;
-    setValues({ ...values, fields: [...currentFields] });
+  const onFieldDelete = (fieldName: string) => () => {
+    const currentFields = { ...values.fields };
+    if (props.isEdit) {
+      const currenetDeletedField = [...deletedFieldsNames, fieldName];
+      setDeletedFields([...currenetDeletedField]);
+    }
+    delete currentFields[fieldName];
+
+    setValues({ ...values, fields: { ...currentFields } });
   };
+
+  const onFieldSettingsSave = (fieldName: string) => (settings: ISettings) => {
+    const currentFields = { ...values.fields };
+    currentFields[fieldName].settings = settings;
+    setValues({ ...values, fields: { ...currentFields } });
+  };
+
   const onSave = async () => {
-    console.log('values: ', values);
     try {
-      const res = await entity.createEntities(values);
-      console.log('res: ', res);
+      console.log(values);
+
+      props.onSave(values);
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
+  const onUpdate = () => {
+    const updatedEnitiy: IEditEntity = {
+      entity: values,
+    };
+    if (deletedFieldsNames.length > 0) {
+      updatedEnitiy.deletedFields = [...deletedFieldsNames];
+    }
+    if (addedFieldsNames.length > 0) {
+      let currentAddedFields = {};
+      addedFieldsNames.forEach((fieldName: string) => {
+        currentAddedFields = { ...currentAddedFields, [fieldName]: values.fields[fieldName] };
+      });
+      updatedEnitiy.addedFields = currentAddedFields;
+    }
+    console.log('updatedEnitiy: ', updatedEnitiy);
+    props.onUpdate(updatedEnitiy);
+  };
+
+  const onCancle = () => {
+    props.setShowForm(false);
+    props.setIsEdit(false);
+  };
+
   const DisplayonMenu = (checked: boolean) => {
     setValues({ ...values, isDisplayonMenu: checked });
   };
+
   const PublishMobile = (checked: boolean) => {
     setValues({ ...values, isPublish: checked });
   };
@@ -324,13 +273,7 @@ const EntityForm: React.FC<Props> = (props) => {
     <EntityFormContainer>
       <div className="header">
         <div className="text">Add New Entity</div>
-        <img
-          onClick={() => {
-            props.setShowForm(false);
-          }}
-          src={`/images/icons/close.svg`}
-          alt="close"
-        />
+        <img onClick={onCancle} src={`/images/icons/close.svg`} alt="close" />
       </div>
       {isError && (
         <>
@@ -368,8 +311,15 @@ const EntityForm: React.FC<Props> = (props) => {
         </div>
         <Divider orientation="left">Fields</Divider>
 
-        {values.fields.map((field: IFeild, index: number) => (
-          <FieldRows field={field} onInputChange={onFieldsSet(index)} index={index} onFieldSettingSave={onFieldSettingsSave(index)} />
+        {Object.entries(values.fields).map((field: [string, IFeild], index: number) => (
+          <FieldRows
+            field={field[1]}
+            onFieldDelete={onFieldDelete(field[0])}
+            onInputChange={onFieldsSet(field[0])}
+            index={index}
+            isEditMode={props.isEdit}
+            onFieldSettingSave={onFieldSettingsSave(field[0])}
+          />
         ))}
         <div className="add-field">
           <FilledButton onClick={addField} background={GREEN_PRIMARY} color={WHITE} height={'32px'} font={'14px'}>
@@ -380,12 +330,12 @@ const EntityForm: React.FC<Props> = (props) => {
         <Divider />
         <div className="footer">
           <div className="footer-left">
-            <OutlinedButton color={RED_PRIMARY} onClick={() => props.setShowForm(false)}>
+            <OutlinedButton color={RED_PRIMARY} onClick={onCancle}>
               Cancel
             </OutlinedButton>
           </div>
           <div className="footer-right">
-            <OutlinedButton color={GREEN_PRIMARY} onClick={onSave} textColor={GREEN_PRIMARY} loading={false}>
+            <OutlinedButton color={GREEN_PRIMARY} onClick={props.isEdit ? onUpdate : onSave} textColor={GREEN_PRIMARY} loading={false}>
               Save
             </OutlinedButton>
           </div>

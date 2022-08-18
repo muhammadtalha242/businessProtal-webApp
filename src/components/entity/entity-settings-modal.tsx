@@ -8,8 +8,8 @@ import SelectField, { IOptionType } from '../common/select';
 import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
 import { EntitySettingsModalContainer } from './container';
-import { IDatatypeField, IDatatypeFieldType, ISettings } from './form';
-import { values } from 'lodash';
+import { ISettings } from './form';
+import { IDatatypeField, IDatatypeFieldType } from '../../constants/entiy';
 
 interface props {
   modalVisible: boolean;
@@ -29,10 +29,10 @@ const EntitySettingsModal: React.FC<props> = (props) => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (values) {
-      setState({ ...values });
+    if (props.values) {
+      setState({ ...props.values });
     }
-  }, [values]);
+  }, [props.values]);
 
   const onInputChange = ({ name, value }: { name: string; value: any }) => {
     const update: any = { ...state };

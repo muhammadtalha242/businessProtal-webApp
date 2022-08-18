@@ -7,9 +7,10 @@ interface IEnvApi {
 }
 
 const envApi: IEnvApi = {
-  development: "http://localhost:8080",
-  test: "http://localhost:8080",
-  production: "http://localhost:8080",
+  development: 'http://localhost:8080',
+  test: 'http://localhost:8080',
+  production: 'http://104.155.107.86:4042',
 };
+console.log('NODE_ENV: ', NODE_ENV);
 
 export default envApi[NODE_ENV];

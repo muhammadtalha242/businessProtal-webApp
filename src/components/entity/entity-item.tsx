@@ -1,33 +1,59 @@
 import React from 'react';
-import { EntityItemContainer } from './container';
-import Checkbox from '../common/checkbox';
-import { IEntity } from './form';
 
-interface props {
-  entity: IEntity;
-  key: number;
-}
+// import { EntityItemContainer } from './container';
+// import Checkbox from '../common/checkbox';
+// import { IEntity, IFeild, IValues } from './form';
+// import { Space } from 'antd';
+// import { ColumnsType } from 'antd/es/table';
+// import Table from '../common/table-dragable';
 
-const EntityItem: React.FC<props> = (props) => {
-  return (
-    <EntityItemContainer key={props.key}>
-      <div className="flex">
-        <div className="check-box">
-          <Checkbox />
-        </div>
+// interface props {
+//   entity: IEntity;
+//   key: 0;
+// }
 
-        <div className="name">{props.entity.name}</div>
+// export interface IDataType {
+//   key: number;
+//   value: string;
+// }
 
-        <div className="description">{props.entity.description}</div>
-        <div className="actions">ACTIONS</div>
-        {/* <Popover placement="bottomRight" content={content} trigger="hover">
-    <span className="icon-dots">
-      <img src={`/images/icons/dots.svg`} alt="click" />
-    </span>
-  </Popover> */}
-      </div>
-    </EntityItemContainer>
-  );
-};
+// const EntityItem: React.FC<props> = (props) => {
+//   let tableData: any[] = [];
+//   props.entity.fields.forEach((field: IFeild, index: number) => {
+//     const x = field.values.map((value: IValues, index: number) => {
+//       return { key: index, [field.name]: value.value };
+//     });
+//     tableData.push(...x);
+//   });
 
-export default EntityItem;
+//   console.log('tableData: ', tableData);
+
+//   const columns: ColumnsType = props.entity.fields.map((field: IFeild, index: number) => {
+//     return {
+//       title: field.name,
+//       dataIndex: field.name,
+//       key: field.name,
+//     };
+//   });
+//   // const columns: ColumnsType<IDataType> = [
+//   //   {
+//   //     title: 'Name',
+//   //     dataIndex: 'name',
+//   //     key: 'name',
+//   //   },
+//   //   {
+//   //     title: 'Action',
+//   //     key: 'action',
+//   //     render: (_, record) => (
+//   //       <Space size="middle">
+//   //         <div onClick={() => {}}>Edit</div>
+//   //         <div onClick={() => {}}>view</div>
+//   //         <div onClick={() => {}}>Delete</div>
+//   //       </Space>
+//   //     ),
+//   //   },
+//   // ];
+//   return <Table data={tableData} columns={columns} />;
+// };
+
+// export default EntityItem;
