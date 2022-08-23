@@ -20,6 +20,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.1.0",
+    "react-highlight-words": "^0.18.0",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
@@ -51,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-highlight-words": "^0.16.4"
   }
 }

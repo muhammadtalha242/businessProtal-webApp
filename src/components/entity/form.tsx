@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Popover, Switch, Divider } from 'antd';
 
 import { GREEN_PRIMARY, RED_PRIMARY, WHITE } from '../../styles/colors';
@@ -15,7 +15,6 @@ interface Props {
   setShowForm: (e: boolean) => void;
   onSave: (entity: IEntity) => void;
   onUpdate: (updatedEnitiy: IEditEntity) => void;
-
   isEdit: boolean;
   editEntity: IEntity;
   setIsEdit: (e: boolean) => void;
@@ -162,11 +161,15 @@ type IEntityKeys = 'name' | 'despription';
 type IEntityFieldKeys = 'name' | 'dataType';
 
 const EntityForm: React.FC<Props> = (props) => {
-  const [values, setValues] = useState<IEntity>(props.isEdit ? props.editEntity : defaultEntityValues);
+  const [values, setValues] = useState<IEntity>(defaultEntityValues);
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
   const [deletedFieldsNames, setDeletedFields] = useState<string[]>([]);
   const [addedFieldsNames, setAddedFields] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (props.isEdit) setValues(props.editEntity);
+  }, [props.editEntity]);
 
   const onInputChange = ({ name, value }: { name: IEntityKeys; value: string }) => {
     const updateState: any = { ...values };

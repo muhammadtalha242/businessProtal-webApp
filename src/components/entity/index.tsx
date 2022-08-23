@@ -69,13 +69,22 @@ const Entity: React.FC<props> = (props) => {
 
   const onEdit = (entity: IEntity) => {
     setIsEdit(true);
-    setEditEntity(entity);
+    setEditEntity({...entity});
     setShowForm(true);
   };
 
   const onView = (entity: IEntity) => {
     setIsView(true);
     setViewEntity(entity);
+  };
+
+  const onDelete = async (entityId: number) => {
+    try {
+      await entityService.deleteEntity(entityId);
+      FetchEntities();
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
   return (
@@ -89,7 +98,7 @@ const Entity: React.FC<props> = (props) => {
       </DashboardHeader>
 
       {showForm && <EntityForm setShowForm={setShowForm} onSave={onSave} onUpdate={onUpdate} isEdit={isEdit} editEntity={editEntiy} setIsEdit={setIsEdit} />}
-      {entitiesData && entitiesData.length !== 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} />}
+      {entitiesData && entitiesData.length !== 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} onDelete={onDelete}/>}
     </EntityComponenetContainer>
   );
 };

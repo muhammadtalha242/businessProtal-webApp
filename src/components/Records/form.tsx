@@ -1,5 +1,5 @@
-import { Alert, Col, Divider, Row } from 'antd';
-import React, { useState } from 'react';
+import { Alert, Col, Divider, Row, Slider } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 
 import { GREEN_PRIMARY, RED_PRIMARY } from '../../styles/colors';
@@ -13,16 +13,22 @@ interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
   formData: IFeilds;
+  isEdit: boolean;
+  setIsEdit: (e: boolean) => void;
+  recordSelected: any;
 }
-const RecordForm: React.FC<props> = (props) => {
-  const [values, setValues] = useState([]);
 
+const RecordForm: React.FC<props> = (props) => {
+  const [values, setValues] = useState(props.isEdit ? props.recordSelected : []);
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
 
   const { state: routeState } = useLocation();
   const { currentEntity }: any = routeState;
-  console.log('currentEntity: ', currentEntity);
+
+  useEffect(() => {
+    if (props.isEdit) setValues(props.recordSelected);
+  }, [props.recordSelected]);
 
   const onInputChange =
     (fieldName: string) =>
@@ -68,20 +74,30 @@ const RecordForm: React.FC<props> = (props) => {
 
       <Row align={'middle'} gutter={[24, 24]}>
         {currentEntity &&
-          Object.entries(currentEntity.fields).map((val: any, index: number) => {
-            return (
-              <Col span={8}>
-                <InputField
-                  type="input"
-                  setValue={onInputChange(val[0])}
-                  value={values[val[0]]}
-                  name={val[1].name}
-                  label={val[1].name}
-                  placeholder={val[1].placeholder}
-                  inputFieldContainerProps={{ marginBottom: 8 }}
-                />
-              </Col>
-            );
+          Object.entries(currentEntity.fields).map((field: [string, any], index: number) => {
+            const fieldCode = field[0];
+            const fieldData = field[1];
+            if (fieldData.dataType === 'Progress') {
+              return (
+                <Col span={8}>
+                  <Slider defaultValue={30} />;
+                </Col>
+              );
+            } else {
+              return (
+                <Col span={8}>
+                  <InputField
+                    type="input"
+                    setValue={onInputChange(fieldCode)}
+                    value={values[fieldCode]}
+                    name={fieldData.name}
+                    label={fieldData.name}
+                    placeholder={fieldData.placeholder}
+                    inputFieldContainerProps={{ marginBottom: 8 }}
+                  />
+                </Col>
+              );
+            }
           })}
       </Row>
 
