@@ -7,6 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 interface props {
   data: any;
   columns: any;
+  rowSelection?: any;
 }
 
 interface DraggableBodyRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
@@ -46,7 +47,7 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }: Dr
   return <tr ref={ref} className={`${className}${isOver ? dropClassName : ''}`} style={{ cursor: 'move', ...style }} {...restProps} />;
 };
 
-const App: React.FC<props> = ({ columns, data }) => {
+const App: React.FC<props> = ({ columns, data, rowSelection }) => {
   const [tableData, setTableData] = useState<any>();
   const [tableColumns, setTableColumns] = useState();
 
@@ -82,6 +83,7 @@ const App: React.FC<props> = ({ columns, data }) => {
         columns={tableColumns}
         dataSource={tableData}
         components={components}
+        tableLayout={'auto'}
         onRow={(_, index) => {
           const attr = {
             index,
@@ -90,6 +92,7 @@ const App: React.FC<props> = ({ columns, data }) => {
           return attr as React.HTMLAttributes<any>;
         }}
         pagination={false}
+        rowSelection={rowSelection}
       />
     </DndProvider>
   );

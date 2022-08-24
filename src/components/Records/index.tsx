@@ -36,6 +36,7 @@ const Records: React.FC<props> = (props) => {
   const searchInput = useRef<InputRef>(null);
   const [isEdit, setIsEdit] = useState(false);
   const [recordSelected, setRecordSelected] = useState();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { entityName } = useParams();
   const { state: routeState } = useLocation();
 
@@ -95,11 +96,21 @@ const Records: React.FC<props> = (props) => {
       </div>
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
+    onFilter: (value, record) => {
+      if (record[dataIndex]) {
+        const dataType = currentEntity.fields[dataIndex].dataType;
+
+        if (dataType === 'Number') {
+          console.log('record[dataIndex]: ', record[dataIndex]);
+          console.log('values: ', value);
+
+          if (record[dataIndex] > value) {
+            console.log(record[dataIndex]);
+            return record[dataIndex];
+          }
+        } else return record[dataIndex].toString().includes((value as string).toLowerCase());
+      }
+    },
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 1);
@@ -112,6 +123,7 @@ const Records: React.FC<props> = (props) => {
         text
       );
     },
+    sorter: (record_1, record_2) => record_1[dataIndex] - record_2[dataIndex],
   });
 
   const getTableColumns = () => {
@@ -189,6 +201,15 @@ const Records: React.FC<props> = (props) => {
       }
     } catch (error: any) {}
   };
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    console.log('newSelectedRowKeys: ', newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
 
   return (
     <EntityRecordDisplayContainer>
@@ -198,7 +219,7 @@ const Records: React.FC<props> = (props) => {
         </FilledButton>
       </DashboardHeader>
       {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={currentEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
-      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} />}
+      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} />}
     </EntityRecordDisplayContainer>
   );
 };

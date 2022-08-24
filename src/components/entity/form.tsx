@@ -8,8 +8,8 @@ import SelectField from '../common/select';
 import { HorizontalSpace, VerticalSpace } from '../common/space';
 import EntitySettingsModal from './entity-settings-modal';
 import { EntityFormContainer, IFieldRowContainer, PopoverContent } from './container';
-import { DATA_TYPES, datatypeFieldSettings } from '../../constants/entiy';
-import { getRandom, incrementNumber } from '../../utils/helper';
+import { DATA_TYPES, DATA_FIELD_SETTINGS } from '../../constants/entiy';
+import { getRandom } from '../../utils/helper';
 
 interface Props {
   setShowForm: (e: boolean) => void;
@@ -70,8 +70,8 @@ export interface IEditEntity {
 
 const defaultValue: IValues = { recordId: '', value: '' };
 
-const entityRandomName = getRandom('entity')('0123456789', 5, 1);
-const fieldRandomName = getRandom('field')('0123456789', 5, 1);
+const entityRandomName = getRandom('entity')('0123456789', 5);
+const fieldRandomName = getRandom('field')('0123456789', 5);
 
 export const defaultField: IFeild = {
   name: '',
@@ -99,7 +99,7 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
         dataType={field.dataType}
         values={field.settings}
         setModalVisible={setModalVisible}
-        settingFields={datatypeFieldSettings[field.dataType]}
+        settingFields={DATA_FIELD_SETTINGS[field.dataType]}
         onFieldSettingSave={onFieldSettingSave}
       />
 
@@ -216,8 +216,6 @@ const EntityForm: React.FC<Props> = (props) => {
 
   const onSave = async () => {
     try {
-      console.log(values);
-
       props.onSave(values);
     } catch (error: any) {
       console.log(error.message);
@@ -238,7 +236,6 @@ const EntityForm: React.FC<Props> = (props) => {
       });
       updatedEnitiy.addedFields = currentAddedFields;
     }
-    console.log('updatedEnitiy: ', updatedEnitiy);
     props.onUpdate(updatedEnitiy);
   };
 

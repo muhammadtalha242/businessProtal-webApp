@@ -43,7 +43,7 @@ export const DEFAULT_CHECKBOX_FIELDS = [
   { name: 'isComment', label: 'Comment' },
   { name: 'isPublic', label: 'Public' },
 ];
-export const datatypeFieldSettings: IDatatypeFieldSettings = {
+export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
   'Auto Number': {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [{ name: 'isRegenerate', label: 'Regenerate' }],

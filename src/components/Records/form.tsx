@@ -8,7 +8,7 @@ import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
 import { IFeilds } from '../Entity/form';
 import { EntityRecordFormContainer } from './container';
-
+import InputDate from '../common/date-input';
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -77,7 +77,13 @@ const RecordForm: React.FC<props> = (props) => {
           Object.entries(currentEntity.fields).map((field: [string, any], index: number) => {
             const fieldCode = field[0];
             const fieldData = field[1];
-            if (fieldData.dataType === 'Progress') {
+            if (fieldData.dataType === 'Date') {
+              return (
+                <Col span={4}>
+                  <InputDate setValue={onInputChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} label={fieldData.name} placeholder={fieldData.placeholder} />
+                </Col>
+              );
+            } else if (fieldData.dataType === 'Progress') {
               return (
                 <Col span={8}>
                   <Slider defaultValue={30} />;
