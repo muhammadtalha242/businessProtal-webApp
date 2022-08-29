@@ -15,6 +15,9 @@ import { BLUE_TERTIARY, WHITE } from '../../styles/colors';
 import { EntityRecordDisplayContainer } from './container';
 import Form from './form';
 import { Link } from 'react-router-dom';
+import FilterCollapes from './filter-collapse';
+import { IFilterValues } from './filters';
+import { transformData } from '../../utils/filters';
 
 interface props {}
 
@@ -37,6 +40,8 @@ const Records: React.FC<props> = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [recordSelected, setRecordSelected] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [filterData, setFilterData] = useState<IFilterValues[]>([]);
+
   const { entityName } = useParams();
   const { state: routeState } = useLocation();
 
@@ -46,6 +51,19 @@ const Records: React.FC<props> = (props) => {
     getData();
   }, [showForm]);
 
+  useEffect(() => {
+    if (filterData.length > 0) {
+      updateData();
+      getTableColumns();
+    } else {
+      getData();
+    }
+  }, [filterData]);
+
+  const updateData = async () => {
+    const response = transformData(entityData, filterData);
+    await getTableData(response);
+  };
   const getData = async () => {
     const response = await fetctData();
     await getTableData(response);
@@ -63,6 +81,7 @@ const Records: React.FC<props> = (props) => {
       console.log(error);
     }
   };
+
   const getColumnSearchProps = (dataIndex: DataIndex, columnName: string): ColumnType<IDataType> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
@@ -101,9 +120,6 @@ const Records: React.FC<props> = (props) => {
         const dataType = currentEntity.fields[dataIndex].dataType;
 
         if (dataType === 'Number') {
-          console.log('record[dataIndex]: ', record[dataIndex]);
-          console.log('values: ', value);
-
           if (record[dataIndex] > value) {
             console.log(record[dataIndex]);
             return record[dataIndex];
@@ -167,15 +183,16 @@ const Records: React.FC<props> = (props) => {
     try {
       if (isEdit && entityName) {
         const { index, ...restVal } = entityRecords;
+
         await EntityServices.updateEntityRecord(entityName, entityRecords.id, restVal);
         getData();
-      }
-      if (entityName) {
+      } else if (entityName) {
         await EntityServices.addEntityRecord(entityName, entityRecords);
         getData();
       }
     } catch (error: any) {}
   };
+
   const handleSearch = (selectedKeys: string[], confirm: (param?: FilterConfirmProps) => void, dataIndex: DataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -201,14 +218,22 @@ const Records: React.FC<props> = (props) => {
       }
     } catch (error: any) {}
   };
+
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
     console.log('newSelectedRowKeys: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
+
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
+  };
+
+  const getFilterData = (filter: IFilterValues[]) => {
+    setFilterData(filter);
+    updateData();
+    getTableColumns();
   };
 
   return (
@@ -219,6 +244,7 @@ const Records: React.FC<props> = (props) => {
         </FilledButton>
       </DashboardHeader>
       {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={currentEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
+      <FilterCollapes entityFields={currentEntity.fields} getFilterData={getFilterData} />
       {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} />}
     </EntityRecordDisplayContainer>
   );

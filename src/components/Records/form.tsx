@@ -9,6 +9,8 @@ import { VerticalSpace } from '../common/space';
 import { IFeilds } from '../Entity/form';
 import { EntityRecordFormContainer } from './container';
 import InputDate from '../common/date-input';
+import SelectField, { IOptionType } from '../common/select';
+import SliderInput from '../common/slider-input';
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -17,6 +19,12 @@ interface props {
   setIsEdit: (e: boolean) => void;
   recordSelected: any;
 }
+
+const YES_NO_OPTIONS: IOptionType[] = [
+  { label: '', value: '' },
+  { label: 'Yes', value: 'Yes' },
+  { label: 'No', value: 'No' },
+];
 
 const RecordForm: React.FC<props> = (props) => {
   const [values, setValues] = useState(props.isEdit ? props.recordSelected : []);
@@ -28,6 +36,7 @@ const RecordForm: React.FC<props> = (props) => {
 
   useEffect(() => {
     if (props.isEdit) setValues(props.recordSelected);
+    else setValues([]);
   }, [props.recordSelected]);
 
   const onInputChange =
@@ -41,19 +50,20 @@ const RecordForm: React.FC<props> = (props) => {
   const onSave = () => {
     props.onSave(values);
     props.setShowForm(false);
+    props.setIsEdit(false);
+  };
+
+  const onCancle = () => {
+    props.setIsEdit(false);
+    setValues([]);
+    props.setShowForm(false);
   };
 
   return (
     <EntityRecordFormContainer>
       <div className="header">
         <div className="text">Add Record</div>
-        <img
-          onClick={() => {
-            props.setShowForm(false);
-          }}
-          src={`/images/icons/close.svg`}
-          alt="close"
-        />
+        <img onClick={onCancle} src={`/images/icons/close.svg`} alt="close" />
       </div>
       {isError && (
         <>
@@ -77,16 +87,39 @@ const RecordForm: React.FC<props> = (props) => {
           Object.entries(currentEntity.fields).map((field: [string, any], index: number) => {
             const fieldCode = field[0];
             const fieldData = field[1];
-            if (fieldData.dataType === 'Date') {
+            if (fieldData.dataType === 'Yes/No') {
               return (
                 <Col span={4}>
-                  <InputDate setValue={onInputChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} label={fieldData.name} placeholder={fieldData.placeholder} />
+                  <SelectField
+                    options={YES_NO_OPTIONS}
+                    value={values[fieldCode]}
+                    label={fieldData.name}
+                    setValue={onInputChange(fieldCode)}
+                    placeholder="Choose options"
+                    name={fieldData.name}
+                    key={fieldData.name}
+                    lineHeight={0}
+                    marginBottom={0}
+                  />
+                </Col>
+              );
+            } else if (fieldData.dataType === 'Date') {
+              return (
+                <Col span={4}>
+                  <InputDate
+                    setValue={onInputChange(fieldCode)}
+                    value={values[fieldCode]}
+                    name={fieldData.name}
+                    label={fieldData.name}
+                    placeholder={fieldData.placeholder}
+                    datePickerContainerProps={{ marginBottom: 0 }}
+                  />
                 </Col>
               );
             } else if (fieldData.dataType === 'Progress') {
               return (
                 <Col span={8}>
-                  <Slider defaultValue={30} />;
+                  <SliderInput setValue={onInputChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} label={fieldData.name} />
                 </Col>
               );
             } else {
@@ -111,7 +144,7 @@ const RecordForm: React.FC<props> = (props) => {
       <Divider />
       <div className="footer">
         <div className="footer-left">
-          <OutlinedButton color={RED_PRIMARY} onClick={() => props.setShowForm(false)}>
+          <OutlinedButton color={RED_PRIMARY} onClick={onCancle}>
             Cancel
           </OutlinedButton>
         </div>

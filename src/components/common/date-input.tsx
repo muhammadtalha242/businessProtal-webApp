@@ -71,6 +71,7 @@ export const Label = styled.div`
   letter-spacing: 0.05em;
   color: ${GREY_SECONDARY};
   margin-bottom: 8px;
+  text-align: start;
 `;
 
 const CustomDateTimePicker: React.FC<Props> = (props) => {

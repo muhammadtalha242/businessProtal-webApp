@@ -30,9 +30,16 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   defaultValue?: string;
+  selectInputStyleProps?: ISelectContainerProps;
 }
 
-const SelectFieldContainer = styled.div<{ marginBottom: number | undefined }>`
+interface ISelectContainerProps {
+  lineHeight?: number;
+  marginBottom?: number;
+  padding?: number | string;
+}
+
+const SelectFieldContainer = styled.div<ISelectContainerProps>`
   margin-bottom: ${(props) => (props.marginBottom || props.marginBottom === 0 ? props.marginBottom : 32)}px;
   font-size: 14px;
 
@@ -62,7 +69,7 @@ const SelectFieldContainer = styled.div<{ marginBottom: number | undefined }>`
   .select {
     border: 1px solid ${GREY_PRIMARY};
     border-radius: 8px;
-    height: 48px;
+    height: ${(props) => (props.lineHeight || props.lineHeight === 0 ? props.lineHeight : 48)}px;
     width: 100%;
     padding: 6px 0px;
     outline: none;
@@ -101,7 +108,7 @@ const SelectField: React.FC<Props> = (props) => {
   };
 
   return (
-    <SelectFieldContainer marginBottom={props.marginBottom}>
+    <SelectFieldContainer marginBottom={props.marginBottom} {...props.selectInputStyleProps}>
       {props.label && (
         <div className="label-container">
           {props.label && <Label lineHeight={props.lineHeight}>{props.label}</Label>}

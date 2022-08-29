@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { GREEN_PRIMARY, GREY_PRIMARY, GREY_SECONDARY, WHITE } from '../../styles/colors';
+import { BLACK, GREEN_PRIMARY, GREY_PRIMARY, GREY_SECONDARY, WHITE } from '../../styles/colors';
 
 export const EntityRecordDisplayContainer = styled.div``;
 
@@ -31,4 +31,44 @@ export const EntityRecordFormContainer = styled.div`
       display: flex;
     }
   }
+`;
+
+export const FilterCollapesContainer = styled.div`
+  margin-bottom: 48px;
+`;
+
+export const FilterRecordsContainer = styled.div`
+  .new-clause {
+    margin: 12px 0;
+    text-align: start;
+
+    .image {
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
+    .text {
+      font-size: 16px;
+      color: ${BLACK};
+      cursor: pointer;
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+
+    .footer-right {
+      display: flex;
+    }
+  }
+`;
+
+export const FilterRecordsRowContainer = styled.div`
+  cursor: pointer;
+`;
+
+export const FilterRecordsHeaderContainer = styled.div`
+  color: ${BLACK};
+  text-align: start;
 `;
