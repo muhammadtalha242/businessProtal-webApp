@@ -68,7 +68,32 @@ export const FilterRecordsRowContainer = styled.div`
   cursor: pointer;
 `;
 
+export const SortRecordsRowContainer = styled.div`
+  cursor: pointer;
+
+  .new-clause {
+    margin: 12px 0;
+    text-align: start;
+
+    .image {
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
+    .text {
+      font-size: 16px;
+      color: ${BLACK};
+      cursor: pointer;
+    }
+  }
+`;
+
 export const FilterRecordsHeaderContainer = styled.div`
+  color: ${BLACK};
+  text-align: start;
+`;
+
+export const SortRecordsHeaderContainer = styled.div`
   color: ${BLACK};
   text-align: start;
 `;

@@ -7,7 +7,7 @@ import DashboardHeader from '../common/dashboard-header';
 import { EntityComponenetContainer } from './container';
 import EntityForm, { defaultEntityValues, IEditEntity, IEntity } from './form';
 import EntityList from './entity-list';
-
+import { logger } from '../../utils/logger';
 interface props {}
 
 const Entity: React.FC<props> = (props) => {
@@ -25,7 +25,7 @@ const Entity: React.FC<props> = (props) => {
     fetchData();
   }, []);
   const currentProps: any = { ...props };
-  console.log(
+  logger.log(
     'currentProps:',
     currentProps.onSidebarItemUpdate({
       key: '/entity',
@@ -39,7 +39,7 @@ const Entity: React.FC<props> = (props) => {
       const res = await entityService.getEntities();
       setEntities(res.entities);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   };
 
@@ -52,7 +52,7 @@ const Entity: React.FC<props> = (props) => {
       setShowForm(false);
       setIsEdit(false);
     } catch (e: any) {
-      console.log(e);
+      logger.error(e);
     }
   };
 
@@ -63,7 +63,7 @@ const Entity: React.FC<props> = (props) => {
       setShowForm(false);
       setIsEdit(false);
     } catch (err: any) {
-      console.log(err);
+      logger.error(err);
     }
   };
 
@@ -83,7 +83,7 @@ const Entity: React.FC<props> = (props) => {
       await entityService.deleteEntity(entityId);
       FetchEntities();
     } catch (err: any) {
-      console.log(err);
+      logger.error(err);
     }
   };
 

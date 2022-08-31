@@ -3,17 +3,18 @@ import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 interface Props {
-  onChange?: (e: CheckboxChangeEvent) => void;
+  setValue?: Function;
   text?: string;
-  checked?: boolean;
+  value?: boolean;
+  name?: string;
 }
 
 const CustomCheckbox: React.FC<Props> = (props) => {
-  return (
-    <Checkbox checked={props.checked} onChange={props.onChange}>
-      {props.text}
-    </Checkbox>
-  );
+  const onChange = (e: CheckboxChangeEvent) => {
+    if (props.setValue) props.setValue({ name: props.name, value: e.target.checked });
+  };
+
+  return <Checkbox checked={props.value} onChange={onChange} />;
 };
 
 export default CustomCheckbox;

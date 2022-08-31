@@ -16,8 +16,9 @@ import { EntityRecordDisplayContainer } from './container';
 import Form from './form';
 import { Link } from 'react-router-dom';
 import FilterCollapes from './filter-collapse';
-import { IFilterValues } from './filters';
-import { transformData } from '../../utils/filters';
+import { IFilter } from './filters';
+import { sortData, transformData } from '../../utils/filters';
+import moment from 'moment';
 
 interface props {}
 
@@ -40,7 +41,7 @@ const Records: React.FC<props> = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [recordSelected, setRecordSelected] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [filterData, setFilterData] = useState<IFilterValues[]>([]);
+  const [filterData, setFilterData] = useState<IFilter>();
 
   const { entityName } = useParams();
   const { state: routeState } = useLocation();
@@ -52,7 +53,7 @@ const Records: React.FC<props> = (props) => {
   }, [showForm]);
 
   useEffect(() => {
-    if (filterData.length > 0) {
+    if (filterData && filterData.filterValues.length > 0) {
       updateData();
       getTableColumns();
     } else {
@@ -61,9 +62,21 @@ const Records: React.FC<props> = (props) => {
   }, [filterData]);
 
   const updateData = async () => {
-    const response = transformData(entityData, filterData);
-    await getTableData(response);
+    let response;
+    if (filterData) {
+      if (filterData.filterValues.length > 0) {
+        console.log('filterData.filterValues.length: ', filterData.filterValues.length);
+
+        response = transformData(entityData, filterData.filterValues);
+      }
+      if (filterData.sortValues.length > 0) {
+        response = response || entityData;
+        response = sortData(response, filterData.sortValues);
+      }
+      await getTableData(response);
+    }
   };
+
   const getData = async () => {
     const response = await fetctData();
     await getTableData(response);
@@ -183,11 +196,12 @@ const Records: React.FC<props> = (props) => {
     try {
       if (isEdit && entityName) {
         const { index, ...restVal } = entityRecords;
-
-        await EntityServices.updateEntityRecord(entityName, entityRecords.id, restVal);
+        const datesAdd = { ...restVal, updatedAt: moment().toDate() };
+        await EntityServices.updateEntityRecord(entityName, entityRecords.id, datesAdd);
         getData();
       } else if (entityName) {
-        await EntityServices.addEntityRecord(entityName, entityRecords);
+        const datesAdd = { ...entityRecords, createdAt: moment().toDate(), updatedAt: moment().toDate() };
+        await EntityServices.addEntityRecord(entityName, datesAdd);
         getData();
       }
     } catch (error: any) {}
@@ -230,7 +244,7 @@ const Records: React.FC<props> = (props) => {
     onChange: onSelectChange,
   };
 
-  const getFilterData = (filter: IFilterValues[]) => {
+  const getFilterData = (filter: IFilter) => {
     setFilterData(filter);
     updateData();
     getTableColumns();
