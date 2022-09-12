@@ -14,6 +14,17 @@ interface OutlinedButtonProps {
   borderWidth?: string;
 }
 
+interface LinkButtonProps {
+  color?: string;
+  textColor?: string;
+  width?: string;
+  height?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  borderWidth?: string;
+  type?: string;
+}
+
 interface FilledButtonProps {
   background: string;
   color: string;
@@ -116,3 +127,5 @@ export const IconButton: React.FC<IconButtonProps> = (props) => {
     </>
   );
 };
+
+export const LinkButton = styled(Button)<LinkButtonProps>``;

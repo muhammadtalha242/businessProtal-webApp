@@ -158,7 +158,7 @@ const InputField: React.FC<Props> = (props) => {
       {props.label && (
         <div className="label-container">
           {props.label && <Label>{props.label}</Label>}
-          {/* {props.link && <Link to={props.link}>{props.linkLabel}</Link>} */}
+          {props.link && <Link to={props.link}>{props.linkLabel}</Link>}
         </div>
       )}
       <div>

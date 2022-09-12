@@ -6,6 +6,8 @@ import { Button, Input, Space } from 'antd';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import type { FilterConfirmProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 import TableDraggable from '../common/table-dragable';
 import EntityServices from '../../services/entity';
@@ -14,11 +16,9 @@ import { FilledButton } from '../common/button';
 import { BLUE_TERTIARY, WHITE } from '../../styles/colors';
 import { EntityRecordDisplayContainer } from './container';
 import Form from './form';
-import { Link } from 'react-router-dom';
 import FilterCollapes from './filter-collapse';
 import { IFilter } from './filters';
 import { sortData, transformData } from '../../utils/filters';
-import moment from 'moment';
 
 interface props {}
 
@@ -65,8 +65,6 @@ const Records: React.FC<props> = (props) => {
     let response;
     if (filterData) {
       if (filterData.filterValues.length > 0) {
-        console.log('filterData.filterValues.length: ', filterData.filterValues.length);
-
         response = transformData(entityData, filterData.filterValues);
       }
       if (filterData.sortValues.length > 0) {
@@ -134,10 +132,13 @@ const Records: React.FC<props> = (props) => {
 
         if (dataType === 'Number') {
           if (record[dataIndex] > value) {
-            console.log(record[dataIndex]);
             return record[dataIndex];
           }
-        } else return record[dataIndex].toString().includes((value as string).toLowerCase());
+        } else
+          return record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes((value as string).toLowerCase());
       }
     },
     onFilterDropdownVisibleChange: (visible) => {
@@ -152,7 +153,16 @@ const Records: React.FC<props> = (props) => {
         text
       );
     },
-    sorter: (record_1, record_2) => record_1[dataIndex] - record_2[dataIndex],
+    sorter: {
+      compare: (record_1, record_2) => {
+        const res = record_1[dataIndex] - record_2[dataIndex] ? record_1[dataIndex] - record_2[dataIndex] : ('' + record_1[dataIndex]).localeCompare(record_2[dataIndex]);
+        console.log('( + record_1[dataIndex]).localeCompare(record_2[dataIndex]) ', ('' + record_1[dataIndex]).localeCompare(record_2[dataIndex]));
+        console.log('res ', res);
+
+        return res;
+      },
+      multiple: 1,
+    },
   });
 
   const getTableColumns = () => {
@@ -234,8 +244,6 @@ const Records: React.FC<props> = (props) => {
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    console.log('newSelectedRowKeys: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 

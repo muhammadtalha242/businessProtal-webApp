@@ -1,11 +1,13 @@
 import React from 'react';
-import { Route, Navigate, useRoutes, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import { useNavigate  } from 'react-router';
 
 import Login from '../pages/auth/login';
 import Register from '../pages/auth/register';
 import Dashboard from '../pages/home';
 import Entity from '../pages/entity';
 import EntityRecords from '../pages/records';
+import Administartion from '../pages/administration';
 
 interface props {}
 
@@ -19,6 +21,43 @@ interface IPage {
 }
 
 const PAGES: IPage[] = [
+  {
+    key: 'dashboard',
+    path: '/',
+    exact: true,
+    isProtected: false,
+    component: Dashboard,
+  },
+  {
+    key: 'entity',
+    path: '/entity',
+    exact: true,
+    isProtected: false,
+    component: Entity,
+  },
+  {
+    key: 'entity',
+    path: '/entity/:entityName',
+    exact: true,
+    isProtected: false,
+    component: EntityRecords,
+  },
+  {
+    key: 'entity',
+    path: '/entity/:entityName/:recordId',
+    exact: true,
+    isProtected: false,
+    component: EntityRecords,
+  },
+  {
+    key: 'admin',
+    path: '/admin',
+    exact: true,
+    isProtected: false,
+    component: Administartion,
+  },
+
+
   /**auth-routes**/
   {
     key: 'login',
@@ -55,37 +94,10 @@ const PAGES: IPage[] = [
     isProtected: false,
     component: Login,
   },
-  {
-    key: 'dashboard',
-    path: '/',
-    exact: true,
-    isProtected: false,
-    component: Dashboard,
-  },
-  {
-    key: 'entity',
-    path: '/entity',
-    exact: true,
-    isProtected: false,
-    component: Entity,
-  },
-  {
-    key: 'entity',
-    path: '/entity/:entityName',
-    exact: true,
-    isProtected: false,
-    component: EntityRecords,
-  },
-  {
-    key: 'entity',
-    path: '/entity/:entityName/:recordId',
-    exact: true,
-    isProtected: false,
-    component: EntityRecords,
-  },
 ];
 
 const Router: React.FC<props> = (props) => {
+
   const filteredPages = PAGES.filter((page: IPage) => !page.isProtected);
 
   const Components = filteredPages.map((page: IPage) => {

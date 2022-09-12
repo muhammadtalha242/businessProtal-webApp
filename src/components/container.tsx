@@ -1,10 +1,5 @@
-import styled from "styled-components";
-import {
-  GREEN_PRIMARY,
-  GREY_PRIMARY,
-  NAVY_PRIMARY,
-  WHITE,
-} from "../styles/colors";
+import styled from 'styled-components';
+import { GREEN_PRIMARY, GREY_PRIMARY, NAVY_PRIMARY, WHITE } from '../styles/colors';
 
 interface DashboardMainContainerProps {
   sidebarWidth: number;
@@ -96,7 +91,6 @@ export const LoginFormContainer = styled.div`
   }
 `;
 
-
 export const DashboardHeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -132,3 +126,5 @@ export const DashboardHeaderContainer = styled.div`
     }
   }
 `;
+
+export const AdministrationContainer = styled.div``;

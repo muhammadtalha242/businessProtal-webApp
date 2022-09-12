@@ -4,7 +4,6 @@ import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 import FormActions from '../common/form-action';
 import CustomModal from '../common/modal';
-import SelectField, { IOptionType } from '../common/select';
 import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
 import { EntitySettingsModalContainer } from './container';

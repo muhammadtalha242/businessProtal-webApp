@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
@@ -7,6 +7,7 @@ interface Props {
   text?: string;
   value?: boolean;
   name?: string;
+  children?: ReactNode;
 }
 
 const CustomCheckbox: React.FC<Props> = (props) => {
@@ -14,7 +15,7 @@ const CustomCheckbox: React.FC<Props> = (props) => {
     if (props.setValue) props.setValue({ name: props.name, value: e.target.checked });
   };
 
-  return <Checkbox checked={props.value} onChange={onChange} />;
+  return <Checkbox checked={props.value} onChange={onChange} {...props} />;
 };
 
 export default CustomCheckbox;

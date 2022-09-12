@@ -17,11 +17,17 @@ export const SidebarLinks: MenuItem[] = [
     label: 'Dashboard',
     link: '/',
     icon: <InsertRowBelowOutlined />,
-  }, 
+  },
   {
     key: '/entity',
     label: 'Entity',
     link: '/entity',
+    icon: <TableOutlined />,
+  },
+  {
+    key: '/admin',
+    label: 'Administration',
+    link: '/admin',
     icon: <TableOutlined />,
   },
 ];
