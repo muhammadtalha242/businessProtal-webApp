@@ -18,21 +18,17 @@ export interface IUserGroup {
   id?: number;
   code: string;
   name: string;
-  isAdmin: boolean;
-  isPublic: boolean;
   isActive: boolean;
 }
 
 interface IUserGroupDataRowProps extends IUserGroup {
   onEdit: () => void;
-  onDelete: () => void;
+  onDelete: (id: number) => void;
 }
 
 export const defaultUserGroup: IUserGroup = {
   name: '',
   code: '',
-  isAdmin: true,
-  isPublic: false,
   isActive: true,
 };
 
@@ -42,12 +38,6 @@ const UserGroupHeader = () => {
       <Row align={'middle'} gutter={[8, 24]} justify="space-around">
         <Col span={2}>Code</Col>
         <Col span={6}>Name</Col>
-        <Col span={2}>
-          <div>Admin</div>
-        </Col>
-        <Col span={2}>
-          <div>Public</div>
-        </Col>
         <Col span={2}>
           <div>Active</div>
         </Col>
@@ -63,27 +53,28 @@ const UserGroupHeader = () => {
 };
 
 const UserGroupDataRow: React.FC<IUserGroupDataRowProps> = (props) => {
+  const FIXED_IDs = [1, 2, 3];
+  const onEdit = () => {
+    if (props.id && !FIXED_IDs.includes(props.id)) props.onEdit();
+  };
+  const onDelete = () => {
+    if (props.id && !FIXED_IDs.includes(props.id)) props.onDelete(props.id);
+  };
   return (
     <UserGroupDataRowsContainer>
       <Row align={'middle'} gutter={[8, 24]} justify="space-around">
         <Col span={2}>{props.code}</Col>
         <Col span={6}>{props.name}</Col>
         <Col span={2}>
-          <CustomCheckbox value={props.isAdmin} name="isAdmin" />
-        </Col>
-        <Col span={2}>
-          <CustomCheckbox value={props.isPublic} name="isPublic" />
-        </Col>
-        <Col span={2}>
           <CustomCheckbox value={props.isActive} name="isActive" />
         </Col>
         <Col span={1}>
-          <LinkButton type="link" onClick={() => props.onEdit()}>
+          <LinkButton type="link" onClick={onEdit}>
             Edit
           </LinkButton>
         </Col>
         <Col span={1}>
-          <LinkButton type="link" onClick={() => props.onDelete()}>
+          <LinkButton type="link" onClick={onDelete}>
             Delete
           </LinkButton>
         </Col>
@@ -118,13 +109,13 @@ const UserGroup: React.FC<props> = (props) => {
 
   const onOkay = async () => {
     try {
-      const { name, code, isActive, isAdmin, isPublic } = values;
+      const { name, code, isActive } = values;
       if (name && code) {
         let res;
         if (isEdit && values.id) {
-          res = await UserGroupServices.editUserGroup({ name, code, isActive, isAdmin, isPublic }, values.id);
+          res = await UserGroupServices.editUserGroup({ name, code, isActive }, values.id);
         } else {
-          res = await UserGroupServices.setUserGroup({ name, code, isActive, isAdmin, isPublic });
+          res = await UserGroupServices.setUserGroup({ name, code, isActive });
         }
         await fetchUserGroups();
         success(res.message);
@@ -153,11 +144,12 @@ const UserGroup: React.FC<props> = (props) => {
     setIsEdit(true);
   };
 
-  const onDelete = async () => {
+  const onDelete = async (userGroupId: number) => {
     try {
-      if (values.id) {
-        const res = await UserGroupServices.deleteUserGroup(values.id);
+      if (userGroupId) {
+        const res = await UserGroupServices.deleteUserGroup(userGroupId);
         success(res.message);
+        fetchUserGroups();
       }
     } catch (e: any) {
       error('Unable to create user group');
@@ -206,13 +198,7 @@ const UserGroup: React.FC<props> = (props) => {
         )}
         <UserGroupFormContainer>
           <InputField type="input" setValue={onInputChange} value={values.name} name="name" label="Name" placeholder="Name" inputFieldContainerProps={{ marginBottom: 8 }} />
-          <InputField type="input" setValue={onInputChange} value={values.code} name="code" label="Code" placeholder="Code" inputFieldContainerProps={{ marginBottom: 16 }} />
-          <CustomCheckbox value={values.isAdmin} setValue={onInputChange} name="isAdmin">
-            Administration
-          </CustomCheckbox>
-          <CustomCheckbox value={values.isPublic} setValue={onInputChange} name="isPublic">
-            Public
-          </CustomCheckbox>
+          <InputField type="input" setValue={onInputChange} value={values.code} name="code" label="Code" placeholder="Code" inputFieldContainerProps={{ marginBottom: 16 }} disabled={isEdit} />
           <CustomCheckbox value={values.isActive} setValue={onInputChange} name="isActive">
             Activate
           </CustomCheckbox>

@@ -14,6 +14,7 @@ import InputField from '../common/input-field';
 import { error, success } from '../common/message';
 import { IUserGroup } from './user-group';
 import SelectField, { IOptionType } from '../common/select';
+import { COUNTRIES_NAME_LIST } from '../../constants/countires';
 
 interface props {}
 
@@ -146,7 +147,7 @@ const UsersRow: React.FC<props> = (props) => {
         if (isEdit && values.id) {
           // res = await UserGroupServices.editUserGroup({ name, email, isActive, country, isPublic }, values.id);
         } else {
-          res = await UsersServices.setUser({ name, email, isActive, country, userGroupId, password, isCheckReq, isPasswordUpdated });
+          res = await UsersServices.setUser({ name, email, isActive, country, userGroupId, password, isCheckReq, isPasswordUpdated: !isPasswordUpdated });
         }
         await fetchUserGroups();
         await fetchUsers();
@@ -207,10 +208,10 @@ const UsersRow: React.FC<props> = (props) => {
           </div>
         </div>
         <FilledButton width="164px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={() => setShowForm(true)}>
-          <img src="/images/icons/add.svg" alt="add" /> Add User Group
+          <img src="/images/icons/add.svg" alt="add" /> Add User
         </FilledButton>
       </UserGroupListContainer>
-      <CustomModal title="Add user group" visible={showForm} width={500} onCancel={onCancle} onOk={onOkay}>
+      <CustomModal title="Add User" visible={showForm} width={500} onCancel={onCancle} onOk={onOkay}>
         {isError && (
           <>
             <Alert
@@ -229,10 +230,12 @@ const UsersRow: React.FC<props> = (props) => {
         )}
         <UserGroupFormContainer>
           <InputField type="input" setValue={onInputChange} value={values.name} name="name" label="Name" placeholder="Name" inputFieldContainerProps={{ marginBottom: 8 }} />
-          <InputField type="input" setValue={onInputChange} value={values.password} name="password" label="Password" placeholder="Password" inputFieldContainerProps={{ marginBottom: 8 }} />
+          {!isEdit && (
+            <InputField type="input" setValue={onInputChange} value={values.password} name="password" label="Password" placeholder="Password" inputFieldContainerProps={{ marginBottom: 8 }} />
+          )}
           <InputField type="input" setValue={onInputChange} value={values.email} name="email" label="Email" placeholder="Email" inputFieldContainerProps={{ marginBottom: 16 }} />
-          <InputField type="input" setValue={onInputChange} value={values.country} name="country" label="Country" placeholder="Country" inputFieldContainerProps={{ marginBottom: 16 }} />
 
+          <SelectField options={COUNTRIES_NAME_LIST} value={values.country} setValue={onInputChange} name="country" key="Country" label="Country" placeholder="Country" showSearch filterOption />
           <SelectField options={UserGroups} value={values.userGroupId} setValue={onInputChange} name="userGroupId" key="userGroupId" label="Use Group" placeholder="Use Group" />
 
           <CustomCheckbox value={values.isActive} setValue={onInputChange} name="isActive">

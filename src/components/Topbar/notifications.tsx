@@ -5,6 +5,9 @@ import { UserOutlined } from '@ant-design/icons';
 import { NotificationsDetailsContainer, DetailsContainer } from './container';
 import { GREY_QUINARY } from '../../styles/colors';
 import styled from 'styled-components';
+import { UserContext, setUser, initialState } from '../../context/user.context';
+import { useNavigate } from 'react-router';
+import { error } from '../common/message';
 
 interface NotificationsProps {}
 const MenuPopover = styled(Menu)`
@@ -21,11 +24,22 @@ const MenuPopover = styled(Menu)`
 
 const NotificationsDetails: React.FC<NotificationsProps> = (props) => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const { dispatch: userDispatch } = useContext(UserContext);
+  const history = useNavigate();
+  
+  const logout = ()=>{
+    try {
+      setUser(userDispatch)(initialState)
+      history('/login')
+    } catch (e :any) {
+      error("Error.")
+    }
+  }
 
   const MenuOverlay = () => {
     return (
       <MenuPopover>
-        <Menu.Item onClick={() => {}}>
+        <Menu.Item onClick={logout}>
           <div>
             <img src={'/images/icons/log-out.svg'} alt="logout" /> <span>Log Out</span>
           </div>

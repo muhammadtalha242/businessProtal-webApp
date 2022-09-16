@@ -156,9 +156,6 @@ const Records: React.FC<props> = (props) => {
     sorter: {
       compare: (record_1, record_2) => {
         const res = record_1[dataIndex] - record_2[dataIndex] ? record_1[dataIndex] - record_2[dataIndex] : ('' + record_1[dataIndex]).localeCompare(record_2[dataIndex]);
-        console.log('( + record_1[dataIndex]).localeCompare(record_2[dataIndex]) ', ('' + record_1[dataIndex]).localeCompare(record_2[dataIndex]));
-        console.log('res ', res);
-
         return res;
       },
       multiple: 1,

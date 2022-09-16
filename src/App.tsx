@@ -1,19 +1,18 @@
-import React from "react";
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
-import { BrowserRouter } from "react-router-dom";
+import './App.css';
+import 'antd/dist/antd.css';
 
-import Home from "./pages/home";
-import Login from "./pages/auth/login";
-import "./App.css";
-import "antd/dist/antd.css";
-import Router from "./routes";
+import Router from './routes';
+import { Provider as UserProvider } from '../src/context/user.context';
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="App">
+      <UserProvider>
         <Router />
-      </div>
+      </UserProvider>
     </BrowserRouter>
   );
 }

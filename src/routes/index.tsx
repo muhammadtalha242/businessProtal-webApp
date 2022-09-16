@@ -1,9 +1,12 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { useNavigate  } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import Login from '../pages/auth/login';
 import Register from '../pages/auth/register';
+import ResetPassword from '../pages/auth/reset-password';
+import VerifyAccount from '../pages/auth/verify-account';
+import NewPassword from '../pages/auth/new-password';
 import Dashboard from '../pages/home';
 import Entity from '../pages/entity';
 import EntityRecords from '../pages/records';
@@ -57,7 +60,6 @@ const PAGES: IPage[] = [
     component: Administartion,
   },
 
-
   /**auth-routes**/
   {
     key: 'login',
@@ -78,26 +80,25 @@ const PAGES: IPage[] = [
     path: '/new-password',
     exact: true,
     isProtected: false,
-    component: Login,
+    component: NewPassword,
   },
   {
     key: 'reset-password',
     path: '/reset-password',
     exact: true,
     isProtected: false,
-    component: Login,
+    component: ResetPassword,
   },
   {
     key: 'verify-account',
     path: '/verify-account',
     exact: true,
     isProtected: false,
-    component: Login,
+    component: VerifyAccount,
   },
 ];
 
 const Router: React.FC<props> = (props) => {
-
   const filteredPages = PAGES.filter((page: IPage) => !page.isProtected);
 
   const Components = filteredPages.map((page: IPage) => {

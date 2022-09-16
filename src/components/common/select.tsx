@@ -30,6 +30,8 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   defaultValue?: string;
+  showSearch?: boolean;
+  filterOption?: boolean;
   selectInputStyleProps?: ISelectContainerProps;
 }
 
@@ -107,6 +109,11 @@ const SelectField: React.FC<Props> = (props) => {
     if (props.setValue) props.setValue({ name: props.name, value: value });
   };
 
+  const onFilterOptions = (input: any, option: any): boolean => {
+    if (props.filterOption) return (option!.value as unknown as string).toLowerCase().includes(input.toLowerCase());
+    else return false
+  };
+
   return (
     <SelectFieldContainer marginBottom={props.marginBottom} {...props.selectInputStyleProps}>
       {props.label && (
@@ -116,7 +123,19 @@ const SelectField: React.FC<Props> = (props) => {
         </div>
       )}
       <div className={classNames({ error: props.error })}>
-        <Select className="select" placeholder={props.placeholder} name={props.name} onChange={onChange} bordered={false} defaultValue={props.defaultValue} {...props} loading={props.loading} />
+        <Select
+          showSearch={props.showSearch}
+          
+          className="select"
+          placeholder={props.placeholder}
+          name={props.name}
+          onChange={onChange}
+          bordered={false}
+          defaultValue={props.defaultValue}
+          {...props}
+          loading={props.loading}
+          filterOption={ onFilterOptions}
+        />
         {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
         {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}
       </div>

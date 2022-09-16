@@ -8,6 +8,7 @@ import { EntityComponenetContainer } from './container';
 import EntityForm, { defaultEntityValues, IEditEntity, IEntity } from './form';
 import EntityList from './entity-list';
 import { logger } from '../../utils/logger';
+
 interface props {}
 
 const Entity: React.FC<props> = (props) => {
@@ -24,16 +25,6 @@ const Entity: React.FC<props> = (props) => {
     };
     fetchData();
   }, []);
-  const currentProps: any = { ...props };
-  logger.log(
-    'currentProps:',
-    currentProps.onSidebarItemUpdate({
-      key: '/entity',
-      label: 'Entity',
-      link: '/entity',
-    })
-  );
-
   const FetchEntities = async () => {
     try {
       const res = await entityService.getEntities();
@@ -69,7 +60,7 @@ const Entity: React.FC<props> = (props) => {
 
   const onEdit = (entity: IEntity) => {
     setIsEdit(true);
-    setEditEntity({...entity});
+    setEditEntity({ ...entity });
     setShowForm(true);
   };
 
@@ -98,7 +89,7 @@ const Entity: React.FC<props> = (props) => {
       </DashboardHeader>
 
       {showForm && <EntityForm setShowForm={setShowForm} onSave={onSave} onUpdate={onUpdate} isEdit={isEdit} editEntity={editEntiy} setIsEdit={setIsEdit} />}
-      {entitiesData && entitiesData.length !== 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} onDelete={onDelete}/>}
+      {entitiesData && entitiesData.length !== 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} onDelete={onDelete} />}
     </EntityComponenetContainer>
   );
 };

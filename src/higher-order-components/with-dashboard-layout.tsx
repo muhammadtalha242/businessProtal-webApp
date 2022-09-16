@@ -46,8 +46,7 @@ const withDashboardLayout = (WrappedComponent: React.ComponentType<any>): React.
     };
 
     onSidebarItemUpdate = (sidebarItem: MenuItem) => {
-      console.log('LOG');
-      console.log('sidebarItem: ', sidebarItem);
+
     };
 
     render(): React.ReactNode {

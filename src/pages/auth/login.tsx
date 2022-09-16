@@ -10,13 +10,12 @@ import { VerticalSpace } from '../../components/common/space';
 import { success } from '../../components/common/message';
 
 import userService from '../../services/users';
-// import * as authActions from '../../context/auth.context';
-// import * as userActions from '../../context/user.context';
-// import { AuthContext } from '../../context/auth.context';
-// import { UserContext } from '../../context/user.context';
+import { UserContext, setUser } from '../../context/user.context';
 
 import { ROCK_BLUE } from '../../styles/colors';
 import { LoginFormContainer } from '../../components/container';
+
+import ReCAPTCHACheck from '../../components/common/recaptch-check';
 
 interface Props {}
 
@@ -47,8 +46,7 @@ const fields: IField[] = [
 ];
 
 const Login: React.FC<Props> = (props) => {
-  // const { dispatch: authDispatch } = useContext(AuthContext);
-  // const { dispatch: userDispatch } = useContext(UserContext);
+  const { dispatch: userDispatch } = useContext(UserContext);
   const [err, setErr] = useState({});
   const history = useNavigate();
   const onSubmit = async ({ email, password }: ILoginSubmitParams) => {
@@ -64,19 +62,14 @@ const Login: React.FC<Props> = (props) => {
           email,
           password,
         });
-
-        // authActions.setToken(authDispatch)({
-        //   accessToken: data.accessToken,
-        //   idToken: data.idToken,
-        //   isAuthenticated: true,
-        // });
-        // userActions.setUser(userDispatch)(data.user);
-        // props.history.push('/');
+        
+        setUser(userDispatch)({ accessToken: data.accessToken, ...data.user });
         success(data.message);
-        history('/');
+        const nextPath = data.user.isPasswordUpdated ? (data.user.isCheckReq ? '/verify-account' : `/`) : `/new-password`;
+        history(nextPath);
       } catch (e: any) {
         const { data } = e.response;
-        if (data.isError) setErr({ message: data.message, isError: true });
+        if (data) setErr({ message: data.message, isError: true });
       }
     }
   };
@@ -84,6 +77,8 @@ const Login: React.FC<Props> = (props) => {
   return (
     <LoginFormContainer>
       <AuthForm heading="Log in to your account" subHeading="Enter your work email address" fields={fields} buttonText="Next" onSubmit={onSubmit} err={err} setErr={setErr}>
+      <VerticalSpace height={32} />
+        <ReCAPTCHACheck />
         <Divider>Or Sign In with</Divider>
         <VerticalSpace height={32} />
         <div className="social-login-component">
@@ -93,15 +88,6 @@ const Login: React.FC<Props> = (props) => {
               Sign IN
             </div>
           </button>
-          {/* <button className="social-login-button">
-            <img
-              src="https://cdn.monday.com/images/logo_google_v2.svg"
-              alt="log-in-google"
-            />
-            <div className="g-signin2" data-onsuccess="onSignIn">
-              Sign IN
-            </div>
-          </button> */}
         </div>
         <div>
           <VerticalSpace height={32} />
