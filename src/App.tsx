@@ -6,13 +6,19 @@ import 'antd/dist/antd.css';
 
 import Router from './routes';
 import { Provider as UserProvider } from '../src/context/user.context';
+import { Provider as AuthProvider } from '../src/context/auth.context';
+import { Provider as EntityProvider } from '../src/context/entity.context';
 
 function App() {
   return (
     <BrowserRouter>
-      <UserProvider>
-        <Router />
-      </UserProvider>
+      <AuthProvider>
+        <UserProvider>
+          <EntityProvider>
+            <Router />
+          </EntityProvider>
+        </UserProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

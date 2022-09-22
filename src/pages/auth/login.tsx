@@ -11,6 +11,7 @@ import { success } from '../../components/common/message';
 
 import userService from '../../services/users';
 import { UserContext, setUser } from '../../context/user.context';
+import { AuthContext, setAuthToken } from '../../context/auth.context';
 
 import { ROCK_BLUE } from '../../styles/colors';
 import { LoginFormContainer } from '../../components/container';
@@ -47,6 +48,8 @@ const fields: IField[] = [
 
 const Login: React.FC<Props> = (props) => {
   const { dispatch: userDispatch } = useContext(UserContext);
+  const { dispatch: authDispatch } = useContext(AuthContext);
+
   const [err, setErr] = useState({});
   const history = useNavigate();
   const onSubmit = async ({ email, password }: ILoginSubmitParams) => {
@@ -62,8 +65,9 @@ const Login: React.FC<Props> = (props) => {
           email,
           password,
         });
-        
-        setUser(userDispatch)({ accessToken: data.accessToken, ...data.user });
+
+        setUser(userDispatch)({  ...data.user });
+        setAuthToken(authDispatch)({ isAuthenticated: true, accessToken: data.accessToken });
         success(data.message);
         const nextPath = data.user.isPasswordUpdated ? (data.user.isCheckReq ? '/verify-account' : `/`) : `/new-password`;
         history(nextPath);
@@ -77,7 +81,7 @@ const Login: React.FC<Props> = (props) => {
   return (
     <LoginFormContainer>
       <AuthForm heading="Log in to your account" subHeading="Enter your work email address" fields={fields} buttonText="Next" onSubmit={onSubmit} err={err} setErr={setErr}>
-      <VerticalSpace height={32} />
+        <VerticalSpace height={32} />
         <ReCAPTCHACheck />
         <Divider>Or Sign In with</Divider>
         <VerticalSpace height={32} />

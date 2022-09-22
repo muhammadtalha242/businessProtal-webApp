@@ -2,21 +2,24 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 
+import { UserContext, setUser } from '../../context/user.context';
+import { AuthContext, setAuthToken } from '../../context/auth.context';
+
+import userService from '../../services/users';
+
 import AuthForm from '../../components/common/auth-form';
 
 import { IField } from '../../components/common/auth-form';
 import { VerticalSpace } from '../../components/common/space';
 import { GREEN_PRIMARY } from '../../styles/colors';
 import { validatePassword } from '../../utils/validate';
-import userService from '../../services/users';
 import { error, success } from '../../components/common/message';
-import { UserContext, setUser } from '../../context/user.context';
 
 interface Props {}
 
 interface INewPassword {
   password: string;
-  isPasswordUpdated: boolean;
+  repeatPassword: string;
 }
 
 const fields: IField[] = [
@@ -43,8 +46,9 @@ const fields: IField[] = [
 const NewPassword: React.FC<Props> = (props) => {
   const [err, setErr] = useState({});
   const { dispatch: userDispatch, state: userState } = useContext(UserContext);
+  const { dispatch: authDispatch } = useContext(AuthContext);
   const history = useNavigate();
-  const onSubmit = async ({ password, repeatPassword }: { password: string; repeatPassword: string }) => {
+  const onSubmit = async ({ password, repeatPassword }: INewPassword) => {
     if (!password || !repeatPassword) {
       setErr({
         isError: true,
@@ -65,7 +69,9 @@ const NewPassword: React.FC<Props> = (props) => {
         if (userState.email) {
           const res = await userService.updatePassword({ password, email: userState.email });
           success('Password updated.');
-          setUser(userDispatch)({ accessToken: res.accessToken, ...res.user });
+          setUser(userDispatch)({ ...res.user });
+          setAuthToken(authDispatch)({ isAuthenticated: true, accessToken: res.accessToken });
+
           const nextPath = res.user.isCheckReq ? '/verify-account' : `/`;
           history(nextPath);
         }

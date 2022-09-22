@@ -1,22 +1,22 @@
 import React, { createContext, useReducer } from 'react';
 
+import { IUserGroup } from '../components/Administration/user-group';
+
 interface IState {
   name: string;
   email: string;
-  accessToken: string;
-  id?: number
+  id?: number;
+  userGroup?: IUserGroup;
 }
 
 type ISetUserParams = {
   name: string;
   email: string;
-  accessToken: string;
 };
 
 export const initialState: IState = {
   name: '',
   email: '',
-  accessToken: '',
 };
 
 type IAction = {
@@ -37,9 +37,7 @@ const userReducer = (state: IState, action: IAction): IState => {
       };
     }
     default: {
-      return {
-        ...state,
-      };
+      throw new Error(`Unhandled action type: ${action.type}`);
     }
   }
 };
@@ -47,7 +45,6 @@ const userReducer = (state: IState, action: IAction): IState => {
 export const setUser = (dispatch: React.Dispatch<IAction> | undefined) => (params: ISetUserParams) => {
   if (dispatch) dispatch({ type: ACTION_TYPES.SET_USER, payload: { ...params } });
 };
-
 
 const Context = () => {
   const UserContext = createContext<{ state: IState; dispatch?: React.Dispatch<IAction> }>(null!);

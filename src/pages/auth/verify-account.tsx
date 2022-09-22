@@ -6,6 +6,7 @@ import { VerticalSpace } from '../../components/common/space';
 import AuthForm from '../../components/common/auth-form';
 import { GREEN_PRIMARY } from '../../styles/colors';
 import { UserContext, setUser } from '../../context/user.context';
+import { AuthContext, setAuthToken } from '../../context/auth.context';
 import userService from '../../services/users';
 
 interface IMatchParams {
@@ -43,6 +44,8 @@ const VerifyAccount: React.FC<IMatchParams> = (props) => {
     try {
       if (userState.email) {
         const data = await userService.verifyAccount({ email: userState.email, code: parseInt(code) });
+        console.log('data: ', data);
+
         setUser(userDispatch)({ accessToken: data.accessToken, ...data.user });
         success(data.message);
         history('/');

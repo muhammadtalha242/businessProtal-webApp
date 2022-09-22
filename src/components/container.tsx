@@ -11,6 +11,8 @@ export const DashBoardContainer = styled.div``;
 
 export const EntityRecordsContainer = styled.div``;
 
+export const EntityPermissionsContainer = styled.div``;
+
 export const DashboardMainContainerContainer = styled.div<DashboardMainContainerProps>`
   margin-left: ${(props) => `${props.sidebarWidth}px`};
   overflow: hidden;

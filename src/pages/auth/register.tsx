@@ -6,7 +6,7 @@ import { IField } from "../../components/common/auth-form";
 import { VerticalSpace } from "../../components/common/space";
 import { success } from "../../components/common/message";
 
-import { GREEN_PRIMARY, ROCK_BLUE } from "../../styles/colors";
+import { ROCK_BLUE } from "../../styles/colors";
 
 import { validatePassword } from "../../utils/validate";
 

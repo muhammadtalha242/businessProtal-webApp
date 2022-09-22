@@ -1,7 +1,10 @@
 import axios, { setHeaders } from '../singletons/axios';
+import jsCookie from 'js-cookie';
+
 import REACT_APP_API_URL from '../constants/api';
 import { IUser } from '../components/Administration/users';
 import { ILoginSubmitParams } from '../pages/auth/login';
+import responseCodes from '../constants/res-codes';
 
 export interface IVerifyAccountRequest {
   code: number;
@@ -20,7 +23,10 @@ const setUser = async (user: IUser) => {
 
 const login = async ({ email, password }: ILoginSubmitParams) => {
   const res = await axios.post(`${REACT_APP_API_URL}/auth/login`, { username: email, password });
-  setHeaders(res.data.accessToken);
+  if (responseCodes.SUCCESS.includes(res.status)) {
+    jsCookie.set('accessToken', res.data.accessToken);
+    setHeaders(res.data.accessToken);
+  }
   return res.data;
 };
 
@@ -62,7 +68,7 @@ const exports = {
   verifyAccount,
   sendVerificationCode,
   resetPassword,
-  updatePassword
+  updatePassword,
 };
 
 export default exports;
