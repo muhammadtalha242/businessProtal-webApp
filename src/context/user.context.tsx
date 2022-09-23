@@ -6,7 +6,7 @@ interface IState {
   name: string;
   email: string;
   id?: number;
-  userGroup?: IUserGroup;
+  userGroupCodes?: number[];
 }
 
 type ISetUserParams = {

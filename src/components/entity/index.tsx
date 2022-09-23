@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useQuery } from 'react-query';
 
 import entityService from '../../services/entity';
 import { BLUE_TERTIARY, WHITE } from '../../styles/colors';
@@ -25,6 +26,7 @@ const Entity: React.FC<props> = (props) => {
     };
     fetchData();
   }, []);
+
   const FetchEntities = async () => {
     try {
       const res = await entityService.getEntities();
@@ -89,7 +91,7 @@ const Entity: React.FC<props> = (props) => {
       </DashboardHeader>
 
       {showForm && <EntityForm setShowForm={setShowForm} onSave={onSave} onUpdate={onUpdate} isEdit={isEdit} editEntity={editEntiy} setIsEdit={setIsEdit} />}
-      {entitiesData && entitiesData.length !== 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} onDelete={onDelete} />}
+      {entitiesData && entitiesData.length > 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} onDelete={onDelete} />}
     </EntityComponenetContainer>
   );
 };

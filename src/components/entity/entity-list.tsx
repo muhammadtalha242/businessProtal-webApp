@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import { Space } from 'antd';
+import { Checkbox, Space } from 'antd';
 
 import { UserContext } from '../../context/user.context';
+import { EntityContext, setEntity } from '../../context/entity.context';
 
 import { EntityListContainer } from './container';
 import { IEntity } from './form';
@@ -26,6 +27,7 @@ export interface IDataType {
 
 const EntityLis: React.FC<props> = (props) => {
   const { state: userState } = useContext(UserContext);
+  const { dispatch: EntityDispatch } = useContext(EntityContext);
 
   const editEntity = (record: IDataType) => () => {
     props.onEdit(record.data);
@@ -38,8 +40,12 @@ const EntityLis: React.FC<props> = (props) => {
   const viewEntityData = (record: IDataType) => () => {
     props.onView(record.data);
   };
-  console.log('userState.userGroup: ', typeof userState.userGroup?.code);
-  console.log('userState.userGroup?.code: ');
+
+  const setSelectedEntity = (record: IDataType) => {
+    console.log(record.data);
+
+    setEntity(EntityDispatch)(record.data);
+  };
 
   const tableData: IDataType[] = props.entities.map((entity: IEntity, index: number) => ({
     key: index,
@@ -65,9 +71,9 @@ const EntityLis: React.FC<props> = (props) => {
           <div onClick={editEntity(record)}>Edit</div>
           <div onClick={deleteEntity(record)}>Delete</div>
 
-          {userState.userGroup?.code.toString() === USER_GROUP_MAP.SYSTEM_ADMIN && (
+          {userState.userGroupCodes?.includes(USER_GROUP_MAP.SYSTEM_ADMIN) && (
             <Link to={`/entity/${record.data.databaseName}/permissions`}>
-              <div onClick={viewEntityData(record)}>permissions</div>
+              <div onClick={() => setSelectedEntity(record)}>permissions</div>
             </Link>
           )}
         </Space>
