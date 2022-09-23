@@ -39,6 +39,7 @@ interface ISelectContainerProps {
   lineHeight?: number;
   marginBottom?: number;
   padding?: number | string;
+  width?: string;
 }
 
 const SelectFieldContainer = styled.div<ISelectContainerProps>`
@@ -111,7 +112,7 @@ const SelectField: React.FC<Props> = (props) => {
 
   const onFilterOptions = (input: any, option: any): boolean => {
     if (props.filterOption) return (option!.value as unknown as string).toLowerCase().includes(input.toLowerCase());
-    else return false
+    else return false;
   };
 
   return (
@@ -125,7 +126,6 @@ const SelectField: React.FC<Props> = (props) => {
       <div className={classNames({ error: props.error })}>
         <Select
           showSearch={props.showSearch}
-          
           className="select"
           placeholder={props.placeholder}
           name={props.name}
@@ -134,7 +134,7 @@ const SelectField: React.FC<Props> = (props) => {
           defaultValue={props.defaultValue}
           {...props}
           loading={props.loading}
-          filterOption={ onFilterOptions}
+          filterOption={onFilterOptions}
         />
         {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
         {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}

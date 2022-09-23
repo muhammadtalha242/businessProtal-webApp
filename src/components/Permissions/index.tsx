@@ -5,16 +5,15 @@ import UserGroupService from '../../services/user-group';
 import { IUserGroup } from '../Administration/user-group';
 import Table from '../common/table-dragable';
 import type { ColumnsType } from 'antd/es/table';
-import CustomCheckbox from '../common/checkbox';
 import SelectField, { IOptionType } from '../common/select';
 
 interface props {}
 
 const ENTITY_LEVEL_PERMISSIONS: IOptionType[] = [
   { value: 'None', label: 'None' },
-  { value: 'View', label: 'View' },
-  { value: 'Edit', label: 'Edit' },
-  { value: 'Delete', label: 'Delete' },
+  { value: 'readRecord', label: 'Read Record' },
+  { value: 'createRecord', label: 'Edit Record' },
+  { value: 'deleteRecord', label: 'Delete Record' },
 ];
 
 export interface IDataType {
