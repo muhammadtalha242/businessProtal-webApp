@@ -118,7 +118,7 @@ const UsersRow: React.FC<props> = (props) => {
   useEffect(() => {
     fetchUserGroups();
     fetchUsers();
-  }, []);
+  }, [showForm]);
 
   const fetchUserGroups = async () => {
     try {

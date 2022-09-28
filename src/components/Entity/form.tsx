@@ -60,10 +60,9 @@ export interface IEntity {
   fields: IFeilds;
   isDisplayonMenu: boolean;
   isPublish: boolean;
-  entityPermissionsAdd: number[];
+  entityPermissionsCreate: number[];
   entityPermissionsNone: number[];
-  entityPermissionsView: number[];
-  entityPermissionsEdit: number[];
+  entityPermissionsRead: number[];
   entityPermissionsDelete: number[];
 }
 
@@ -93,11 +92,10 @@ export const defaultEntityValues: IEntity = {
   fields: { [fieldRandomName()]: { ...defaultField } },
   isDisplayonMenu: false,
   isPublish: false,
-  entityPermissionsAdd: [],
+  entityPermissionsCreate: [1],
   entityPermissionsNone: [],
-  entityPermissionsView: [],
-  entityPermissionsEdit: [],
-  entityPermissionsDelete: [],
+  entityPermissionsRead: [1],
+  entityPermissionsDelete: [1],
 };
 
 const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFieldSettingSave, isEditMode, onFieldDelete }) => {

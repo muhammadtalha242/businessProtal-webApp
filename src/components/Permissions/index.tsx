@@ -1,64 +1,117 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { EntityContext } from '../../context/entity.context';
+import { EntityContext, updateEntityPermissions } from '../../context/entity.context';
 import UserGroupService from '../../services/user-group';
 import { IUserGroup } from '../Administration/user-group';
 import Table from '../common/table-dragable';
 import type { ColumnsType } from 'antd/es/table';
-import SelectField, { IOptionType } from '../common/select';
+import MultiSelectField, { IOptionType } from '../common/select-multiple';
+import DashboardHeader from '../common/dashboard-header';
+import { FilledButton } from '../common/button';
+import { BLUE_TERTIARY, WHITE } from '../../styles/colors';
+import entityService from '../../services/entity';
 
 interface props {}
 
 const ENTITY_LEVEL_PERMISSIONS: IOptionType[] = [
-  { value: 'None', label: 'None' },
-  { value: 'readRecord', label: 'Read Record' },
-  { value: 'createRecord', label: 'Edit Record' },
-  { value: 'deleteRecord', label: 'Delete Record' },
+  { value: 'entityPermissionsNone', label: 'None' },
+  { value: 'entityPermissionsRead', label: 'Read Entity' },
+  { value: 'entityPermissionsCreate', label: 'Create/Edit Records' },
+  { value: 'entityPermissionsDelete', label: 'Delete Record' },
 ];
 
+const entity_permissions = ['entityPermissionsNone', 'entityPermissionsRead', 'entityPermissionsCreate', 'entityPermissionsDelete'];
 export interface IDataType {
   key: number;
   userGroup: string;
+  data: IUserGroup;
+}
+
+interface IEntityLevelPermissions {
+  [key: string]: string[];
 }
 
 const EntityPermission: React.FC<props> = (props) => {
-  const { state: entityState } = useContext(EntityContext);
+  const { state: entityState, dispatch: entityDispatch } = useContext(EntityContext);
+  const [entityPermissions, setEntityPermissions] = useState<IEntityLevelPermissions>({});
   const [userGroups, setuserGroups] = useState<IUserGroup[]>([]);
   const [columnData, setColumnData] = useState<ColumnsType<IDataType>>();
   const [tableData, setTableData] = useState<IDataType[]>();
 
   useEffect(() => {
-    const fectchData = async () => {
-      const res: IUserGroup[] = await fetchUserGroups();
-      getTableColumns(res);
-    };
     fectchData();
+    console.log('entityState.selectEntity: ', entityState.selectEntity);
   }, []);
+
+  const fectchData = async () => {
+    const res: IUserGroup[] = await fetchUserGroups();
+    console.log('REs', res);
+    const values = setEntityPermissionsValues(res);
+
+    getTableColumns(res, values);
+  };
+  const setEntityPermissionsValues = (userGroups: IUserGroup[]) => {
+    const currentEntity: any = entityState.selectEntity;
+
+    let values: IEntityLevelPermissions = {};
+    userGroups.forEach((userGroup: IUserGroup) => {
+      const permissions: string[] = [];
+      entity_permissions.forEach((perm: string) => {
+        if (currentEntity[perm].includes(userGroup.code)) permissions.push(perm);
+      });
+
+      values[userGroup.code] = permissions;
+    });
+
+    console.log('values: ', values);
+    setEntityPermissions({ ...values });
+    return values;
+  };
 
   const fetchUserGroups = async () => {
     const res = await UserGroupService.getUserGroups();
-    setuserGroups(res.userGroups);
+    const test = await setuserGroups([...res.userGroups]);
+    console.log(' user ', userGroups);
+    console.log(' test ', test);
+
     return res.userGroups;
   };
 
-  const getTableColumns = (res: IUserGroup[]) => {
+  const onInputChange =
+    (userGroup: IUserGroup) =>
+    ({ name, value }: { name: string; value: string[] }) => {
+      const currentEntityPermissions: IEntityLevelPermissions = { ...entityPermissions };
+
+      currentEntityPermissions[userGroup.code] = [...value];
+
+      console.log('currentEntityPermissions: ', currentEntityPermissions);
+
+      setEntityPermissions((prev: IEntityLevelPermissions) => {
+        return { ...prev, ...currentEntityPermissions };
+      });
+      return;
+    };
+
+  const getTableColumns = (res: IUserGroup[], values: IEntityLevelPermissions) => {
     const columns: ColumnsType<IDataType> = [
       {
         title: 'Entity Permissions',
         dataIndex: 'entityPermissions',
-        key: 'entityPermissions',
+        key: `entityPermissions`,
         render: (_, record) => {
-          console.log(record);
-          //if
+          const permissions = values || entityPermissions;
+
+          console.log('permissions: ', permissions);
+          console.log('permissions[record.data.code]: ', permissions[record.data.code]);
           return (
             <>
-              <SelectField
+              <MultiSelectField
                 options={ENTITY_LEVEL_PERMISSIONS}
-                value={''}
-                setValue={() => {}}
+                setValue={onInputChange(record.data)}
+                defaultValue={values[record.data.code]}
                 placeholder="Choose Permission type"
                 name="permissionType"
-                key="permissionType"
+                key={`permissionType ${record.data.code}`}
                 lineHeight={0}
                 marginBottom={0}
               />
@@ -75,15 +128,36 @@ const EntityPermission: React.FC<props> = (props) => {
         userGroup: userGroup.name,
         key: index,
         dataIndex: 'userGroups',
+        data: userGroup,
       };
     });
     setTableData([...rowData]);
   };
-  console.log('tableData: ', tableData);
-  console.log('columnData: ', columnData);
+
+  const savePermissions = async () => {
+    const currentEntity: any = entityState.selectEntity;
+    console.log('pre currentEntity: ', currentEntity);
+
+    Object.entries(entityPermissions).forEach((value: [string, string[]]) => {
+      const [groupCode, permissions] = value;
+      permissions.forEach((perm: string) => {
+        const arr = [];
+        arr.push(parseInt(groupCode));
+        currentEntity[perm] = arr;
+        // if (!currentEntity[perm].includes(groupCode)) ;
+      });
+    });
+    updateEntityPermissions(entityDispatch)(currentEntity);
+    await entityService.updateEntity(currentEntity.databaseName, { entity: currentEntity });
+  };
 
   return (
     <>
+      <DashboardHeader title="Entity">
+        <FilledButton width="164px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={savePermissions}>
+          <img src="/images/icons/add.svg" alt="add" /> Save Permissions
+        </FilledButton>
+      </DashboardHeader>
       <Table data={tableData} columns={columnData} />
     </>
   );

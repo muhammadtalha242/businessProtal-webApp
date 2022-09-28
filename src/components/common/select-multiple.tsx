@@ -29,7 +29,7 @@ interface Props {
   options: IOptionType[];
   disabled?: boolean;
   loading?: boolean;
-  defaultValue?: string;
+  defaultValue?: string[];
   showSearch?: boolean;
   filterOption?: boolean;
   selectInputStyleProps?: ISelectContainerProps;
@@ -103,10 +103,12 @@ export const Label = styled.div<{ lineHeight: number | undefined }>`
   margin-bottom: 8px;
 `;
 
-const SelectField: React.FC<Props> = (props) => {
+const MultiSelectField: React.FC<Props> = (props) => {
   const [iconActive, setIconActive] = useState(false);
 
-  const onChange = (value: string): void => {
+  const onChange = (value: string[]): void => {
+    console.log('value:', value);
+
     if (props.setValue) props.setValue({ name: props.name, value: value });
   };
 
@@ -124,7 +126,8 @@ const SelectField: React.FC<Props> = (props) => {
         </div>
       )}
       <div className={classNames({ error: props.error })}>
-        <Select 
+        <Select
+          mode="multiple"
           showSearch={props.showSearch}
           className="select"
           placeholder={props.placeholder}
@@ -144,4 +147,4 @@ const SelectField: React.FC<Props> = (props) => {
   );
 };
 
-export default SelectField;
+export default MultiSelectField;

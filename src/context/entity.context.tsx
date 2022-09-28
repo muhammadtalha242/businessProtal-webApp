@@ -19,11 +19,23 @@ type IActions = {
 const ACTION_TYPES = {
   SET_ENTITY: 'SET_ENTITY',
   SET_ALL_ENTITIES: 'SET_ALL_ENTITIES',
+  UPDATE_ENTITY_PERMISSIONS: 'UPDATE_ENTITY_PERMISSIONS',
 };
 
 const entityReducer = (state: IState, action: IActions): IState => {
   switch (action.type) {
     case ACTION_TYPES.SET_ENTITY:
+      return {
+        ...state,
+        selectEntity: { ...action.payload },
+      };
+    case ACTION_TYPES.SET_ALL_ENTITIES:
+      return {
+        ...state,
+        allEntities: [...action.payload],
+      };
+
+    case ACTION_TYPES.UPDATE_ENTITY_PERMISSIONS:
       return {
         ...state,
         selectEntity: { ...action.payload },
@@ -39,6 +51,10 @@ export const setEntity = (dispatch: React.Dispatch<IActions> | undefined) => (en
 
 export const setAllEntities = (dispatch: React.Dispatch<IActions> | undefined) => (entiteis: IEntity[]) => {
   if (dispatch) dispatch({ type: ACTION_TYPES.SET_ALL_ENTITIES, payload: entiteis });
+};
+
+export const updateEntityPermissions = (dispatch: React.Dispatch<IActions> | undefined) => (entity: IEntity) => {
+  if (dispatch) dispatch({ type: ACTION_TYPES.UPDATE_ENTITY_PERMISSIONS, payload: entity });
 };
 
 const Context = () => {
