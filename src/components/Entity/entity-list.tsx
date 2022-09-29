@@ -66,8 +66,9 @@ const EntityLis: React.FC<props> = (props) => {
           <Link to={`/entity/${record.data.databaseName}`} state={{ currentEntity: record.data }}>
             <div onClick={viewEntityData(record)}>view</div>
           </Link>
-          <div onClick={editEntity(record)}>Edit</div>
-          <div onClick={deleteEntity(record)}>Delete</div>
+          {userState.userGroupCodes?.includes(USER_GROUP_MAP.SYSTEM_ADMIN) && <div onClick={editEntity(record)}>Edit</div>}
+
+          {/* <div onClick={deleteEntity(record)}>Delete</div> */}
 
           {userState.userGroupCodes?.includes(USER_GROUP_MAP.SYSTEM_ADMIN) && (
             <Link to={`/entity/${record.data.databaseName}/permissions`}>

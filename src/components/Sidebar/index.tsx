@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Menu } from 'antd';
 
 import { MenuItem, SidebarLinks } from '../../iterators/sidebaLinks';
 import { LogoContainer, SidebarContainer } from './container';
 import { useNavigate } from 'react-router';
+import { MenuItemGroupProps } from 'antd/lib/menu';
+import { UserContext } from '../../context/user.context';
+import { USER_GROUP_MAP } from '../../constants/userGroups';
 
 interface Props {
   collapsed: boolean;
@@ -13,19 +16,23 @@ interface Props {
 }
 
 const SideBar: React.FC<Props> = ({ collapsed, onSidebarStateChange, sidebarItem }) => {
+  const { state: userState } = useContext(UserContext);
   const [sidebarItems, setSidebarItems] = useState<MenuItem[]>();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setSidebarItems(sidebarItem);
+    const filteredItem = sidebarItem.filter((item: MenuItem) => {
+      if (!item.requiresAdmin || (item.requiresAdmin && userState.userGroupCodes?.includes(USER_GROUP_MAP.SYSTEM_ADMIN))) {
+        return item;
+      }
+    });
+    setSidebarItems(filteredItem);
   }, [sidebarItem]);
 
-  const navigate = useNavigate();
   const onSelect: any = (e: any) => {
-    console.log('onSelect ', e);
     // navigate(e.key);
   };
   const onClick: any = (e: any) => {
-    console.log('onClick ', e);
     navigate(e.key);
   };
 

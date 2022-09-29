@@ -1,4 +1,4 @@
-import React, { useContext, useEffect,  useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import entityService from '../../services/entity';
 import { BLUE_TERTIARY, WHITE } from '../../styles/colors';
@@ -9,6 +9,8 @@ import EntityForm, { defaultEntityValues, IEditEntity, IEntity } from './form';
 import EntityList from './entity-list';
 import { logger } from '../../utils/logger';
 import { EntityContext, setAllEntities } from '../../context/entity.context';
+import { UserContext } from '../../context/user.context';
+import { USER_GROUP_MAP } from '../../constants/userGroups';
 
 interface props {}
 
@@ -20,8 +22,10 @@ const Entity: React.FC<props> = (props) => {
   const [isView, setIsView] = useState(false);
   const [viewEntiy, setViewEntity] = useState<IEntity>(defaultEntityValues);
 
-const { dispatch: EntityDispatch } = useContext(EntityContext);
-useEffect(() => {
+  const { dispatch: EntityDispatch } = useContext(EntityContext);
+  const { state: userState } = useContext(UserContext);
+
+  useEffect(() => {
     const fetchData = () => {
       FetchEntities();
     };
@@ -31,7 +35,7 @@ useEffect(() => {
   const FetchEntities = async () => {
     try {
       const res = await entityService.getEntities();
-      setAllEntities(EntityDispatch)(res.entities)
+      setAllEntities(EntityDispatch)(res.entities);
       setEntities(res.entities);
     } catch (error) {
       logger.error(error);
@@ -85,7 +89,7 @@ useEffect(() => {
   return (
     <EntityComponenetContainer>
       <DashboardHeader title="Entity">
-        {!isView && (
+        {userState.userGroupCodes?.includes(USER_GROUP_MAP.SYSTEM_ADMIN) && (
           <FilledButton width="164px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={() => setShowForm(!showForm)}>
             <img src="/images/icons/add.svg" alt="add" /> Add New Entity
           </FilledButton>

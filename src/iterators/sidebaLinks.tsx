@@ -28,6 +28,7 @@ export const SidebarLinks: MenuItem[] = [
     key: '/admin',
     label: 'Administration',
     link: '/admin',
+    requiresAdmin: true,
     icon: <TableOutlined />,
   },
 ];

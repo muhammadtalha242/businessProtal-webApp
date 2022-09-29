@@ -94,6 +94,11 @@ export const EntityFormContainer = styled.div`
     display: flex;
     justify-content: space-between;
     padding: 0px 16px 16px 16px;
+
+    .footer-left {
+      display: flex;
+    }
+
     .footer-right {
       display: flex;
     }

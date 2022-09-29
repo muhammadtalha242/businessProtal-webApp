@@ -341,6 +341,12 @@ const EntityForm: React.FC<Props> = (props) => {
             <OutlinedButton color={RED_PRIMARY} onClick={onCancle}>
               Cancle
             </OutlinedButton>
+
+            <HorizontalSpace width={16} />
+
+            <FilledButton background={RED_PRIMARY} color={WHITE} onClick={onCancle}>
+              Delete
+            </FilledButton>
           </div>
           <div className="footer-right">
             <OutlinedButton color={GREEN_PRIMARY} onClick={props.isEdit ? onUpdate : onSave} textColor={GREEN_PRIMARY} loading={false}>
