@@ -339,7 +339,7 @@ const EntityForm: React.FC<Props> = (props) => {
         <div className="footer">
           <div className="footer-left">
             <OutlinedButton color={RED_PRIMARY} onClick={onCancle}>
-              Cancel
+              Cancle
             </OutlinedButton>
           </div>
           <div className="footer-right">

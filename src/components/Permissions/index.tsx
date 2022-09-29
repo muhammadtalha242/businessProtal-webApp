@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { EntityContext, updateEntityPermissions } from '../../context/entity.context';
+import { EntityContext, setAllEntities, updateEntityPermissions } from '../../context/entity.context';
 import UserGroupService from '../../services/user-group';
 import { IUserGroup } from '../Administration/user-group';
 import Table from '../common/table-dragable';
@@ -10,6 +10,7 @@ import DashboardHeader from '../common/dashboard-header';
 import { FilledButton } from '../common/button';
 import { BLUE_TERTIARY, WHITE } from '../../styles/colors';
 import entityService from '../../services/entity';
+import { error, success } from '../common/message';
 
 interface props {}
 
@@ -136,19 +137,25 @@ const EntityPermission: React.FC<props> = (props) => {
 
   const savePermissions = async () => {
     const currentEntity: any = entityState.selectEntity;
-    console.log('pre currentEntity: ', currentEntity);
-
-    Object.entries(entityPermissions).forEach((value: [string, string[]]) => {
-      const [groupCode, permissions] = value;
-      permissions.forEach((perm: string) => {
-        const arr = [];
-        arr.push(parseInt(groupCode));
-        currentEntity[perm] = arr;
-        // if (!currentEntity[perm].includes(groupCode)) ;
+    try {
+      entity_permissions.forEach((perm: string) => {
+        currentEntity[perm] = [];
       });
-    });
-    updateEntityPermissions(entityDispatch)(currentEntity);
-    await entityService.updateEntity(currentEntity.databaseName, { entity: currentEntity });
+      Object.entries(entityPermissions).forEach((value: [string, string[]]) => {
+        const [groupCode, permissions] = value;
+        permissions.forEach((perm: string) => {
+          currentEntity[perm].push(parseInt(groupCode));
+        });
+      });
+      updateEntityPermissions(entityDispatch)(currentEntity);
+      await entityService.updateEntity(currentEntity.databaseName, { entity: currentEntity });
+      const res = await entityService.getEntities();
+      setAllEntities(entityDispatch)(res.entities);
+      success('Permissions updated successfully.');
+    } catch (e: any) {
+      error('Error.');
+
+    }
   };
 
   return (

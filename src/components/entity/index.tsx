@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useQuery } from 'react-query';
+import React, { useContext, useEffect,  useState } from 'react';
 
 import entityService from '../../services/entity';
 import { BLUE_TERTIARY, WHITE } from '../../styles/colors';
@@ -9,6 +8,7 @@ import { EntityComponenetContainer } from './container';
 import EntityForm, { defaultEntityValues, IEditEntity, IEntity } from './form';
 import EntityList from './entity-list';
 import { logger } from '../../utils/logger';
+import { EntityContext, setAllEntities } from '../../context/entity.context';
 
 interface props {}
 
@@ -20,7 +20,8 @@ const Entity: React.FC<props> = (props) => {
   const [isView, setIsView] = useState(false);
   const [viewEntiy, setViewEntity] = useState<IEntity>(defaultEntityValues);
 
-  useEffect(() => {
+const { dispatch: EntityDispatch } = useContext(EntityContext);
+useEffect(() => {
     const fetchData = () => {
       FetchEntities();
     };
@@ -30,6 +31,7 @@ const Entity: React.FC<props> = (props) => {
   const FetchEntities = async () => {
     try {
       const res = await entityService.getEntities();
+      setAllEntities(EntityDispatch)(res.entities)
       setEntities(res.entities);
     } catch (error) {
       logger.error(error);

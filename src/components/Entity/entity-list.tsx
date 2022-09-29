@@ -27,7 +27,7 @@ export interface IDataType {
 
 const EntityLis: React.FC<props> = (props) => {
   const { state: userState } = useContext(UserContext);
-  const { dispatch: EntityDispatch } = useContext(EntityContext);
+  const { state: entityState, dispatch: EntityDispatch } = useContext(EntityContext);
 
   const editEntity = (record: IDataType) => () => {
     props.onEdit(record.data);
@@ -42,12 +42,10 @@ const EntityLis: React.FC<props> = (props) => {
   };
 
   const setSelectedEntity = (record: IDataType) => {
-    console.log(record.data);
-
     setEntity(EntityDispatch)(record.data);
   };
 
-  const tableData: IDataType[] = props.entities.map((entity: IEntity, index: number) => ({
+  const tableData: IDataType[] = entityState.allEntities.map((entity: IEntity, index: number) => ({
     key: index,
     name: entity.name,
     description: entity.description,
