@@ -24,7 +24,7 @@ const MenuPopover = styled(Menu)`
 
 const NotificationsDetails: React.FC<NotificationsProps> = (props) => {
   const [showNotifications, setShowNotifications] = useState(false);
-  const { dispatch: userDispatch } = useContext(UserContext);
+  const { dispatch: userDispatch, state: userState } = useContext(UserContext);
   const history = useNavigate();
   
   const logout = ()=>{
@@ -47,12 +47,21 @@ const NotificationsDetails: React.FC<NotificationsProps> = (props) => {
       </MenuPopover>
     );
   };
+  let userGroupNames: string[] = [];
+  if (userState.userGroupCodes) {
+    userState.userGroupCodes.forEach((ugCode: number) => {
+      // const ug = props.userGroups.find((userGroup: IOptionType) => {
+      //   return userGroup.value === ugCode;
+      // });
+      // userGroupNames.push(ug ? ug.label : '');
+    });
+  }
   return (
     <NotificationsDetailsContainer>
       <Dropdown placement="bottomRight" overlay={MenuOverlay}>
         <DetailsContainer>
           <div className="identity">
-            <div className="name">{`Talha`}</div>
+            <div className="name">{userState.name}</div>
             {true && <div className="role">Admin</div>}
           </div>
           {/* <UserOutlined width={4} height={4} /> */}

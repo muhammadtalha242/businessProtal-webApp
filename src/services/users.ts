@@ -16,6 +16,14 @@ export interface IPasswordUpdateRequest {
   email: string;
 }
 
+export interface IUserUpdateRequest {
+  name: string;
+  country: string;
+  userGroupCodes: string[];
+  isActive: boolean;
+  isCheckReq: boolean;
+}
+
 const setUser = async (user: IUser) => {
   const res = await axios.post(`${REACT_APP_API_URL}/auth/register`, user);
   return res.data;

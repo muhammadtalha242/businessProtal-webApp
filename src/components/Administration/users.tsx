@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Col, Row } from 'antd';
 
 import UserGroupServices from '../../services/user-group';
-import UsersServices from '../../services/users';
+import UsersServices, { IUserUpdateRequest } from '../../services/users';
 import { UserGroupContainer, UserGroupDataRowsContainer, UserGroupFormContainer, UserGroupHeaderContainer, UserGroupListContainer } from './container';
 import CustomCheckbox from '../common/checkbox';
 import { FilledButton, LinkButton } from '../common/button';
@@ -15,6 +15,7 @@ import { error, success } from '../common/message';
 import { IUserGroup } from './user-group';
 import SelectField, { IOptionType } from '../common/select';
 import { COUNTRIES_NAME_LIST } from '../../constants/countires';
+import MultiSelectField from '../common/select-multiple';
 
 interface props {}
 
@@ -24,7 +25,7 @@ export interface IUser {
   password: string;
   name: string;
   country: string;
-  userGroupId: string;
+  userGroupCodes: string[];
   isActive: boolean;
   isCheckReq: boolean;
   isPasswordUpdated: boolean;
@@ -34,6 +35,7 @@ export interface IUser {
 interface IUserGroupDataRowProps extends IUser {
   onEdit: () => void;
   onDelete: () => void;
+  userGroups: IOptionType[];
 }
 
 export const defaultUser: IUser = {
@@ -41,7 +43,7 @@ export const defaultUser: IUser = {
   password: '',
   email: '',
   country: '',
-  userGroupId: '',
+  userGroupCodes: [],
   isActive: true,
   isCheckReq: true,
   isPasswordUpdated: true,
@@ -51,13 +53,13 @@ const UserGroupHeader = () => {
   return (
     <UserGroupHeaderContainer>
       <Row align={'middle'} gutter={[8, 24]} justify="space-around">
-        <Col span={5}>Name</Col>
+        <Col span={4}>Name</Col>
         <Col span={5}>Email</Col>
-        <Col span={4}>
+        <Col span={3}>
           <div>Country</div>
         </Col>
-        <Col span={4}>
-          <div>User Group</div>
+        <Col span={5}>
+          <div>User Groups</div>
         </Col>
         <Col span={2}>
           <div>Active</div>
@@ -77,13 +79,23 @@ const UserGroupHeader = () => {
 };
 
 const UserGroupDataRow: React.FC<IUserGroupDataRowProps> = (props) => {
+  let userGroupNames: string[] = [];
+  if (props.userGroupCodes) {
+    props.userGroupCodes.forEach((ugCode: string) => {
+      const ug = props.userGroups.find((userGroup: IOptionType) => {
+        return userGroup.value === ugCode;
+      });
+      userGroupNames.push(ug ? ug.label : '');
+    });
+  }
+
   return (
     <UserGroupDataRowsContainer>
       <Row align={'middle'} gutter={[8, 24]} justify="space-around">
-        <Col span={5}>{props.name}</Col>
+        <Col span={4}>{props.name}</Col>
         <Col span={5}>{props.email}</Col>
-        <Col span={4}>{props.country}</Col>
-        <Col span={4}>{props.userGroup?.name}</Col>
+        <Col span={3}>{props.country}</Col>
+        <Col span={5}>{userGroupNames.join(' | ')}</Col>
         <Col span={2}>
           <CustomCheckbox value={props.isActive} name="isActive" />
         </Col>
@@ -141,13 +153,13 @@ const UsersRow: React.FC<props> = (props) => {
 
   const onOkay = async () => {
     try {
-      const { name, email, isActive, country, userGroupId, password, isCheckReq, isPasswordUpdated } = values;
-      if (name && email && country && userGroupId && password) {
+      const { name, email, isActive, country, userGroupCodes, password, isCheckReq, isPasswordUpdated } = values;
+      if (name && email && country && userGroupCodes && password) {
         let res;
         if (isEdit && values.id) {
-          // res = await UserGroupServices.editUserGroup({ name, email, isActive, country, isPublic }, values.id);
+          res = await UsersServices.update<IUserUpdateRequest>({ name, country, isActive, isCheckReq, userGroupCodes }, values.id);
         } else {
-          res = await UsersServices.setUser({ name, email, isActive, country, userGroupId, password, isCheckReq, isPasswordUpdated: !isPasswordUpdated });
+          res = await UsersServices.setUser({ name, email, isActive, country, userGroupCodes, password, isCheckReq, isPasswordUpdated: !isPasswordUpdated });
         }
         await fetchUserGroups();
         await fetchUsers();
@@ -155,19 +167,15 @@ const UsersRow: React.FC<props> = (props) => {
         setValues({ ...defaultUser });
         setShowForm(false);
         setIsEdit(false);
-      } else if (name) {
-        setIsError(true);
-        setErr('Code is required.');
-      } else if (email) {
-        setIsError(true);
-        setErr('Name is required.');
       } else {
         setIsError(true);
-        setErr('Both name and email are required.');
+        setErr('All fields are required.');
       }
     } catch (e: any) {
-      error('Unable to create user group');
+      error('Unable to create user');
+      setValues({ ...defaultUser });
       setShowForm(false);
+      setIsEdit(false);
     }
   };
 
@@ -184,7 +192,7 @@ const UsersRow: React.FC<props> = (props) => {
         success(res.message);
       }
     } catch (e: any) {
-      error('Unable to create user group');
+      error('Unable to delete user');
     }
   };
 
@@ -231,12 +239,14 @@ const UsersRow: React.FC<props> = (props) => {
         <UserGroupFormContainer>
           <InputField type="input" setValue={onInputChange} value={values.name} name="name" label="Name" placeholder="Name" inputFieldContainerProps={{ marginBottom: 8 }} />
           {!isEdit && (
-            <InputField type="input" setValue={onInputChange} value={values.password} name="password" label="Password" placeholder="Password" inputFieldContainerProps={{ marginBottom: 8 }} />
+            <>
+              <InputField type="input" setValue={onInputChange} value={values.password} name="password" label="Password" placeholder="Password" inputFieldContainerProps={{ marginBottom: 8 }} />
+              <InputField type="input" setValue={onInputChange} value={values.email} name="email" label="Email" placeholder="Email" inputFieldContainerProps={{ marginBottom: 16 }} />
+            </>
           )}
-          <InputField type="input" setValue={onInputChange} value={values.email} name="email" label="Email" placeholder="Email" inputFieldContainerProps={{ marginBottom: 16 }} />
 
           <SelectField options={COUNTRIES_NAME_LIST} value={values.country} setValue={onInputChange} name="country" key="Country" label="Country" placeholder="Country" showSearch filterOption />
-          <SelectField options={UserGroups} value={values.userGroupId} setValue={onInputChange} name="userGroupId" key="userGroupId" label="Use Group" placeholder="Use Group" />
+          <MultiSelectField options={UserGroups} value={values.userGroupCodes} setValue={onInputChange} name="userGroupCodes" key="userGroupCodes" label="Use Group" placeholder="Use Group" />
 
           <CustomCheckbox value={values.isActive} setValue={onInputChange} name="isActive">
             Activate
@@ -244,16 +254,18 @@ const UsersRow: React.FC<props> = (props) => {
           <CustomCheckbox value={values.isCheckReq} setValue={onInputChange} name="isCheckReq">
             2Factor Auth
           </CustomCheckbox>
-          <CustomCheckbox value={values.isPasswordUpdated} setValue={onInputChange} name="isPasswordUpdated">
-            Change Password After First login.
-          </CustomCheckbox>
+          {!isEdit && (
+            <CustomCheckbox value={values.isPasswordUpdated} setValue={onInputChange} name="isPasswordUpdated">
+              Change Password After First login.
+            </CustomCheckbox>
+          )}
         </UserGroupFormContainer>
       </CustomModal>
       {isExpanded && (
         <div>
           <UserGroupHeader />
           {Users.map((user: IUser, index: number) => (
-            <UserGroupDataRow {...user} onDelete={onDelete} onEdit={onEdit(index)} key={index} />
+            <UserGroupDataRow {...user} userGroups={UserGroups} onDelete={onDelete} onEdit={onEdit(index)} key={index} />
           ))}
         </div>
       )}
