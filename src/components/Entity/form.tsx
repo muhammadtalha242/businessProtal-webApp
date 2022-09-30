@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Popover, Switch, Divider } from 'antd';
 
 import { GREEN_PRIMARY, RED_PRIMARY, WHITE } from '../../styles/colors';
@@ -10,6 +10,8 @@ import EntitySettingsModal from './entity-settings-modal';
 import { EntityFormContainer, IFieldRowContainer, PopoverContent } from './container';
 import { DATA_TYPES, DATA_FIELD_SETTINGS } from '../../constants/entiy';
 import { getRandom } from '../../utils/helper';
+import { UserContext } from '../../context/user.context';
+import { USER_GROUP_MAP } from '../../constants/userGroups';
 
 interface Props {
   setShowForm: (e: boolean) => void;
@@ -170,14 +172,19 @@ type IEntityKeys = 'name' | 'despription';
 type IEntityFieldKeys = 'name' | 'dataType';
 
 const EntityForm: React.FC<Props> = (props) => {
-  const [values, setValues] = useState<IEntity>(defaultEntityValues);
+  const [values, setValues] = useState<IEntity>({ ...defaultEntityValues });
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
   const [deletedFieldsNames, setDeletedFields] = useState<string[]>([]);
   const [addedFieldsNames, setAddedFields] = useState<string[]>([]);
+  const { state: userState } = useContext(UserContext);
 
   useEffect(() => {
-    if (props.isEdit) setValues(props.editEntity);
+    if (props.isEdit) {
+      setValues(props.editEntity);
+    } else {
+      setValues({ ...defaultEntityValues });
+    }
   }, [props.editEntity]);
 
   const onInputChange = ({ name, value }: { name: IEntityKeys; value: string }) => {
@@ -348,7 +355,7 @@ const EntityForm: React.FC<Props> = (props) => {
             </OutlinedButton>
 
             <HorizontalSpace width={16} />
-            {props.isEdit && (
+            {props.isEdit && userState.userGroupCodes?.includes(USER_GROUP_MAP.SYSTEM_ADMIN) && (
               <FilledButton background={RED_PRIMARY} color={WHITE} onClick={deleteEntity}>
                 Delete
               </FilledButton>
