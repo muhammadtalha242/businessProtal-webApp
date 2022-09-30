@@ -3,12 +3,12 @@ import { IEntity, defaultEntityValues } from '../components/Entity/form';
 
 interface IState {
   allEntities: IEntity[];
-  selectEntity: IEntity | {};
+  selectEntity: IEntity;
 }
 
 const initialState: IState = {
   allEntities: [],
-  selectEntity: {},
+  selectEntity: {...defaultEntityValues},
 };
 
 type IActions = {

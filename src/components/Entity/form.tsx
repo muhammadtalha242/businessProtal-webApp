@@ -15,6 +15,7 @@ interface Props {
   setShowForm: (e: boolean) => void;
   onSave: (entity: IEntity) => void;
   onUpdate: (updatedEnitiy: IEditEntity) => void;
+  onDelete: (entityId: number, entityName: string) => void;
   isEdit: boolean;
   editEntity: IEntity;
   setIsEdit: (e: boolean) => void;
@@ -230,6 +231,10 @@ const EntityForm: React.FC<Props> = (props) => {
     }
   };
 
+  const deleteEntity = () => {
+    if (values.id) props.onDelete(values.id, values.name);
+  };
+
   const onUpdate = () => {
     const updatedEnitiy: IEditEntity = {
       entity: values,
@@ -343,10 +348,11 @@ const EntityForm: React.FC<Props> = (props) => {
             </OutlinedButton>
 
             <HorizontalSpace width={16} />
-
-            <FilledButton background={RED_PRIMARY} color={WHITE} onClick={onCancle}>
-              Delete
-            </FilledButton>
+            {props.isEdit && (
+              <FilledButton background={RED_PRIMARY} color={WHITE} onClick={deleteEntity}>
+                Delete
+              </FilledButton>
+            )}
           </div>
           <div className="footer-right">
             <OutlinedButton color={GREEN_PRIMARY} onClick={props.isEdit ? onUpdate : onSave} textColor={GREEN_PRIMARY} loading={false}>

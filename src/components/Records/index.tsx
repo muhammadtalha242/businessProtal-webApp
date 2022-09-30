@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams, useLocation } from 'react-router';
 import { SearchOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
@@ -19,6 +19,8 @@ import Form from './form';
 import FilterCollapes from './filter-collapse';
 import { IFilter } from './filters';
 import { sortData, transformData } from '../../utils/filters';
+import { UserContext } from '../../context/user.context';
+import { EntityContext } from '../../context/entity.context';
 
 interface props {}
 
@@ -42,6 +44,9 @@ const Records: React.FC<props> = (props) => {
   const [recordSelected, setRecordSelected] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [filterData, setFilterData] = useState<IFilter>();
+
+  const { state: userState } = useContext(UserContext);
+  const { state: entityState } = useContext(EntityContext);
 
   const { entityName } = useParams();
   const { state: routeState } = useLocation();
@@ -255,12 +260,19 @@ const Records: React.FC<props> = (props) => {
     getTableColumns();
   };
 
+  console.log('[...entityState.selectEntity.entityPermissionsCreate, ...entityState.selectEntity.entityPermissionsDelete]: ', entityState.selectEntity.name, [
+    ...currentEntity.entityPermissionsCreate,
+    ...currentEntity.entityPermissionsDelete,
+  ]);
+
   return (
     <EntityRecordDisplayContainer>
       <DashboardHeader title={currentEntity.name}>
-        <FilledButton width="144px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={() => setShowForm(!showForm)}>
-          <img src="/images/icons/add.svg" alt="add" /> Add Record
-        </FilledButton>
+        {entityState.selectEntity && [...currentEntity.entityPermissionsCreate, ...currentEntity.entityPermissionsDelete].some((ele: number) => userState.userGroupCodes?.includes(ele)) && (
+          <FilledButton width="144px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={() => setShowForm(!showForm)}>
+            <img src="/images/icons/add.svg" alt="add" /> Add Record
+          </FilledButton>
+        )}
       </DashboardHeader>
       {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={currentEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
       <FilterCollapes entityFields={currentEntity.fields} getFilterData={getFilterData} />

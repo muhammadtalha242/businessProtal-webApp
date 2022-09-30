@@ -42,7 +42,7 @@ const EntityPermission: React.FC<props> = (props) => {
   useEffect(() => {
     fectchData();
     console.log('entityState.selectEntity: ', entityState.selectEntity);
-  }, []);
+  }, [entityState.selectEntity]);
 
   const fectchData = async () => {
     const res: IUserGroup[] = await fetchUserGroups();
@@ -154,13 +154,12 @@ const EntityPermission: React.FC<props> = (props) => {
       success('Permissions updated successfully.');
     } catch (e: any) {
       error('Error.');
-
     }
   };
 
   return (
     <>
-      <DashboardHeader title="Entity">
+      <DashboardHeader title={`Entity-Permissions: ${entityState.selectEntity.name}`}>
         <FilledButton width="164px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={savePermissions}>
           <img src="/images/icons/add.svg" alt="add" /> Save Permissions
         </FilledButton>

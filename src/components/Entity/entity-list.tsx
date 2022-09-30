@@ -15,7 +15,6 @@ interface props {
   entities: IEntity[];
   onEdit: (entity: IEntity) => void;
   onView: (entity: IEntity) => void;
-  onDelete: (entityId: number) => void;
 }
 
 export interface IDataType {
@@ -31,10 +30,6 @@ const EntityLis: React.FC<props> = (props) => {
 
   const editEntity = (record: IDataType) => () => {
     props.onEdit(record.data);
-  };
-
-  const deleteEntity = (record: IDataType) => () => {
-    if (record.data.id) props.onDelete(record.data.id);
   };
 
   const viewEntityData = (record: IDataType) => () => {

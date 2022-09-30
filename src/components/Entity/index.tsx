@@ -11,6 +11,7 @@ import { logger } from '../../utils/logger';
 import { EntityContext, setAllEntities } from '../../context/entity.context';
 import { UserContext } from '../../context/user.context';
 import { USER_GROUP_MAP } from '../../constants/userGroups';
+import EntityDeleteModal from './entity-delete-modal';
 
 interface props {}
 
@@ -18,9 +19,11 @@ const Entity: React.FC<props> = (props) => {
   const [entitiesData, setEntities] = useState<IEntity[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
   const [editEntiy, setEditEntity] = useState<IEntity>(defaultEntityValues);
   const [isView, setIsView] = useState(false);
   const [viewEntiy, setViewEntity] = useState<IEntity>(defaultEntityValues);
+  const [deleteEntityData, setDeleteEntityData] = useState({ entityName: '', entityId: -1 });
 
   const { dispatch: EntityDispatch } = useContext(EntityContext);
   const { state: userState } = useContext(UserContext);
@@ -77,12 +80,31 @@ const Entity: React.FC<props> = (props) => {
     setViewEntity(entity);
   };
 
-  const onDelete = async (entityId: number) => {
+  const setDeleteModal = (entityName: string): boolean => {
+    return false;
+  };
+
+  const onDelete = async (entityId: number, entityName: string) => {
     try {
-      await entityService.deleteEntity(entityId);
-      FetchEntities();
+      setIsDelete(true);
+      setDeleteModal(entityName);
+      setDeleteEntityData({ entityId, entityName });
     } catch (err: any) {
       logger.error(err);
+      setIsDelete(false);
+    }
+  };
+
+  const onDeleteConfirm = async () => {
+    try {
+      await entityService.deleteEntity(deleteEntityData.entityId);
+      FetchEntities();
+      setIsDelete(false);
+      setShowForm(false);
+    } catch (err: any) {
+      logger.error(err);
+
+      setIsDelete(false);
     }
   };
 
@@ -96,8 +118,10 @@ const Entity: React.FC<props> = (props) => {
         )}
       </DashboardHeader>
 
-      {showForm && <EntityForm setShowForm={setShowForm} onSave={onSave} onUpdate={onUpdate} isEdit={isEdit} editEntity={editEntiy} setIsEdit={setIsEdit} />}
-      {entitiesData && entitiesData.length > 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} onDelete={onDelete} />}
+      {showForm && <EntityForm setShowForm={setShowForm} onSave={onSave} onUpdate={onUpdate} isEdit={isEdit} editEntity={editEntiy} setIsEdit={setIsEdit} onDelete={onDelete} />}
+      {isDelete && <EntityDeleteModal isDelete={isDelete} setIsDelete={setIsDelete} deleteEntityData={deleteEntityData} onDeleteConfirm={onDeleteConfirm} />}
+
+      {entitiesData && entitiesData.length > 0 && <EntityList entities={entitiesData} onEdit={onEdit} onView={onView} />}
     </EntityComponenetContainer>
   );
 };

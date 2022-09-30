@@ -61,8 +61,8 @@ const NotificationsDetails: React.FC<NotificationsProps> = (props) => {
       <Dropdown placement="bottomRight" overlay={MenuOverlay}>
         <DetailsContainer>
           <div className="identity">
-            <div className="name">{userState.name}</div>
-            {/* {true && <div className="role">Admin</div>} */}
+            <div className="name">{userState.name? userState.name: "Test"  }</div>
+            {true && <div className="role">Admin</div>}
           </div>
           {/* <UserOutlined width={4} height={4} /> */}
           {/* <img width={56} height={56} style={{ borderRadius: '50%' }} src={userState.image} alt="profile" /> */}
