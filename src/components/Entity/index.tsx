@@ -50,7 +50,6 @@ const Entity: React.FC<props> = (props) => {
       const res = await entityService.createEntities(entity);
       setEntities(res.entities);
       FetchEntities();
-
       setShowForm(false);
       setIsEdit(false);
     } catch (e: any) {
@@ -80,14 +79,10 @@ const Entity: React.FC<props> = (props) => {
     setViewEntity(entity);
   };
 
-  const setDeleteModal = (entityName: string): boolean => {
-    return false;
-  };
 
   const onDelete = async (entityId: number, entityName: string) => {
     try {
       setIsDelete(true);
-      setDeleteModal(entityName);
       setDeleteEntityData({ entityId, entityName });
     } catch (err: any) {
       logger.error(err);

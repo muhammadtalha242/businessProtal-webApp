@@ -29,6 +29,8 @@ const EntityLis: React.FC<props> = (props) => {
   const { state: entityState, dispatch: EntityDispatch } = useContext(EntityContext);
 
   const editEntity = (record: IDataType) => () => {
+    console.log('record.data: ', record.data);
+
     props.onEdit(record.data);
   };
 

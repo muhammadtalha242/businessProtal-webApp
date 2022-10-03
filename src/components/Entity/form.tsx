@@ -4,14 +4,14 @@ import { Alert, Popover, Switch, Divider } from 'antd';
 import { GREEN_PRIMARY, RED_PRIMARY, WHITE } from '../../styles/colors';
 import { FilledButton, OutlinedButton } from '../common/button';
 import InputField from '../common/input-field';
-import SelectField from '../common/select';
 import { HorizontalSpace, VerticalSpace } from '../common/space';
-import EntitySettingsModal from './entity-settings-modal';
-import { EntityFormContainer, IFieldRowContainer, PopoverContent } from './container';
-import { DATA_TYPES, DATA_FIELD_SETTINGS } from '../../constants/entiy';
+import { EntityFormContainer, PopoverContent } from './container';
+import { DATA_TYPES } from '../../constants/entiy';
 import { getRandom } from '../../utils/helper';
 import { UserContext } from '../../context/user.context';
 import { USER_GROUP_MAP } from '../../constants/userGroups';
+import FieldRows from './entity-field-row';
+import { error } from '../common/message';
 
 interface Props {
   setShowForm: (e: boolean) => void;
@@ -101,73 +101,6 @@ export const defaultEntityValues: IEntity = {
   entityPermissionsDelete: [1],
 };
 
-const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFieldSettingSave, isEditMode, onFieldDelete }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  return (
-    <IFieldRowContainer key={index}>
-      <EntitySettingsModal
-        modalVisible={modalVisible}
-        dataType={field.dataType}
-        values={field.settings}
-        setModalVisible={setModalVisible}
-        settingFields={DATA_FIELD_SETTINGS[field.dataType]}
-        onFieldSettingSave={onFieldSettingSave}
-      />
-
-      <div className="row">
-        <div className="row-field">
-          <div className="row-index">#{index + 1}</div>
-          <div className="field">
-            <InputField type="input" setValue={onInputChange} value={field.name} name={`name`} label="Name" placeholder="Name" marginBottom={0} />
-          </div>
-          <HorizontalSpace width={12} />
-
-          <div className="field">
-            <SelectField
-              options={DATA_TYPES}
-              value={field.dataType}
-              label="Data Type"
-              setValue={onInputChange}
-              placeholder="Choose data type"
-              name="dataType"
-              key="dataType"
-              lineHeight={0}
-              marginBottom={0}
-              defaultValue={DATA_TYPES[0].value}
-              disabled={field.isEditable ? !field.isEditable : isEditMode}
-            />
-          </div>
-          <HorizontalSpace width={12} />
-          <div className="field">
-            <InputField type="input" setValue={onInputChange} value={field.defaultValue} name="defaultValue" label="default" placeholder="Default" marginBottom={0} inputWidth={30} />
-          </div>
-          <div
-            className="field-settings"
-            onClick={() => {
-              setModalVisible(true);
-            }}
-          >
-            <span className="icon-dots">
-              <img src={`/images/icons/settings.svg`} alt="click" />
-            </span>
-          </div>
-
-          <div
-            className="field-settings"
-            onClick={() => {
-              onFieldDelete();
-            }}
-          >
-            <span className="icon-dots">
-              <img src={`/images/icons/trash.svg`} alt="click" />
-            </span>
-          </div>
-        </div>
-      </div>
-    </IFieldRowContainer>
-  );
-};
-
 type IEntityKeys = 'name' | 'despription';
 type IEntityFieldKeys = 'name' | 'dataType';
 
@@ -183,20 +116,18 @@ const EntityForm: React.FC<Props> = (props) => {
     if (props.isEdit) {
       setValues(props.editEntity);
     } else {
+      defaultEntityValues.databaseName = entityRandomName();
+      defaultEntityValues.fields = { [fieldRandomName()]: { ...defaultField } };
       setValues({ ...defaultEntityValues });
     }
-  }, [props.editEntity]);
-
-  useEffect(() => {
-    defaultEntityValues.databaseName = entityRandomName();
-    defaultEntityValues.fields = { [fieldRandomName()]: { ...defaultField } };
-    setValues({ ...defaultEntityValues });
   }, []);
 
   const onInputChange = ({ name, value }: { name: IEntityKeys; value: string }) => {
     const updateState: any = { ...values };
     updateState[name] = value;
     setValues(updateState);
+    setIsError(false);
+    setErr('');
   };
 
   const addField = () => {
@@ -217,6 +148,8 @@ const EntityForm: React.FC<Props> = (props) => {
       const currentFields = { ...values.fields };
       currentFields[fieldName][name] = value;
       setValues({ ...values, fields: { ...currentFields } });
+      setIsError(false);
+      setErr('');
     };
 
   const onFieldDelete = (fieldName: string) => () => {
@@ -226,8 +159,9 @@ const EntityForm: React.FC<Props> = (props) => {
       setDeletedFields([...currenetDeletedField]);
     }
     delete currentFields[fieldName];
-
     setValues({ ...values, fields: { ...currentFields } });
+    setIsError(false);
+    setErr('');
   };
 
   const onFieldSettingsSave = (fieldName: string) => (settings: ISettings) => {
@@ -236,11 +170,25 @@ const EntityForm: React.FC<Props> = (props) => {
     setValues({ ...values, fields: { ...currentFields } });
   };
 
+  const validateValues = (): boolean => {
+    let isValid = true;
+    if (values.name === '') {
+      setIsError(true);
+      setErr('Entity name required');
+      isValid = false;
+    } else if (!Object.values(values.fields).every((field: IFeild) => field.name !== '')) {
+      isValid = false;
+      setIsError(true);
+      setErr('field is required.');
+    }
+    return isValid;
+  };
+
   const onSave = async () => {
     try {
-      props.onSave(values);
-    } catch (error: any) {
-      console.log(error.message);
+      if (validateValues()) props.onSave(values);
+    } catch (e: any) {
+      error(`Unable to create entity ${e}`);
     }
   };
 

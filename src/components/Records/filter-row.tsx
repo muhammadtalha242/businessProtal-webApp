@@ -45,9 +45,9 @@ const DATE_OPERATIONS: IOptionType[] = [
   { label: '!=', value: '!==_date' },
 ];
 
-const DATATYPE_STRING = ['Email', 'Progress', 'Duration', 'Link', 'Location', 'Document', 'Image', 'Section', 'Text Single Line', 'Text Multi Line'];
-const DATATYPE_NUMBER = ['Auto Number', 'Currency', 'Progress', 'Number'];
-const DATATYPE_DATE = ['Date', 'createdAt', 'updatedAt'];
+export const DATATYPE_STRING = ['Email', 'Progress', 'Duration', 'Link', 'Location', 'Document', 'Image', 'Section', 'Text Single Line', 'Text Multi Line'];
+export const DATATYPE_NUMBER = ['Auto Number', 'Currency', 'Progress', 'Number'];
+export const DATATYPE_DATE = ['Date', 'createdAt', 'updatedAt'];
 
 export const AND_OR_OPTIONS: IOptionType[] = [
   { label: 'Or', value: 'or' },

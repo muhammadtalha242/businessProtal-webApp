@@ -9,6 +9,7 @@ import { VerticalSpace } from '../common/space';
 import { EntitySettingsModalContainer } from './container';
 import { ISettings } from './form';
 import { IDatatypeField, IDatatypeFieldType } from '../../constants/entiy';
+import InputFieldNumber from '../common/input-field-number';
 
 interface props {
   modalVisible: boolean;
@@ -117,15 +118,27 @@ const EntitySettingsModal: React.FC<props> = (props) => {
           {props.dataType &&
             props.settingFields.input?.map((val: IDatatypeField, index: number) => (
               <Col span={8}>
-                <InputField
-                  type="input"
-                  setValue={onInputChange}
-                  value={state[val.name]}
-                  name={val.name}
-                  label={val.label}
-                  placeholder={val.placeholder}
-                  inputFieldContainerProps={{ marginBottom: 8 }}
-                />
+                {val.type === 'number' ? (
+                  <InputFieldNumber
+                    type="input"
+                    setValue={onInputChange}
+                    value={state[val.name]}
+                    name={val.name}
+                    label={val.label}
+                    placeholder={val.placeholder}
+                    inputFieldContainerProps={{ marginBottom: 8 }}
+                  />
+                ) : (
+                  <InputField
+                    type="input"
+                    setValue={onInputChange}
+                    value={state[val.name]}
+                    name={val.name}
+                    label={val.label}
+                    placeholder={val.placeholder}
+                    inputFieldContainerProps={{ marginBottom: 8 }}
+                  />
+                )}
               </Col>
             ))}
         </Row>

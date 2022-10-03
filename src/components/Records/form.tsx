@@ -1,12 +1,11 @@
-import { Alert, Col, Divider, Row, Slider } from 'antd';
+import { Alert, Col, Divider, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
 
 import { GREEN_PRIMARY, RED_PRIMARY } from '../../styles/colors';
 import { OutlinedButton } from '../common/button';
 import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
-import { IFeilds } from '../Entity/form';
+import { IFeild, IFeilds } from '../Entity/form';
 import { EntityRecordFormContainer } from './container';
 import InputDate from '../common/date-input';
 import SelectField, { IOptionType } from '../common/select';
@@ -27,16 +26,19 @@ const YES_NO_OPTIONS: IOptionType[] = [
 ];
 
 const RecordForm: React.FC<props> = (props) => {
-  const [values, setValues] = useState(props.isEdit ? props.recordSelected : []);
+  const [values, setValues] = useState(props.isEdit ? props.recordSelected : {});
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
 
-  const { state: routeState } = useLocation();
-  const { currentEntity }: any = routeState;
-
   useEffect(() => {
     if (props.isEdit) setValues(props.recordSelected);
-    else setValues([]);
+    else {
+      const state: any = {};
+      Object.entries(props.formData).forEach((field: [string, IFeild], index: number) => {
+        state[field[0]] = field[1].defaultValue;
+      });
+      setValues({ ...state });
+    }
   }, [props.recordSelected]);
 
   const onInputChange =
@@ -83,8 +85,8 @@ const RecordForm: React.FC<props> = (props) => {
       )}
 
       <Row align={'middle'} gutter={[24, 24]}>
-        {currentEntity &&
-          Object.entries(currentEntity.fields).map((field: [string, any], index: number) => {
+        {props.formData &&
+          Object.entries(props.formData).map((field: [string, IFeild], index: number) => {
             const fieldCode = field[0];
             const fieldData = field[1];
             if (fieldData.dataType === 'Yes/No') {
@@ -111,7 +113,7 @@ const RecordForm: React.FC<props> = (props) => {
                     value={values[fieldCode]}
                     name={fieldData.name}
                     label={fieldData.name}
-                    placeholder={fieldData.placeholder}
+                    placeholder={fieldData.defaultValue}
                     datePickerContainerProps={{ marginBottom: 0 }}
                   />
                 </Col>
@@ -131,7 +133,7 @@ const RecordForm: React.FC<props> = (props) => {
                     value={values[fieldCode]}
                     name={fieldData.name}
                     label={fieldData.name}
-                    placeholder={fieldData.placeholder}
+                    defaultValue={fieldData.defaultValue}
                     inputFieldContainerProps={{ marginBottom: 8 }}
                   />
                 </Col>

@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { Input } from 'antd';
+import { InputNumber } from 'antd';
 
-import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, GREY_QUATERNARY, WHITE, BLUE_TERTIARY } from '../../styles/colors';
-
-const { TextArea } = Input;
+import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, WHITE, BLUE_TERTIARY } from '../../styles/colors';
 
 interface Props {
   label?: React.ReactNode | string;
@@ -30,7 +28,7 @@ interface Props {
   bordered?: boolean;
   height?: number;
   padding?: string;
-  defaultValue?: string;
+  defaultValue?: number;
   status?: '' | 'error' | 'warning';
   inputFieldContainerProps?: IInputFieldProps;
 }
@@ -69,7 +67,6 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
 
   input {
     border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
-    border-radius: 8px;
     height: ${(props) => (props.height || props.height === 0 ? props.height : 48)}px;
     width: ${(props) => (props.inputWidth || props.inputWidth === 0 ? props.inputWidth + 'px' : '100%')};
     padding: ${(props) => (props.padding ? props.padding : `16px 12px`)};
@@ -134,27 +131,22 @@ export const Label = styled.div`
   margin-bottom: 8px;
 `;
 
-const InputField: React.FC<Props> = (props) => {
+const InputFieldNumber: React.FC<Props> = (props) => {
   const [iconActive, setIconActive] = useState(false);
   const inputProps = { ...props };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>): void => {
+  const onChange = (value: number): void => {
     if (props.setValue)
       props.setValue({
         name: props.name,
-        value: (e.target as HTMLInputElement).value,
+        value,
       });
   };
 
   if (props.activeIcon && iconActive) {
     inputProps.type = 'text';
   }
-  const InputField =
-    inputProps.type === 'TextArea' ? (
-      <TextArea autoSize className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} autoComplete="off" onChange={onChange} {...inputProps} />
-    ) : (
-      <Input className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} onChange={onChange} bordered={props.bordered} autoComplete="off" {...inputProps} />
-    );
+
   return (
     <InputFieldContainer {...props.inputFieldContainerProps}>
       {props.label && (
@@ -164,7 +156,16 @@ const InputField: React.FC<Props> = (props) => {
         </div>
       )}
       <div>
-        {InputField}
+        <InputNumber
+          className={classNames({ error: props.error })}
+          placeholder={props.placeholder}
+          name={props.name}
+          onChange={onChange}
+          bordered={props.bordered}
+          autoComplete="off"
+          {...inputProps}
+        />
+
         {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
         {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}
       </div>
@@ -173,4 +174,4 @@ const InputField: React.FC<Props> = (props) => {
   );
 };
 
-export default InputField;
+export default InputFieldNumber;
