@@ -260,22 +260,18 @@ const Records: React.FC<props> = (props) => {
     getTableColumns();
   };
 
-  console.log('[...entityState.selectEntity.entityPermissionsCreate, ...entityState.selectEntity.entityPermissionsDelete]: ', entityState.selectEntity.name, [
-    ...currentEntity.entityPermissionsCreate,
-    ...currentEntity.entityPermissionsDelete,
-  ]);
-
   return (
     <EntityRecordDisplayContainer>
-      <DashboardHeader title={currentEntity.name}>
-        {entityState.selectEntity && [...currentEntity.entityPermissionsCreate, ...currentEntity.entityPermissionsDelete].some((ele: number) => userState.userGroupCodes?.includes(ele)) && (
-          <FilledButton width="144px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={() => setShowForm(!showForm)}>
-            <img src="/images/icons/add.svg" alt="add" /> Add Record
-          </FilledButton>
-        )}
+      <DashboardHeader title={entityState.selectEntity.name}>
+        {entityState.selectEntity &&
+          [...entityState.selectEntity.entityPermissionsCreate, ...entityState.selectEntity.entityPermissionsDelete].some((ele: number) => userState.userGroupCodes?.includes(ele)) && (
+            <FilledButton width="144px" height="32px" background={BLUE_TERTIARY} color={WHITE} font="14px" onClick={() => setShowForm(!showForm)}>
+              <img src="/images/icons/add.svg" alt="add" /> Add Record
+            </FilledButton>
+          )}
       </DashboardHeader>
-      {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={currentEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
-      <FilterCollapes entityFields={currentEntity.fields} getFilterData={getFilterData} />
+      {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={entityState.selectEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
+      <FilterCollapes entityFields={entityState.selectEntity.fields} getFilterData={getFilterData} />
       {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} />}
     </EntityRecordDisplayContainer>
   );

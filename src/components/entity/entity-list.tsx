@@ -33,6 +33,7 @@ const EntityLis: React.FC<props> = (props) => {
   };
 
   const viewEntityData = (record: IDataType) => () => {
+    setEntity(EntityDispatch)(record.data);
     props.onView(record.data);
   };
 

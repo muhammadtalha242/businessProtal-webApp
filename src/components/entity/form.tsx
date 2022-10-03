@@ -91,8 +91,8 @@ export const defaultField: IFeild = {
 export const defaultEntityValues: IEntity = {
   name: '',
   description: '',
-  databaseName: entityRandomName(),
-  fields: { [fieldRandomName()]: { ...defaultField } },
+  databaseName: '',
+  fields: {},
   isDisplayonMenu: false,
   isPublish: false,
   entityPermissionsCreate: [1],
@@ -186,6 +186,12 @@ const EntityForm: React.FC<Props> = (props) => {
       setValues({ ...defaultEntityValues });
     }
   }, [props.editEntity]);
+
+  useEffect(() => {
+    defaultEntityValues.databaseName = entityRandomName();
+    defaultEntityValues.fields = { [fieldRandomName()]: { ...defaultField } };
+    setValues({ ...defaultEntityValues });
+  }, []);
 
   const onInputChange = ({ name, value }: { name: IEntityKeys; value: string }) => {
     const updateState: any = { ...values };
