@@ -10,6 +10,9 @@ import { EntityRecordFormContainer } from './container';
 import InputDate from '../common/date-input';
 import SelectField, { IOptionType } from '../common/select';
 import SliderInput from '../common/slider-input';
+import { DATA_TYPES_MAPPER } from '../../constants';
+import InputFieldNumber from '../common/input-field-number';
+import { error } from '../common/message';
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -49,10 +52,37 @@ const RecordForm: React.FC<props> = (props) => {
       setValues(updateState);
     };
 
+  const validateValues = (): boolean => {
+    let isValid = true;
+    let fields = '';
+    Object.entries(props.formData).forEach((field: [string, IFeild]) => {
+      const [fieldCode, fieldData] = field;
+      const { settings: fieldSettings, name } = fieldData;
+      if (fieldSettings && fieldSettings.isRequired && values[fieldCode] === '') {
+        fields = fields + ' ' + name;
+        isValid = false;
+      }
+    });
+    if (!isValid) {
+      setIsError(true);
+      setErr(`${fields} Required`);
+    }
+    return isValid;
+  };
+
   const onSave = () => {
-    props.onSave(values);
-    props.setShowForm(false);
-    props.setIsEdit(false);
+    try {
+      console.log(values);
+      console.log(props.formData);
+      console.log(validateValues());
+      if (validateValues()) {
+        props.onSave(values);
+        props.setShowForm(false);
+        props.setIsEdit(false);
+      }
+    } catch (e: any) {
+      error(`Unable to add record ${e}`);
+    }
   };
 
   const onCancle = () => {
@@ -86,60 +116,79 @@ const RecordForm: React.FC<props> = (props) => {
 
       <Row align={'middle'} gutter={[24, 24]}>
         {props.formData &&
-          Object.entries(props.formData).map((field: [string, IFeild], index: number) => {
-            const fieldCode = field[0];
-            const fieldData = field[1];
-            if (fieldData.dataType === 'Yes/No') {
-              return (
-                <Col span={4}>
-                  <SelectField
-                    options={YES_NO_OPTIONS}
-                    value={values[fieldCode]}
-                    label={fieldData.name}
-                    setValue={onInputChange(fieldCode)}
-                    placeholder="Choose options"
-                    name={fieldData.name}
-                    key={fieldData.name}
-                    lineHeight={0}
-                    marginBottom={0}
-                  />
-                </Col>
-              );
-            } else if (fieldData.dataType === 'Date') {
-              return (
-                <Col span={4}>
-                  <InputDate
-                    setValue={onInputChange(fieldCode)}
-                    value={values[fieldCode]}
-                    name={fieldData.name}
-                    label={fieldData.name}
-                    placeholder={fieldData.defaultValue}
-                    datePickerContainerProps={{ marginBottom: 0 }}
-                  />
-                </Col>
-              );
-            } else if (fieldData.dataType === 'Progress') {
-              return (
-                <Col span={8}>
-                  <SliderInput setValue={onInputChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} label={fieldData.name} />
-                </Col>
-              );
-            } else {
-              return (
-                <Col span={8}>
-                  <InputField
-                    type="input"
-                    setValue={onInputChange(fieldCode)}
-                    value={values[fieldCode]}
-                    name={fieldData.name}
-                    label={fieldData.name}
-                    defaultValue={fieldData.defaultValue}
-                    inputFieldContainerProps={{ marginBottom: 8 }}
-                  />
-                </Col>
-              );
-            }
-          })}
+          Object.entries(props.formData)
+            .filter((field: [string, IFeild]) => field[1].isDisplayForRecords === true)
+            .map((field: [string, IFeild], index: number) => {
+              const fieldCode = field[0];
+              const fieldData = field[1];
+
+              if (fieldData.dataType === 'Yes/No') {
+                return (
+                  <Col span={4}>
+                    <SelectField
+                      options={YES_NO_OPTIONS}
+                      value={values[fieldCode]}
+                      label={fieldData.name}
+                      setValue={onInputChange(fieldCode)}
+                      placeholder="Choose options"
+                      name={fieldData.name}
+                      key={fieldData.name}
+                      lineHeight={0}
+                      marginBottom={0}
+                    />
+                  </Col>
+                );
+              } else if (fieldData.dataType === 'Date') {
+                return (
+                  <Col span={4}>
+                    <InputDate
+                      setValue={onInputChange(fieldCode)}
+                      value={values[fieldCode]}
+                      name={fieldData.name}
+                      label={fieldData.name}
+                      placeholder={fieldData.defaultValue}
+                      datePickerContainerProps={{ marginBottom: 0 }}
+                    />
+                  </Col>
+                );
+              } else if (fieldData.dataType === 'Progress') {
+                return (
+                  <Col span={8}>
+                    <SliderInput setValue={onInputChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} label={fieldData.name} allowClear={false} />
+                  </Col>
+                );
+              } else if (DATA_TYPES_MAPPER[fieldData.dataType] === 'string') {
+                return (
+                  <Col span={8}>
+                    <InputField
+                      type="input"
+                      setValue={onInputChange(fieldCode)}
+                      value={values[fieldCode]}
+                      name={fieldData.name}
+                      label={fieldData.name}
+                      defaultValue={fieldData.defaultValue}
+                      inputFieldContainerProps={{ marginBottom: 8 }}
+                    />
+                  </Col>
+                );
+              } else if (DATA_TYPES_MAPPER[fieldData.dataType] === 'number') {
+                return (
+                  <Col span={8}>
+                    <InputFieldNumber
+                      type="input"
+                      setValue={onInputChange(fieldCode)}
+                      value={values[fieldCode]}
+                      name={fieldData.name}
+                      label={fieldData.name}
+                      defaultValue={parseInt(fieldData.defaultValue)}
+                      inputFieldContainerProps={{ marginBottom: 8 }}
+                    />
+                  </Col>
+                );
+              } else {
+                return <>{fieldData.dataType} to be implemented</>;
+              }
+            })}
       </Row>
 
       <VerticalSpace height={16} />

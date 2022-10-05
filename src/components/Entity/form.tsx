@@ -6,7 +6,7 @@ import { FilledButton, OutlinedButton } from '../common/button';
 import InputField from '../common/input-field';
 import { HorizontalSpace, VerticalSpace } from '../common/space';
 import { EntityFormContainer, PopoverContent } from './container';
-import { DATA_TYPES } from '../../constants/entiy';
+import { DATA_FIELD_SETTINGS, DATA_TYPES } from '../../constants/entiy';
 import { getRandom } from '../../utils/helper';
 import { UserContext } from '../../context/user.context';
 import { USER_GROUP_MAP } from '../../constants/userGroups';
@@ -21,15 +21,6 @@ interface Props {
   isEdit: boolean;
   editEntity: IEntity;
   setIsEdit: (e: boolean) => void;
-}
-
-interface IFeildRowProps {
-  field: IFeild;
-  onInputChange: ({ name, value }: { name: IEntityFieldKeys; value: string }) => void;
-  index: number;
-  onFieldSettingSave: (settings: ISettings) => void;
-  isEditMode: boolean;
-  onFieldDelete: () => void;
 }
 
 export interface IValues {
@@ -49,6 +40,7 @@ export interface IFeild {
   settings: ISettings;
   values: IValues[];
   isEditable?: boolean;
+  isDisplayForRecords: boolean;
 }
 
 export interface IFeilds {
@@ -86,6 +78,7 @@ export const defaultField: IFeild = {
   defaultValue: '',
   settings: {},
   values: [defaultValue],
+  isDisplayForRecords: false,
 };
 
 export const defaultEntityValues: IEntity = {
@@ -147,9 +140,12 @@ const EntityForm: React.FC<Props> = (props) => {
     ({ name, value }: { name: IEntityFieldKeys; value: string }) => {
       const currentFields = { ...values.fields };
       currentFields[fieldName][name] = value;
+      currentFields[fieldName].isDisplayForRecords = DATA_FIELD_SETTINGS[currentFields[fieldName].dataType].isDisplayForRecords;
       setValues({ ...values, fields: { ...currentFields } });
       setIsError(false);
       setErr('');
+
+      
     };
 
   const onFieldDelete = (fieldName: string) => () => {

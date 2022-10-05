@@ -21,6 +21,7 @@ import { IFilter } from './filters';
 import { sortData, transformData } from '../../utils/filters';
 import { UserContext } from '../../context/user.context';
 import { EntityContext } from '../../context/entity.context';
+import { IEntity, IFeild } from '../Entity/form';
 
 interface props {}
 
@@ -49,9 +50,8 @@ const Records: React.FC<props> = (props) => {
   const { state: entityState } = useContext(EntityContext);
 
   const { entityName } = useParams();
-  const { state: routeState } = useLocation();
 
-  const { currentEntity }: any = routeState;
+  const { selectEntity: currentEntity } = entityState;
 
   useEffect(() => {
     getData();
@@ -103,7 +103,7 @@ const Records: React.FC<props> = (props) => {
       <div style={{ padding: 8 }}>
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Search ${columnName}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
@@ -168,11 +168,17 @@ const Records: React.FC<props> = (props) => {
   });
 
   const getTableColumns = () => {
-    const columns: ColumnsType<IDataType> = Object.entries(currentEntity.fields).map((field: [any, any], index: number) => {
+    const columns: ColumnsType<IDataType> = Object.entries(currentEntity.fields).map((field: [any, IFeild], index: number) => {
       const fieldCode = field[0];
       const fieldData = field[1];
+      let prefix: string = '';
+      const { settings } = fieldData;
+      if (settings.prefix) {
+        prefix = settings.prefix;
+      }
+
       return {
-        title: fieldData.name,
+        title: `${prefix} ${fieldData.name}`,
         dataIndex: fieldCode,
         key: fieldCode,
         ...getColumnSearchProps(fieldCode, fieldData.name),
@@ -199,6 +205,18 @@ const Records: React.FC<props> = (props) => {
   };
   const getTableData = async (response: any) => {
     const rowData: IDataType[] = response.map((value: any, index: number) => {
+      Object.entries(currentEntity.fields).forEach((field: [string, IFeild]) => {
+        const [fieldCode, fieldData] = field;
+        const { settings: fieldSettings } = fieldData;
+        if (fieldSettings.prefix && value[fieldCode]) {
+          value[fieldCode] = `${fieldSettings.prefix} ${value[fieldCode]}`;
+        }
+        if (fieldSettings.decimals && value[fieldCode]) {
+          
+          value[fieldCode] = `${fieldSettings.prefix} ${value[fieldCode]}`;
+        }
+      });
+
       return { index: index + 1, ...value };
     });
     setTableData([...rowData]);

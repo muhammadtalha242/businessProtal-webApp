@@ -46,6 +46,10 @@ interface IInputFieldProps {
 const InputFieldContainer = styled.div<IInputFieldProps>`
   margin-bottom: ${(props) => (props.marginBottom || props.marginBottom === 0 ? props.marginBottom : 32)}px;
   font-size: 14px;
+  
+  .ant-input-number{
+    width: -webkit-fill-available
+  }
 
   .label-container {
     display: flex;
@@ -89,29 +93,6 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
       color: ${GREY_SECONDARY};
       background: none;
       cursor: default;
-    }
-  }
-
-  TextArea {
-    border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
-    height: 48px;
-    width: ${(props) => (props.inputWidth || props.inputWidth === 0 ? props.inputWidth + 'px' : '100%')};
-    overflow: hidden;
-    outline: none;
-    color: ${GREY_SECONDARY};
-
-    &::placeholder {
-      color: #bfbfbf;
-    }
-
-    &:focus {
-      border: 1px solid ${GREEN_PRIMARY};
-      border-radius: 8px;
-      background-color: ${WHITE};
-    }
-
-    &.error {
-      border: 1px solid ${RED_PRIMARY};
     }
   }
 

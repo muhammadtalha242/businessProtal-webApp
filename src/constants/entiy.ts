@@ -3,7 +3,6 @@ import { IOptionType } from '../components/common/select';
 export interface IDatatypeFieldSettings {
   [key: string]: IDatatypeFieldType;
 }
-
 export interface IDatatypeField {
   name: string;
   placeholder?: string;
@@ -17,6 +16,7 @@ export interface IDatatypeFieldType {
   checkbox?: IDatatypeField[];
   input?: IDatatypeField[];
   select?: IDatatypeField[];
+  isDisplayForRecords: boolean;
 }
 
 export const DATA_TYPES: IOptionType[] = [
@@ -51,6 +51,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'prefix', label: 'Prefix' },
       { name: 'digits', label: 'Digits', type: 'number' },
     ],
+    isDisplayForRecords: false,
   },
   Currency: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
@@ -58,18 +59,22 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'prefix', label: 'Prefix' },
       { name: 'decimals', label: 'Decimals', type: 'number' },
     ],
+    isDisplayForRecords: true,
   },
   Phone: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [{ name: 'format', label: 'Format' }],
+    isDisplayForRecords: true,
   },
   'Text Single Line': {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [{ name: 'fieldLength', label: 'Field Length' }],
+    isDisplayForRecords: true,
   },
   'Text Multi Line': {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [{ name: 'fieldLength', label: 'Field Length' }],
+    isDisplayForRecords: true,
   },
   Number: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
@@ -78,23 +83,29 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'decimals', label: 'Decimals', type: 'number' },
     ],
     checkbox: [{ name: 'isDisplayPercetage', label: 'Display %' }],
+    isDisplayForRecords: true,
   },
   Email: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    isDisplayForRecords: true,
   },
   Progress: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    isDisplayForRecords: true,
   },
   Link: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
+    isDisplayForRecords: true,
   },
   Date: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [{ name: 'isTime', label: 'Time' }],
+    isDisplayForRecords: true,
   },
   Location: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [{ name: 'isShowMap', label: 'Show map' }],
+    isDisplayForRecords: true,
   },
   Document: {
     defaultCheckBoxes: [
@@ -102,6 +113,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'isComment', label: 'Comment' },
       { name: 'isPublic', label: 'Public' },
     ],
+    isDisplayForRecords: true,
   },
   Image: {
     defaultCheckBoxes: [
@@ -109,6 +121,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'isComment', label: 'Comment' },
       { name: 'isPublic', label: 'Public' },
     ],
+    isDisplayForRecords: true,
   },
   Section: {
     defaultCheckBoxes: [
@@ -116,12 +129,14 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'isComment', label: 'Comment' },
       { name: 'isPublic', label: 'Public' },
     ],
+    isDisplayForRecords: false,
   },
   'Yes/No': {
     defaultCheckBoxes: [
       { name: 'isComment', label: 'Comment' },
       { name: 'isPublic', label: 'Public' },
     ],
+    isDisplayForRecords: true,
   },
   Duration: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
@@ -131,5 +146,6 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'isMints', label: 'Display minutes' },
       { name: 'isSeconds', label: 'Display seconds' },
     ],
+    isDisplayForRecords: true,
   },
 };
