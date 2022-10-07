@@ -23,6 +23,7 @@ export const DATA_TYPES: IOptionType[] = [
   { value: 'Auto Number', label: 'Auto Number' },
   { value: 'Email', label: 'Email' },
   { value: 'Currency', label: 'Currency' },
+  { value: 'Phone', label: 'Phone' },
   { value: 'Progress', label: 'Progress' },
   { value: 'Duration', label: 'Duration' },
   { value: 'Link', label: 'Link' },
@@ -51,7 +52,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'prefix', label: 'Prefix' },
       { name: 'digits', label: 'Digits', type: 'number' },
     ],
-    isDisplayForRecords: false,
+    isDisplayForRecords: true,
   },
   Currency: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
@@ -129,7 +130,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'isComment', label: 'Comment' },
       { name: 'isPublic', label: 'Public' },
     ],
-    isDisplayForRecords: false,
+    isDisplayForRecords: true,
   },
   'Yes/No': {
     defaultCheckBoxes: [

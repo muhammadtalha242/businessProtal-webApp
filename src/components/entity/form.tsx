@@ -69,8 +69,8 @@ export interface IEditEntity {
 
 const defaultValue: IValues = { recordId: '', value: '' };
 
-const entityRandomName = getRandom('entity')('0123456789', 5);
-const fieldRandomName = getRandom('field')('0123456789', 5);
+const entityRandomName = getRandom('entity')('0123456789', 7);
+const fieldRandomName = getRandom('field')('0123456789', 7);
 
 export const defaultField: IFeild = {
   name: '',

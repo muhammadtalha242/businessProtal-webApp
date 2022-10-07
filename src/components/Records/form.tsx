@@ -176,6 +176,7 @@ const RecordForm: React.FC<props> = (props) => {
                   <Col span={8}>
                     <InputFieldNumber
                       type="input"
+                      precision={fieldData.settings && fieldData.settings.decimals}
                       setValue={onInputChange(fieldCode)}
                       value={values[fieldCode]}
                       name={fieldData.name}

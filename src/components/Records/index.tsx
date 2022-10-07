@@ -211,10 +211,7 @@ const Records: React.FC<props> = (props) => {
         if (fieldSettings.prefix && value[fieldCode]) {
           value[fieldCode] = `${fieldSettings.prefix} ${value[fieldCode]}`;
         }
-        if (fieldSettings.decimals && value[fieldCode]) {
-          
-          value[fieldCode] = `${fieldSettings.prefix} ${value[fieldCode]}`;
-        }
+       
       });
 
       return { index: index + 1, ...value };

@@ -29,6 +29,7 @@ interface Props {
   height?: number;
   padding?: string;
   defaultValue?: number;
+  precision?: number;
   status?: '' | 'error' | 'warning';
   inputFieldContainerProps?: IInputFieldProps;
 }
@@ -46,9 +47,9 @@ interface IInputFieldProps {
 const InputFieldContainer = styled.div<IInputFieldProps>`
   margin-bottom: ${(props) => (props.marginBottom || props.marginBottom === 0 ? props.marginBottom : 32)}px;
   font-size: 14px;
-  
-  .ant-input-number{
-    width: -webkit-fill-available
+
+  .ant-input-number {
+    width: -webkit-fill-available;
   }
 
   .label-container {
@@ -144,6 +145,7 @@ const InputFieldNumber: React.FC<Props> = (props) => {
           onChange={onChange}
           bordered={props.bordered}
           autoComplete="off"
+          precision={props.precision}
           {...inputProps}
         />
 
