@@ -41,6 +41,7 @@ export interface IFeild {
   values: IValues[];
   isEditable?: boolean;
   isDisplayForRecords: boolean;
+  isDefaultFieldVisible: boolean;
 }
 
 export interface IFeilds {
@@ -79,6 +80,7 @@ export const defaultField: IFeild = {
   settings: {},
   values: [defaultValue],
   isDisplayForRecords: false,
+  isDefaultFieldVisible: false,
 };
 
 export const defaultEntityValues: IEntity = {
@@ -141,11 +143,10 @@ const EntityForm: React.FC<Props> = (props) => {
       const currentFields = { ...values.fields };
       currentFields[fieldName][name] = value;
       currentFields[fieldName].isDisplayForRecords = DATA_FIELD_SETTINGS[currentFields[fieldName].dataType].isDisplayForRecords;
+      currentFields[fieldName].isDefaultFieldVisible = DATA_FIELD_SETTINGS[currentFields[fieldName].dataType].isDefaultFieldVisible;
       setValues({ ...values, fields: { ...currentFields } });
       setIsError(false);
       setErr('');
-
-      
     };
 
   const onFieldDelete = (fieldName: string) => () => {

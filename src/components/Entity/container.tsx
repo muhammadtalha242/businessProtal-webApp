@@ -41,7 +41,6 @@ export const EntityFormContainer = styled.div`
     }
 
     .field {
-      margin-bottom: 16px;
 
       .label {
         margin-bottom: 8px;
@@ -143,8 +142,6 @@ export const IFieldRowContainer = styled.div`
   margin-bottom: 8px;
 
   .row {
-    line-height: 24px;
-    padding: 0px 16px 0px 16px;
     align-items: center;
 
     .row-field {
@@ -152,11 +149,12 @@ export const IFieldRowContainer = styled.div`
       margin-right: 4px;
       width: 100%;
       justify-content: space-between;
+      align-items: center;
 
       .row-index {
         font-weight: bold;
         font-size: 14px;
-        margin-right: 6px;
+        margin-right: 16px;
       }
 
       .field {

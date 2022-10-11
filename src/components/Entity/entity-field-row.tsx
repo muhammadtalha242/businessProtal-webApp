@@ -36,7 +36,7 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
         <div className="row-field">
           <div className="row-index">#{index + 1}</div>
           <div className="field">
-            <InputField type="input" setValue={onInputChange} value={field.name} name={`name`} label="Name" placeholder="Name" marginBottom={0} />
+            <InputField type="input" setValue={onInputChange} value={field.name} name={`name`} label="Name" placeholder="Name" inputFieldContainerProps={{ marginBottom: 0 }} />
           </div>
           <HorizontalSpace width={12} />
 
@@ -57,8 +57,20 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
           </div>
           <HorizontalSpace width={12} />
           <div className="field">
-            <InputField type="input" setValue={onInputChange} value={field.defaultValue} name="defaultValue" label="default" placeholder="Default" marginBottom={0} inputWidth={30} />
+            {field.isDefaultFieldVisible && (
+              <InputField
+                type="input"
+                setValue={onInputChange}
+                value={field.defaultValue}
+                name="defaultValue"
+                label="default"
+                placeholder="Default"
+                inputFieldContainerProps={{ marginBottom: 0, inputWidth: 30 }}
+              />
+            )}
           </div>
+          <HorizontalSpace width={8} />
+
           <div
             className="field-settings"
             onClick={() => {
@@ -69,6 +81,7 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
               <img src={`/images/icons/settings.svg`} alt="click" />
             </span>
           </div>
+          <HorizontalSpace width={8} />
 
           <div
             className="field-settings"
