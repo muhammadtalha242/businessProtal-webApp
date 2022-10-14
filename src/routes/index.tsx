@@ -7,7 +7,7 @@ import { UserContext } from '../context/user.context';
 import { AuthContext } from '../context/auth.context';
 
 import { matchPath } from '../utils/helper';
-import {useLocalStorage} from '../hooks/useLocalStorage';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 import Login from '../pages/auth/login';
 import Register from '../pages/auth/register';
@@ -19,7 +19,6 @@ import Entity from '../pages/entity';
 import EntityRecords from '../pages/records';
 import EntityPermission from '../pages/permission';
 import Administartion from '../pages/administration';
-
 
 interface props {}
 
@@ -37,35 +36,35 @@ const PAGES: IPage[] = [
     key: 'dashboard',
     path: '/',
     exact: true,
-    isProtected: false,
+    isProtected: true,
     component: Dashboard,
   },
   {
     key: 'entity',
     path: '/entity',
     exact: true,
-    isProtected: false,
+    isProtected: true,
     component: Entity,
   },
   {
     key: 'entity',
     path: '/entity/:entityName',
     exact: true,
-    isProtected: false,
+    isProtected: true,
     component: EntityRecords,
   },
   {
     key: 'entity',
     path: '/entity/:entityName/:recordId',
     exact: true,
-    isProtected: false,
+    isProtected: true,
     component: EntityRecords,
   },
   {
     key: 'permissions',
     path: '/entity/:entityName/permissions',
     exact: true,
-    isProtected: false,
+    isProtected: true,
     component: EntityPermission,
   },
   {
@@ -119,9 +118,11 @@ const Router: React.FC<props> = (props) => {
   const history = useNavigate();
   const { state: useState, dispatch: userDispatch } = useContext(UserContext);
   const { state: authState, dispatch: authDispatch } = useContext(AuthContext);
-  const isLoaded = useRef(false);
+  const isLoaded = useRef(true);
 
   useEffect(() => {
+    console.log('path: ');
+
     const sessionCheck = () => {
       const accessToken = jsCookie.get('accessToken');
       const path = location.pathname;
@@ -143,9 +144,10 @@ const Router: React.FC<props> = (props) => {
       sessionCheck();
     }
     return () => {
+      console.log('isLoaded pre: ', isLoaded.current);
       isLoaded.current = false;
     };
-  }, [location, history, authState.isAuthenticated]);
+  }, [location, history, authState]);
   const filteredPages: IPage[] = [];
   PAGES.forEach((page) => {
     if (authState.isAuthenticated || !page.isProtected) filteredPages.push(page);

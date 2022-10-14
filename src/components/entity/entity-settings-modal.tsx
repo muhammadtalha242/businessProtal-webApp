@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Alert, Row, Col, Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
@@ -7,9 +7,11 @@ import CustomModal from '../common/modal';
 import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
 import { EntitySettingsModalContainer } from './container';
-import { ISettings } from './form';
+import { IFeild, ISettings } from './form';
 import { IDatatypeField, IDatatypeFieldType } from '../../constants/entiy';
 import InputFieldNumber from '../common/input-field-number';
+import SelectField, { IOptionType } from '../common/select';
+import { EntityContext } from '../../context/entity.context';
 
 interface props {
   modalVisible: boolean;
@@ -24,15 +26,36 @@ export type IEntitySettingsModalKeys = 'name';
 
 const EntitySettingsModal: React.FC<props> = (props) => {
   const [state, setState] = useState<ISettings>({});
+  const [columnFields, setColumnFields] = useState<IOptionType[]>([]);
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
   const [saving, setSaving] = useState(false);
+  const { state: entityState, dispatch: entityDispatch } = useContext(EntityContext);
 
   useEffect(() => {
     if (props.values) {
       setState({ ...props.values });
     }
   }, [props.values]);
+
+  useEffect(() => {
+    let opts: IOptionType[] = [
+      {
+        value: '',
+        label: '',
+      },
+    ];
+    Object.entries(entityState.currentEntity.fields).forEach((field: [string, IFeild]) => {
+      if (field[1].dataType !== 'Auto Number') {
+        opts.push({
+          value: field[0],
+          label: field[1].name,
+        });
+      }
+    });
+
+    setColumnFields(opts);
+  }, [entityState.currentEntity.fields]);
 
   const onInputChange = ({ name, value }: { name: string; value: any }) => {
     const update: any = { ...state };
@@ -113,6 +136,7 @@ const EntitySettingsModal: React.FC<props> = (props) => {
               </Col>
             ))}
         </Row>
+
         <VerticalSpace height={16} />
         <Row gutter={[24, 24]} align={'middle'}>
           {props.dataType &&
@@ -142,6 +166,33 @@ const EntitySettingsModal: React.FC<props> = (props) => {
               </Col>
             ))}
         </Row>
+        <VerticalSpace height={16} />
+        <Row gutter={[24, 24]} align={'middle'}>
+          {props.dataType &&
+            props.settingFields.select?.map((val: IDatatypeField, index: number) => (
+              <Col span={8}>
+                <SelectField
+                  options={columnFields}
+                  setValue={onInputChange}
+                  value={state[val.name]}
+                  name={val.name}
+                  label={val.label}
+                  placeholder={val.placeholder}
+                  key={`${val.name}`}
+                  lineHeight={0}
+                  marginBottom={0}
+                />
+              </Col>
+            ))}
+        </Row>
+        <VerticalSpace height={16} />
+        {props.dataType && state && (
+          <>
+            AutoNumber formate: {state.prefix ? `${state.prefix}-` : ''}
+            {state.prefixCol ? `col-` : ''}
+            {state.digits && state.digits > 0 ? Array(state.digits).fill('X').join('') : ''}
+          </>
+        )}
         <VerticalSpace height={16} />
         <InputField type="TextArea" setValue={onInputChange} value={state.helpText} name="helpText" label="Help Text" placeholder="" inputFieldContainerProps={{ marginBottom: 12 }} />
       </EntitySettingsModalContainer>

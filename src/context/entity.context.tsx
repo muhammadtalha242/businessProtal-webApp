@@ -4,11 +4,13 @@ import { IEntity, defaultEntityValues } from '../components/Entity/form';
 interface IState {
   allEntities: IEntity[];
   selectEntity: IEntity;
+  currentEntity: IEntity;
 }
 
 const initialState: IState = {
   allEntities: [],
-  selectEntity: {...defaultEntityValues},
+  selectEntity: { ...defaultEntityValues },
+  currentEntity: { ...defaultEntityValues },
 };
 
 type IActions = {
@@ -18,6 +20,7 @@ type IActions = {
 
 const ACTION_TYPES = {
   SET_ENTITY: 'SET_ENTITY',
+  SET_CURRENT_ENTITY: 'SET_CURRENT_ENTITY',
   SET_ALL_ENTITIES: 'SET_ALL_ENTITIES',
   UPDATE_ENTITY_PERMISSIONS: 'UPDATE_ENTITY_PERMISSIONS',
 };
@@ -34,12 +37,17 @@ const entityReducer = (state: IState, action: IActions): IState => {
         ...state,
         allEntities: [...action.payload],
       };
-
     case ACTION_TYPES.UPDATE_ENTITY_PERMISSIONS:
       return {
         ...state,
         selectEntity: { ...action.payload },
       };
+    case ACTION_TYPES.SET_CURRENT_ENTITY:
+      return {
+        ...state,
+        currentEntity: { ...action.payload },
+      };
+
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -47,6 +55,10 @@ const entityReducer = (state: IState, action: IActions): IState => {
 
 export const setEntity = (dispatch: React.Dispatch<IActions> | undefined) => (entity: IEntity) => {
   if (dispatch) dispatch({ type: ACTION_TYPES.SET_ENTITY, payload: entity });
+};
+
+export const setCurrentEntity = (dispatch: React.Dispatch<IActions> | undefined) => (entity: IEntity) => {
+  if (dispatch) dispatch({ type: ACTION_TYPES.SET_CURRENT_ENTITY, payload: entity });
 };
 
 export const setAllEntities = (dispatch: React.Dispatch<IActions> | undefined) => (entiteis: IEntity[]) => {

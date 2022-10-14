@@ -12,6 +12,7 @@ import { UserContext } from '../../context/user.context';
 import { USER_GROUP_MAP } from '../../constants/userGroups';
 import FieldRows from './entity-field-row';
 import { error } from '../common/message';
+import { EntityContext, setCurrentEntity } from '../../context/entity.context';
 
 interface Props {
   setShowForm: (e: boolean) => void;
@@ -106,6 +107,7 @@ const EntityForm: React.FC<Props> = (props) => {
   const [deletedFieldsNames, setDeletedFields] = useState<string[]>([]);
   const [addedFieldsNames, setAddedFields] = useState<string[]>([]);
   const { state: userState } = useContext(UserContext);
+  const { dispatch: entityDispatch } = useContext(EntityContext);
 
   useEffect(() => {
     if (props.isEdit) {
@@ -116,6 +118,10 @@ const EntityForm: React.FC<Props> = (props) => {
       setValues({ ...defaultEntityValues });
     }
   }, []);
+
+  useEffect(() => {
+    setCurrentEntity(entityDispatch)(values);
+  }, [values]);
 
   const onInputChange = ({ name, value }: { name: IEntityKeys; value: string }) => {
     const updateState: any = { ...values };
