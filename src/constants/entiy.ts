@@ -1,5 +1,24 @@
 import { IOptionType } from '../components/common/select';
 
+export const DATA_TYPES = {
+  AUTO_NUMBER: 'Auto Number',
+  EMAIL: 'Email',
+  CURRENCY: 'Currency',
+  PHONE: 'Phone',
+  PROGRESS: 'Progress',
+  DURATION: 'Duration',
+  LINK: 'Link',
+  DATE: 'Date',
+  LOCATION: 'Location',
+  DOCUMENT: 'Document',
+  IMAGE: 'Image',
+  SECTION: 'Section',
+  NUMBER: 'Number',
+  TEXT_SINGLE_LINE: 'Text Single Line',
+  TEXT_MULTI_LINE: 'Text Multi Line',
+  YES_NO: 'Yes/No',
+};
+
 export interface IDatatypeFieldSettings {
   [key: string]: IDatatypeFieldType;
 }
@@ -21,23 +40,23 @@ export interface IDatatypeFieldType {
   defaultDataType: string;
 }
 
-export const DATA_TYPES: IOptionType[] = [
-  { value: 'Auto Number', label: 'Auto Number' },
-  { value: 'Email', label: 'Email' },
-  { value: 'Currency', label: 'Currency' },
-  { value: 'Phone', label: 'Phone' },
-  { value: 'Progress', label: 'Progress' },
-  { value: 'Duration', label: 'Duration' },
-  { value: 'Link', label: 'Link' },
-  { value: 'Date', label: 'Date' },
-  { value: 'Location', label: 'Location' },
-  { value: 'Document', label: 'Document' },
-  { value: 'Image', label: 'Image' },
-  { value: 'Section', label: 'Section' },
-  { value: 'Number', label: 'Number' },
-  { value: 'Text Single Line', label: 'Text Single Line' },
-  { value: 'Text Multi Line', label: 'Text Multi Line' },
-  { value: 'Yes/No', label: 'Yes/No' },
+export const DATA_TYPES_OPTIONS: IOptionType[] = [
+  { value: DATA_TYPES.AUTO_NUMBER, label: 'Auto Number' },
+  { value: DATA_TYPES.EMAIL, label: 'Email' },
+  { value: DATA_TYPES.CURRENCY, label: 'Currency' },
+  { value: DATA_TYPES.PHONE, label: 'Phone' },
+  { value: DATA_TYPES.PROGRESS, label: 'Progress' },
+  { value: DATA_TYPES.DURATION, label: 'Duration' },
+  { value: DATA_TYPES.LINK, label: 'Link' },
+  { value: DATA_TYPES.DATE, label: 'Date' },
+  { value: DATA_TYPES.LOCATION, label: 'Location' },
+  { value: DATA_TYPES.DOCUMENT, label: 'Document' },
+  { value: DATA_TYPES.IMAGE, label: 'Image' },
+  { value: DATA_TYPES.SECTION, label: 'Section' },
+  { value: DATA_TYPES.NUMBER, label: 'Number' },
+  { value: DATA_TYPES.TEXT_SINGLE_LINE, label: 'Text Single Line' },
+  { value: DATA_TYPES.TEXT_MULTI_LINE, label: 'Text Multi Line' },
+  { value: DATA_TYPES.YES_NO, label: 'Yes/No' },
 ];
 
 export const DEFAULT_CHECKBOX_FIELDS = [
@@ -48,7 +67,7 @@ export const DEFAULT_CHECKBOX_FIELDS = [
 ];
 
 export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
-  'Auto Number': {
+  [DATA_TYPES.AUTO_NUMBER]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [{ name: 'isRegenerate', label: 'Regenerate' }],
     input: [
@@ -56,11 +75,11 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
       { name: 'digits', label: 'Digits', type: 'number' },
     ],
     select: [{ name: 'prefixCol', label: 'Column' }],
-    isDisplayForRecords: true,
+    isDisplayForRecords: false,
     isDefaultFieldVisible: false,
     defaultDataType: '',
   },
-  Currency: {
+  [DATA_TYPES.CURRENCY]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [
       { name: 'prefix', label: 'Prefix' },
@@ -70,28 +89,28 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     isDefaultFieldVisible: true,
     defaultDataType: 'number',
   },
-  Phone: {
+  [DATA_TYPES.PHONE]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [{ name: 'format', label: 'Format' }],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
     defaultDataType: 'number',
   },
-  'Text Single Line': {
+  [DATA_TYPES.TEXT_SINGLE_LINE]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [{ name: 'fieldLength', label: 'Field Length' }],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
     defaultDataType: 'string',
   },
-  'Text Multi Line': {
+  [DATA_TYPES.TEXT_MULTI_LINE]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [{ name: 'fieldLength', label: 'Field Length' }],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
     defaultDataType: 'string',
   },
-  Number: {
+  [DATA_TYPES.NUMBER]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     input: [
       { name: 'prefix', label: 'Prefix' },
@@ -102,39 +121,39 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     isDefaultFieldVisible: true,
     defaultDataType: 'number',
   },
-  Email: {
+  [DATA_TYPES.EMAIL]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
     defaultDataType: 'string',
   },
-  Progress: {
+  [DATA_TYPES.PROGRESS]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     isDisplayForRecords: true,
     isDefaultFieldVisible: false,
     defaultDataType: '',
   },
-  Link: {
+  [DATA_TYPES.LINK]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
     defaultDataType: 'string',
   },
-  Date: {
+  [DATA_TYPES.DATE]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [{ name: 'isTime', label: 'Time' }],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
     defaultDataType: 'date',
   },
-  Location: {
+  [DATA_TYPES.LOCATION]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [{ name: 'isShowMap', label: 'Show map' }],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
     defaultDataType: 'string',
   },
-  Document: {
+  [DATA_TYPES.DOCUMENT]: {
     defaultCheckBoxes: [
       { name: 'isRequired', label: 'Required' },
       { name: 'isComment', label: 'Comment' },
@@ -144,7 +163,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     isDefaultFieldVisible: true,
     defaultDataType: 'string',
   },
-  Image: {
+  [DATA_TYPES.IMAGE]: {
     defaultCheckBoxes: [
       { name: 'isRequired', label: 'Required' },
       { name: 'isComment', label: 'Comment' },
@@ -154,17 +173,17 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     isDefaultFieldVisible: true,
     defaultDataType: 'string',
   },
-  Section: {
+  [DATA_TYPES.SECTION]: {
     defaultCheckBoxes: [
       { name: 'isRequired', label: 'Required' },
       { name: 'isComment', label: 'Comment' },
       { name: 'isPublic', label: 'Public' },
     ],
-    isDisplayForRecords: true,
+    isDisplayForRecords: false,
     isDefaultFieldVisible: false,
     defaultDataType: '',
   },
-  'Yes/No': {
+  [DATA_TYPES.YES_NO]: {
     defaultCheckBoxes: [
       { name: 'isComment', label: 'Comment' },
       { name: 'isPublic', label: 'Public' },
@@ -174,7 +193,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     isDefaultFieldVisible: false,
     defaultDataType: 'select',
   },
-  Duration: {
+  [DATA_TYPES.DURATION]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [
       { name: 'isDays', label: 'Display Day' },

@@ -6,7 +6,7 @@ import { FilledButton, OutlinedButton } from '../common/button';
 import InputField from '../common/input-field';
 import { HorizontalSpace, VerticalSpace } from '../common/space';
 import { EntityFormContainer, PopoverContent } from './container';
-import { DATA_FIELD_SETTINGS, DATA_TYPES } from '../../constants/entiy';
+import { DATA_FIELD_SETTINGS, DATA_TYPES_OPTIONS } from '../../constants/entiy';
 import { getRandom } from '../../utils/helper';
 import { UserContext } from '../../context/user.context';
 import { USER_GROUP_MAP } from '../../constants/userGroups';
@@ -76,7 +76,7 @@ const fieldRandomName = getRandom('field')('0123456789', 7);
 
 export const defaultField: IFeild = {
   name: '',
-  dataType: DATA_TYPES[0].value,
+  dataType: DATA_TYPES_OPTIONS[0].value,
   defaultValue: '',
   settings: {},
   values: [defaultValue],
@@ -175,11 +175,16 @@ const EntityForm: React.FC<Props> = (props) => {
 
   const validateValues = (): boolean => {
     let isValid = true;
+    console.log(
+      "Object.values(values.fields).some((field: IFeild) => field.name === ''): ",
+      Object.values(values.fields).some((field: IFeild) => field.name === '')
+    );
+
     if (values.name === '') {
       setIsError(true);
       setErr('Entity name required');
       isValid = false;
-    } else if (!Object.values(values.fields).every((field: IFeild) => field.name !== '')) {
+    } else if (Object.values(values.fields).some((field: IFeild) => field.name === '')) {
       isValid = false;
       setIsError(true);
       setErr('field is required.');
@@ -213,7 +218,7 @@ const EntityForm: React.FC<Props> = (props) => {
       });
       updatedEnitiy.addedFields = currentAddedFields;
     }
-    props.onUpdate(updatedEnitiy);
+    if (validateValues()) props.onUpdate(updatedEnitiy);
   };
 
   const onCancle = () => {

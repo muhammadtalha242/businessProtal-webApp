@@ -171,14 +171,9 @@ const Records: React.FC<props> = (props) => {
     const columns: ColumnsType<IDataType> = Object.entries(currentEntity.fields).map((field: [any, IFeild], index: number) => {
       const fieldCode = field[0];
       const fieldData = field[1];
-      let prefix: string = '';
-      const { settings } = fieldData;
-      if (settings.prefix) {
-        prefix = settings.prefix;
-      }
 
       return {
-        title: `${prefix} ${fieldData.name}`,
+        title: ` ${fieldData.name}`,
         dataIndex: fieldCode,
         key: fieldCode,
         ...getColumnSearchProps(fieldCode, fieldData.name),
@@ -205,14 +200,13 @@ const Records: React.FC<props> = (props) => {
   };
   const getTableData = async (response: any) => {
     const rowData: IDataType[] = response.map((value: any, index: number) => {
-      Object.entries(currentEntity.fields).forEach((field: [string, IFeild]) => {
-        const [fieldCode, fieldData] = field;
-        const { settings: fieldSettings } = fieldData;
-        if (fieldSettings.prefix && value[fieldCode]) {
-          value[fieldCode] = `${fieldSettings.prefix} ${value[fieldCode]}`;
-        }
-       
-      });
+      // Object.entries(currentEntity.fields).forEach((field: [string, IFeild]) => {
+      //   const [fieldCode, fieldData] = field;
+      //   const { settings: fieldSettings } = fieldData;
+      //   if (fieldSettings.prefix && value[fieldCode]) {
+      //     value[fieldCode] = `${fieldSettings.prefix} ${value[fieldCode]}`;
+      //   }
+      // });
 
       return { index: index + 1, ...value };
     });

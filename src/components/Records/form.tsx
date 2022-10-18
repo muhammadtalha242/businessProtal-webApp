@@ -13,6 +13,9 @@ import SliderInput from '../common/slider-input';
 import { DATA_TYPES_MAPPER } from '../../constants';
 import InputFieldNumber from '../common/input-field-number';
 import { error } from '../common/message';
+import { validateEmail } from '../../utils/validate';
+import { DATA_TYPES } from '../../constants/entiy';
+import InputFieldMask from '../common/input-field-masked';
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -32,7 +35,7 @@ const RecordForm: React.FC<props> = (props) => {
   const [values, setValues] = useState(props.isEdit ? props.recordSelected : {});
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
-
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   useEffect(() => {
     if (props.isEdit) setValues(props.recordSelected);
     else {
@@ -40,6 +43,7 @@ const RecordForm: React.FC<props> = (props) => {
       Object.entries(props.formData).forEach((field: [string, IFeild], index: number) => {
         state[field[0]] = field[1].defaultValue;
       });
+
       setValues({ ...state });
     }
   }, [props.recordSelected]);
@@ -47,26 +51,36 @@ const RecordForm: React.FC<props> = (props) => {
   const onInputChange =
     (fieldName: string) =>
     ({ name, value }: { name: string; value: string }) => {
+      validateInput({ fieldName, name, value });
       const updateState: any = { ...values };
       updateState[fieldName] = value;
       setValues(updateState);
     };
 
+  const validateInput = ({ fieldName, name, value }: { fieldName: string; name: string; value: string }) => {
+    const { settings: fieldSettings, dataType } = props.formData[fieldName];
+    if (fieldSettings && fieldSettings.isRequired && (value === '' || value === null)) {
+      setErrors({ ...errors, [name]: `${name} is required.` });
+    } else if (dataType === DATA_TYPES.EMAIL && !validateEmail(value)) {
+      setErrors({ ...errors, [name]: `Email is not valid.` });
+    } else {
+      setIsError(false);
+      setErr(``);
+      setErrors({ ...errors, [name]: '' });
+    }
+  };
+
   const validateValues = (): boolean => {
     let isValid = true;
-    let fields = '';
     Object.entries(props.formData).forEach((field: [string, IFeild]) => {
       const [fieldCode, fieldData] = field;
       const { settings: fieldSettings, name } = fieldData;
-      if (fieldSettings && fieldSettings.isRequired && values[fieldCode] === '') {
-        fields = fields + ' ' + name;
+      if ((fieldSettings && fieldSettings.isRequired && values[fieldCode] === '') || (!!errors[name] && errors[name] !== '')) {
         isValid = false;
+        setIsError(true);
+        setErr(`Error.`);
       }
     });
-    if (!isValid) {
-      setIsError(true);
-      setErr(`${fields} Required`);
-    }
     return isValid;
   };
 
@@ -74,7 +88,6 @@ const RecordForm: React.FC<props> = (props) => {
     try {
       console.log(values);
       console.log(props.formData);
-      console.log(validateValues());
       if (validateValues()) {
         props.onSave(values);
         props.setShowForm(false);
@@ -97,7 +110,7 @@ const RecordForm: React.FC<props> = (props) => {
         <div className="text">Add Record</div>
         <img onClick={onCancle} src={`/images/icons/close.svg`} alt="close" />
       </div>
-      {isError && (
+      {isError && err !== '' && (
         <>
           <Alert
             style={{ borderRadius: 16, textAlign: 'left' }}
@@ -122,7 +135,7 @@ const RecordForm: React.FC<props> = (props) => {
               const fieldCode = field[0];
               const fieldData = field[1];
 
-              if (fieldData.dataType === 'Yes/No') {
+              if (fieldData.dataType === DATA_TYPES.YES_NO) {
                 return (
                   <Col span={4}>
                     <SelectField
@@ -135,10 +148,12 @@ const RecordForm: React.FC<props> = (props) => {
                       key={fieldData.name}
                       lineHeight={0}
                       marginBottom={0}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
                     />
                   </Col>
                 );
-              } else if (fieldData.dataType === 'Date') {
+              } else if (fieldData.dataType === DATA_TYPES.DATE) {
                 return (
                   <Col span={4}>
                     <InputDate
@@ -148,13 +163,39 @@ const RecordForm: React.FC<props> = (props) => {
                       label={fieldData.name}
                       placeholder={fieldData.defaultValue}
                       datePickerContainerProps={{ marginBottom: 0 }}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
                     />
                   </Col>
                 );
-              } else if (fieldData.dataType === 'Progress') {
+              } else if (fieldData.dataType === DATA_TYPES.PROGRESS) {
                 return (
                   <Col span={8}>
-                    <SliderInput setValue={onInputChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} label={fieldData.name} allowClear={false} />
+                    <SliderInput
+                      setValue={onInputChange(fieldCode)}
+                      value={values[fieldCode]}
+                      name={fieldData.name}
+                      label={fieldData.name}
+                      allowClear={false}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
+                    />
+                  </Col>
+                );
+              } else if (fieldData.dataType === DATA_TYPES.PHONE) {
+                return (
+                  <Col span={8}>
+                    <InputFieldMask
+                      setValue={onInputChange(fieldCode)}
+                      value={values[fieldCode]}
+                      name={fieldData.name}
+                      label={fieldData.name}
+                      defaultValue={fieldData.defaultValue}
+                      inputFieldContainerProps={{ marginBottom: 8 }}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
+                      mask={!!fieldData.settings.format && fieldData.settings.format}
+                    />
                   </Col>
                 );
               } else if (DATA_TYPES_MAPPER[fieldData.dataType] === 'string') {
@@ -168,6 +209,10 @@ const RecordForm: React.FC<props> = (props) => {
                       label={fieldData.name}
                       defaultValue={fieldData.defaultValue}
                       inputFieldContainerProps={{ marginBottom: 8 }}
+                      showCount={!!fieldData.settings.fieldLength && parseInt(fieldData.settings.fieldLength) > 0}
+                      maxLength={!!fieldData.settings.fieldLength && parseInt(fieldData.settings.fieldLength) > 0 && fieldData.settings.fieldLength}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
                     />
                   </Col>
                 );
@@ -183,6 +228,9 @@ const RecordForm: React.FC<props> = (props) => {
                       label={fieldData.name}
                       defaultValue={parseInt(fieldData.defaultValue)}
                       inputFieldContainerProps={{ marginBottom: 8 }}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
+                      addonBefore={!!fieldData.settings.prefix && fieldData.settings.prefix}
                     />
                   </Col>
                 );

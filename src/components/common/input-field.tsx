@@ -32,6 +32,8 @@ interface Props {
   padding?: string;
   defaultValue?: string;
   status?: '' | 'error' | 'warning';
+  showCount?:boolean; 
+  maxLength?: number;
   inputFieldContainerProps?: IInputFieldProps;
 }
 
@@ -69,7 +71,7 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
 
   input {
     border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
-    border-radius: 8px;
+    // border-radius: 8px;
     height: ${(props) => (props.height || props.height === 0 ? props.height : 48)}px;
     width: ${(props) => (props.inputWidth || props.inputWidth === 0 ? props.inputWidth + 'px' : '100%')};
     padding: ${(props) => (props.padding ? props.padding : `16px 12px`)};
@@ -80,13 +82,17 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
       color: #bfbfbf;
     }
 
-    &:focus {
-      border: 1px solid ${BLUE_TERTIARY};
-    }
+    // &::before{ 
+    //   border: 1px solid ${RED_PRIMARY};
+    // }
 
-    &.error {
-      border: 1px solid ${RED_PRIMARY};
-    }
+    // &:focus {
+    //   border: 1px solid ${BLUE_TERTIARY};
+    // }
+
+    // &.error {
+    //   border: 1px solid ${RED_PRIMARY};
+    // }
 
     &:disabled {
       color: ${GREY_SECONDARY};
@@ -153,7 +159,7 @@ const InputField: React.FC<Props> = (props) => {
     inputProps.type === 'TextArea' ? (
       <TextArea autoSize className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} autoComplete="off" onChange={onChange} {...inputProps} />
     ) : (
-      <Input className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} onChange={onChange} bordered={props.bordered} autoComplete="off" {...inputProps} />
+      <Input className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} onChange={onChange} bordered={props.bordered} autoComplete="off" {...inputProps}  />
     );
   return (
     <InputFieldContainer {...props.inputFieldContainerProps}>

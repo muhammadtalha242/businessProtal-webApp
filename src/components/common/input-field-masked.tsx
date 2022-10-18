@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { InputNumber } from 'antd';
+import { MaskedInput } from 'antd-mask-input';
 
 import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, WHITE, BLUE_TERTIARY } from '../../styles/colors';
 
 interface Props {
+  mask: string;
   label?: React.ReactNode | string;
   disabled?: boolean;
-  type: string;
   value?: any;
   setValue?: Function;
   placeholder?: string;
@@ -28,10 +28,10 @@ interface Props {
   bordered?: boolean;
   height?: number;
   padding?: string;
-  defaultValue?: number;
-  precision?: number;
+  defaultValue?: string;
   status?: '' | 'error' | 'warning';
-  addonBefore?: string;
+  showCount?: boolean;
+  maxLength?: number;
   inputFieldContainerProps?: IInputFieldProps;
 }
 
@@ -48,10 +48,6 @@ interface IInputFieldProps {
 const InputFieldContainer = styled.div<IInputFieldProps>`
   margin-bottom: ${(props) => (props.marginBottom || props.marginBottom === 0 ? props.marginBottom : 32)}px;
   font-size: 14px;
-
-  .ant-input-number {
-    width: -webkit-fill-available;
-  }
 
   .label-container {
     display: flex;
@@ -73,6 +69,7 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
 
   input {
     border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
+    // border-radius: 8px;
     height: ${(props) => (props.height || props.height === 0 ? props.height : 48)}px;
     width: ${(props) => (props.inputWidth || props.inputWidth === 0 ? props.inputWidth + 'px' : '100%')};
     padding: ${(props) => (props.padding ? props.padding : `16px 12px`)};
@@ -83,18 +80,45 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
       color: #bfbfbf;
     }
 
-    &:focus {
-      border: 1px solid ${BLUE_TERTIARY};
-    }
+    // &::before{
+    //   border: 1px solid ${RED_PRIMARY};
+    // }
 
-    &.error {
-      border: 1px solid ${RED_PRIMARY};
-    }
+    // &:focus {
+    //   border: 1px solid ${BLUE_TERTIARY};
+    // }
+
+    // &.error {
+    //   border: 1px solid ${RED_PRIMARY};
+    // }
 
     &:disabled {
       color: ${GREY_SECONDARY};
       background: none;
       cursor: default;
+    }
+  }
+
+  TextArea {
+    border: ${(props) => props.bordered && `1px solid ${GREY_PRIMARY}`};
+    height: 48px;
+    width: ${(props) => (props.inputWidth || props.inputWidth === 0 ? props.inputWidth + 'px' : '100%')};
+    overflow: hidden;
+    outline: none;
+    color: ${GREY_SECONDARY};
+
+    &::placeholder {
+      color: #bfbfbf;
+    }
+
+    &:focus {
+      border: 1px solid ${GREEN_PRIMARY};
+      border-radius: 8px;
+      background-color: ${WHITE};
+    }
+
+    &.error {
+      border: 1px solid ${RED_PRIMARY};
     }
   }
 
@@ -114,21 +138,17 @@ export const Label = styled.div`
   margin-bottom: 8px;
 `;
 
-const InputFieldNumber: React.FC<Props> = (props) => {
+const InputFieldMask: React.FC<Props> = (props) => {
   const [iconActive, setIconActive] = useState(false);
   const inputProps = { ...props };
 
-  const onChange = (value: number): void => {
+  const onChange = (event: { maskedValue: string; unmaskedValue: string }): void => {
     if (props.setValue)
       props.setValue({
         name: props.name,
-        value,
+        value: event.maskedValue,
       });
   };
-
-  if (props.activeIcon && iconActive) {
-    inputProps.type = 'text';
-  }
 
   return (
     <InputFieldContainer {...props.inputFieldContainerProps}>
@@ -139,17 +159,15 @@ const InputFieldNumber: React.FC<Props> = (props) => {
         </div>
       )}
       <div>
-        <InputNumber
+        <MaskedInput
           className={classNames({ error: props.error })}
           placeholder={props.placeholder}
           name={props.name}
           onChange={onChange}
           bordered={props.bordered}
           autoComplete="off"
-          precision={props.precision}
           {...inputProps}
         />
-
         {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
         {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}
       </div>
@@ -158,4 +176,4 @@ const InputFieldNumber: React.FC<Props> = (props) => {
   );
 };
 
-export default InputFieldNumber;
+export default InputFieldMask;

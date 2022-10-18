@@ -8,7 +8,7 @@ import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
 import { EntitySettingsModalContainer } from './container';
 import { IFeild, ISettings } from './form';
-import { IDatatypeField, IDatatypeFieldType } from '../../constants/entiy';
+import { DATA_TYPES, IDatatypeField, IDatatypeFieldType } from '../../constants/entiy';
 import InputFieldNumber from '../common/input-field-number';
 import SelectField, { IOptionType } from '../common/select';
 import { EntityContext } from '../../context/entity.context';
@@ -46,7 +46,7 @@ const EntitySettingsModal: React.FC<props> = (props) => {
       },
     ];
     Object.entries(entityState.currentEntity.fields).forEach((field: [string, IFeild]) => {
-      if (field[1].dataType !== 'Auto Number') {
+      if (field[1].dataType !== DATA_TYPES.AUTO_NUMBER) {
         opts.push({
           value: field[0],
           label: field[1].name,
@@ -186,7 +186,7 @@ const EntitySettingsModal: React.FC<props> = (props) => {
             ))}
         </Row>
         <VerticalSpace height={16} />
-        {props.dataType && state && (
+        {props.dataType === "Auto Number" && state && (
           <>
             AutoNumber formate: {state.prefix ? `${state.prefix}-` : ''}
             {state.prefixCol ? `col-` : ''}

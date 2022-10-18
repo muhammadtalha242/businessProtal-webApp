@@ -20,6 +20,5 @@ export const DATA_TYPES_MAPPER: IDataTypeMapper = {
   Currency: 'number',
   Progress: 'number',
   Number: 'number',
+  Phone: 'number',
 };
-
-

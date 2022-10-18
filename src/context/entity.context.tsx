@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from 'react';
-import { IEntity, defaultEntityValues } from '../components/Entity/form';
+import { IEntity } from '../components/Entity/form';
 
 interface IState {
   allEntities: IEntity[];
@@ -7,6 +7,18 @@ interface IState {
   currentEntity: IEntity;
 }
 
+export const defaultEntityValues: IEntity = {
+  name: '',
+  description: '',
+  databaseName: '',
+  fields: {},
+  isDisplayonMenu: false,
+  isPublish: false,
+  entityPermissionsCreate: [1],
+  entityPermissionsNone: [],
+  entityPermissionsRead: [1],
+  entityPermissionsDelete: [1],
+};
 const initialState: IState = {
   allEntities: [],
   selectEntity: { ...defaultEntityValues },
