@@ -161,7 +161,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     ],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
-    defaultDataType: 'string',
+    defaultDataType: 'uploadFile',
   },
   [DATA_TYPES.IMAGE]: {
     defaultCheckBoxes: [
@@ -171,7 +171,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     ],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
-    defaultDataType: 'string',
+    defaultDataType: 'uploadFile',
   },
   [DATA_TYPES.SECTION]: {
     defaultCheckBoxes: [
@@ -196,10 +196,12 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
   [DATA_TYPES.DURATION]: {
     defaultCheckBoxes: [...DEFAULT_CHECKBOX_FIELDS],
     checkbox: [
+      { name: 'isYear', label: 'Display Year' },
+      { name: 'isMonths', label: 'Display Month' },
       { name: 'isDays', label: 'Display Day' },
       { name: 'isHours', label: 'Display Hours' },
-      { name: 'isMints', label: 'Display minutes' },
-      { name: 'isSeconds', label: 'Display seconds' },
+      { name: 'isMints', label: 'Display Minutes' },
+      { name: 'isSeconds', label: 'Display Seconds' },
     ],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,

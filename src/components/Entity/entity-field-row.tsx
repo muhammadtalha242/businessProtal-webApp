@@ -7,7 +7,7 @@ import { DATA_FIELD_SETTINGS, DATA_TYPES, DATA_TYPES_OPTIONS } from '../../const
 import InputField from '../common/input-field';
 import { HorizontalSpace } from '../common/space';
 import SelectField from '../common/select';
-import InputFieldMask from '../common/input-field-masked';
+import InputFieldMask, { IInputMask } from '../common/input-field-masked';
 
 type IEntityFieldKeys = 'name' | 'dataType';
 
@@ -22,6 +22,42 @@ interface IFeildRowProps {
 
 const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFieldSettingSave, isEditMode, onFieldDelete }) => {
   const [modalVisible, setModalVisible] = useState(false);
+
+  let mask = '';
+  let toolTip = '';
+  if (field.dataType === DATA_TYPES.PHONE) {
+    mask = !!field.settings.format && field.settings.format;
+  } else if (field.dataType === DATA_TYPES.DURATION) {
+    const x: { maskValue: string[]; maskStruct: string[] } = { maskValue: [], maskStruct: [] };
+    if (!!field.settings.isYear && field.settings.isYear) {
+      x.maskValue.push('00');
+      x.maskStruct.push('yy');
+    }
+    if (!!field.settings.isMonths && field.settings.isMonths) {
+      x.maskValue.push('00');
+      x.maskStruct.push('MM');
+    }
+    if (!!field.settings.isDays && field.settings.isDays) {
+      x.maskValue.push('000');
+      x.maskStruct.push('ddd');
+    }
+    if (!!field.settings.isHours && field.settings.isHours) {
+      x.maskValue.push('00');
+      x.maskStruct.push('hh');
+    }
+    if (!!field.settings.isSeconds && field.settings.isSeconds) {
+      x.maskValue.push('00');
+      x.maskStruct.push('ss');
+    }
+    mask = x.maskValue.join(':');
+    toolTip = x.maskStruct.join(':');
+  }
+
+  const MaskInput: IInputMask = {
+    maskValue: mask,
+    maskStructure: toolTip,
+  };
+
   return (
     <IFieldRowContainer key={index}>
       <EntitySettingsModal
@@ -59,17 +95,18 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
           <HorizontalSpace width={12} />
           <div className="field">
             {field.isDefaultFieldVisible ? (
-              field.dataType === DATA_TYPES.PHONE ? (
+              field.dataType === DATA_TYPES.PHONE || field.dataType === DATA_TYPES.DURATION ? (
                 <InputFieldMask
                   setValue={onInputChange}
                   value={field.defaultValue}
                   name="defaultValue"
                   label="default"
-                  placeholder="Default"
+                  placeholder={toolTip || 'default'}
+                  toolTip={toolTip}
                   inputFieldContainerProps={{ marginBottom: 8 }}
                   // error={!!errors["defaultValue"]}
-                  // errorMessage={errors[fieldData.name]}
-                  mask={!!field.settings.format && field.settings.format}
+                  // errorMessage={errors[field.name]}
+                  inputMask={MaskInput}
                 />
               ) : (
                 <InputField

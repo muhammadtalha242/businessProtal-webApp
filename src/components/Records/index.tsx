@@ -281,7 +281,7 @@ const Records: React.FC<props> = (props) => {
       </DashboardHeader>
       {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={entityState.selectEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
       <FilterCollapes entityFields={entityState.selectEntity.fields} getFilterData={getFilterData} />
-      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} />}
+      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} scroll={{ x: '100vw' }}/>}
     </EntityRecordDisplayContainer>
   );
 };

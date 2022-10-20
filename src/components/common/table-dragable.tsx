@@ -8,6 +8,8 @@ interface props {
   data: any;
   columns: any;
   rowSelection?: any;
+  scroll?: { x?: string; y?: string };
+  tableLayout?: 'auto' | 'fixed';
 }
 
 interface DraggableBodyRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
@@ -47,7 +49,7 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }: Dr
   return <tr ref={ref} className={`${className}${isOver ? dropClassName : ''}`} style={{ cursor: 'move', ...style }} {...restProps} />;
 };
 
-const App: React.FC<props> = ({ columns, data, rowSelection }) => {
+const App: React.FC<props> = ({ columns, data, rowSelection, scroll, tableLayout }) => {
   const [tableData, setTableData] = useState<any>();
   const [tableColumns, setTableColumns] = useState();
 
@@ -83,7 +85,7 @@ const App: React.FC<props> = ({ columns, data, rowSelection }) => {
         columns={tableColumns}
         dataSource={tableData}
         components={components}
-        tableLayout={'auto'}
+        tableLayout={tableLayout}
         onRow={(_, index) => {
           const attr = {
             index,
@@ -93,6 +95,7 @@ const App: React.FC<props> = ({ columns, data, rowSelection }) => {
         }}
         pagination={false}
         rowSelection={rowSelection}
+        scroll={scroll}
       />
     </DndProvider>
   );

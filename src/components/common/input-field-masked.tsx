@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Tooltip } from 'antd';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
@@ -6,8 +7,13 @@ import { MaskedInput } from 'antd-mask-input';
 
 import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, WHITE, BLUE_TERTIARY } from '../../styles/colors';
 
+export interface IInputMask {
+  maskValue: string;
+  maskStructure: string;
+}
+
 interface Props {
-  mask: string;
+  inputMask: IInputMask;
   label?: React.ReactNode | string;
   disabled?: boolean;
   value?: any;
@@ -32,6 +38,7 @@ interface Props {
   status?: '' | 'error' | 'warning';
   showCount?: boolean;
   maxLength?: number;
+  toolTip?: string;
   inputFieldContainerProps?: IInputFieldProps;
 }
 
@@ -141,38 +148,46 @@ export const Label = styled.div`
 const InputFieldMask: React.FC<Props> = (props) => {
   const [iconActive, setIconActive] = useState(false);
   const inputProps = { ...props };
+  const { maskStructure } = props.inputMask;
 
   const onChange = (event: { maskedValue: string; unmaskedValue: string }): void => {
     if (props.setValue)
       props.setValue({
         name: props.name,
         value: event.maskedValue,
+        storeValue: 'SAD',
       });
   };
 
   return (
-    <InputFieldContainer {...props.inputFieldContainerProps}>
-      {props.label && (
-        <div className="label-container">
-          {props.label && <Label>{props.label}</Label>}
-          {props.link && <Link to={props.link}>{props.linkLabel}</Link>}
+    <Tooltip title={props.toolTip}>
+      <InputFieldContainer {...props.inputFieldContainerProps}>
+        {props.label && (
+          <div className="label-container">
+            {props.label && <Label>{props.label}</Label>}
+            {props.link && <Link to={props.link}>{props.linkLabel}</Link>}
+          </div>
+        )}
+        <div>
+          <MaskedInput
+            mask={props.inputMask.maskValue}
+            className={classNames({ error: props.error })}
+            placeholder={props.placeholder}
+            name={props.name}
+            onChange={onChange}
+            bordered={props.bordered}
+            autoComplete="off"
+            maskOptions={{
+              lazy: false,
+            }}
+            {...inputProps}
+          />
+          {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
+          {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}
         </div>
-      )}
-      <div>
-        <MaskedInput
-          className={classNames({ error: props.error })}
-          placeholder={props.placeholder}
-          name={props.name}
-          onChange={onChange}
-          bordered={props.bordered}
-          autoComplete="off"
-          {...inputProps}
-        />
-        {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
-        {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}
-      </div>
-      {props.errorMessage && <div className="error-message">{props.errorMessage}</div>}
-    </InputFieldContainer>
+        {props.errorMessage && <div className="error-message">{props.errorMessage}</div>}
+      </InputFieldContainer>
+    </Tooltip>
   );
 };
 

@@ -5,46 +5,12 @@ import classNames from 'classnames';
 import { Input } from 'antd';
 
 import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, GREY_QUATERNARY, WHITE, BLUE_TERTIARY } from '../../styles/colors';
+import { IInputFieldProps, INPUT_PROPS_COMMON } from '../../interfaces';
 
 const { TextArea } = Input;
 
-interface Props {
-  label?: React.ReactNode | string;
-  disabled?: boolean;
+interface Props extends INPUT_PROPS_COMMON {
   type: string;
-  value?: any;
-  setValue?: Function;
-  placeholder?: string;
-  name?: string;
-  linkLabel?: string;
-  link?: string;
-  deactiveIcon?: string;
-  activeIcon?: string;
-  icon?: string;
-  error?: boolean;
-  errorMessage?: string;
-  marginBottom?: number;
-  iconWidth?: number;
-  inputWidth?: number;
-  iconLeft?: number;
-  bordered?: boolean;
-  height?: number;
-  padding?: string;
-  defaultValue?: string;
-  status?: '' | 'error' | 'warning';
-  showCount?:boolean; 
-  maxLength?: number;
-  inputFieldContainerProps?: IInputFieldProps;
-}
-
-interface IInputFieldProps {
-  marginBottom?: number | undefined;
-  iconWidth?: number | undefined;
-  inputWidth?: number | undefined;
-  iconLeft?: number | undefined;
-  bordered?: boolean | undefined;
-  height?: number | undefined;
-  padding?: string | undefined;
 }
 
 const InputFieldContainer = styled.div<IInputFieldProps>`
@@ -82,7 +48,7 @@ const InputFieldContainer = styled.div<IInputFieldProps>`
       color: #bfbfbf;
     }
 
-    // &::before{ 
+    // &::before{
     //   border: 1px solid ${RED_PRIMARY};
     // }
 
@@ -159,7 +125,7 @@ const InputField: React.FC<Props> = (props) => {
     inputProps.type === 'TextArea' ? (
       <TextArea autoSize className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} autoComplete="off" onChange={onChange} {...inputProps} />
     ) : (
-      <Input className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} onChange={onChange} bordered={props.bordered} autoComplete="off" {...inputProps}  />
+      <Input className={classNames({ error: props.error })} placeholder={props.placeholder} name={props.name} onChange={onChange} bordered={props.bordered} autoComplete="off" {...inputProps} />
     );
   return (
     <InputFieldContainer {...props.inputFieldContainerProps}>

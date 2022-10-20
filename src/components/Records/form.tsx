@@ -15,7 +15,9 @@ import InputFieldNumber from '../common/input-field-number';
 import { error } from '../common/message';
 import { validateEmail } from '../../utils/validate';
 import { DATA_TYPES } from '../../constants/entiy';
-import InputFieldMask from '../common/input-field-masked';
+import InputFieldMask, { IInputMask } from '../common/input-field-masked';
+import FileUpload, { FILES_TYPES } from '../common/file-upload';
+import InputRange from '../common/slider-input';
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -50,7 +52,9 @@ const RecordForm: React.FC<props> = (props) => {
 
   const onInputChange =
     (fieldName: string) =>
-    ({ name, value }: { name: string; value: string }) => {
+    ({ name, value, storeValue }: { name: string; value: string; storeValue: string }) => {
+      console.log(' name, value, storeValue : ', name, value, storeValue);
+
       validateInput({ fieldName, name, value });
       const updateState: any = { ...values };
       updateState[fieldName] = value;
@@ -63,6 +67,8 @@ const RecordForm: React.FC<props> = (props) => {
       setErrors({ ...errors, [name]: `${name} is required.` });
     } else if (dataType === DATA_TYPES.EMAIL && !validateEmail(value)) {
       setErrors({ ...errors, [name]: `Email is not valid.` });
+    } else if ((dataType === DATA_TYPES.IMAGE || dataType === DATA_TYPES.DOCUMENT) && value.length <= 0) {
+      setErrors({ ...errors, [name]: `Please Upload File.` });
     } else {
       setIsError(false);
       setErr(``);
@@ -171,18 +177,96 @@ const RecordForm: React.FC<props> = (props) => {
               } else if (fieldData.dataType === DATA_TYPES.PROGRESS) {
                 return (
                   <Col span={8}>
-                    <SliderInput
+                    <InputRange
                       setValue={onInputChange(fieldCode)}
                       value={values[fieldCode]}
+                      min="10"
+                      max="100"
+                      defaultValue={0}
                       name={fieldData.name}
                       label={fieldData.name}
-                      allowClear={false}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
                     />
                   </Col>
                 );
-              } else if (fieldData.dataType === DATA_TYPES.PHONE) {
+              } else if (fieldData.dataType === DATA_TYPES.IMAGE) {
+                return (
+                  <Col span={8}>
+                    <FileUpload
+                      type={FILES_TYPES.images}
+                      text="Images"
+                      label={fieldData.name}
+                      name={fieldData.name}
+                      setValue={onInputChange(fieldCode)}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
+                    />
+                  </Col>
+                );
+              } else if (fieldData.dataType === DATA_TYPES.DOCUMENT) {
+                return (
+                  <Col span={8}>
+                    <FileUpload
+                      type={FILES_TYPES.documents}
+                      text="Documents"
+                      label={fieldData.name}
+                      name={fieldData.name}
+                      setValue={onInputChange(fieldCode)}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
+                    />
+                  </Col>
+                );
+              } else if (fieldData.dataType === DATA_TYPES.PHONE || fieldData.dataType === DATA_TYPES.DURATION) {
+                let mask = '';
+                let toolTip = '';
+                if (fieldData.dataType === DATA_TYPES.PHONE) {
+                  mask = !!fieldData.settings.format && fieldData.settings.format;
+                } else if (fieldData.dataType === DATA_TYPES.DURATION) {
+                  const x: { maskValue: string[]; maskStruct: string[] } = { maskValue: [], maskStruct: [] };
+                  if (!!fieldData.settings.isYear && fieldData.settings.isYear) {
+                    x.maskValue.push('00');
+                    x.maskStruct.push('yy');
+                  }
+                  if (!!fieldData.settings.isMonths && fieldData.settings.isMonths) {
+                    x.maskValue.push('00');
+                    x.maskStruct.push('MM');
+                  }
+                  if (!!fieldData.settings.isDays && fieldData.settings.isDays) {
+                    x.maskValue.push('000');
+                    x.maskStruct.push('ddd');
+                  }
+                  if (!!fieldData.settings.isHours && fieldData.settings.isHours) {
+                    x.maskValue.push('00');
+                    x.maskStruct.push('hh');
+                  }
+                  if (!!fieldData.settings.isSeconds && fieldData.settings.isSeconds) {
+                    x.maskValue.push('00');
+                    x.maskStruct.push('ss');
+                  }
+                  mask = x.maskValue.join(':');
+                  toolTip = x.maskStruct.join(':');
+
+                  console.log('mask: ', mask);
+                  console.log('toolTip: ', toolTip);
+
+                  // const maskTemp = `${!!fieldData.settings.isYear && fieldData.settings.isYear ? {x.maskValue.push('00'), x.maskValue.push('00')} : ''}${
+                  //   !!fieldData.settings.isMonths && fieldData.settings.isMonths ? x.push(['00'], ['MM']) : ''
+                  // }${!!fieldData.settings.isDays && fieldData.settings.isDays ? x.push(['000'], ['ddd']) : ''}${
+                  //    : ''
+                  // }${!!fieldData.settings.isMints && fieldData.settings.isMints ? x.push(['00'], ['mm']) : ''}${
+                  //    ? x.push(['00'], ['ss']) : ''
+                  // }`;
+
+                  // // toolTip = `${!!fieldData.settings.isYear ? 'yy' : ''}${!!fieldData.settings.isMonths ? ':MM' : ''}${!!fieldData.settings.isDays ? ':ddd' : ''}${
+                  //   !!fieldData.settings.isHours ? ':hh' : ''
+                  // }${!!fieldData.settings.isMints ? ':mm' : ''}${!!fieldData.settings.isSeconds ? ':ss' : ''}`;
+                }
+                const MaskInput: IInputMask = {
+                  maskValue: mask,
+                  maskStructure: toolTip,
+                };
                 return (
                   <Col span={8}>
                     <InputFieldMask
@@ -191,10 +275,12 @@ const RecordForm: React.FC<props> = (props) => {
                       name={fieldData.name}
                       label={fieldData.name}
                       defaultValue={fieldData.defaultValue}
+                      placeholder={MaskInput.maskStructure}
                       inputFieldContainerProps={{ marginBottom: 8 }}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
-                      mask={!!fieldData.settings.format && fieldData.settings.format}
+                      toolTip={toolTip}
+                      inputMask={MaskInput}
                     />
                   </Col>
                 );

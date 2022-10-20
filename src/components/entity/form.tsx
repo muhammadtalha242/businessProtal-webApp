@@ -175,10 +175,6 @@ const EntityForm: React.FC<Props> = (props) => {
 
   const validateValues = (): boolean => {
     let isValid = true;
-    console.log(
-      "Object.values(values.fields).some((field: IFeild) => field.name === ''): ",
-      Object.values(values.fields).some((field: IFeild) => field.name === '')
-    );
 
     if (values.name === '') {
       setIsError(true);
