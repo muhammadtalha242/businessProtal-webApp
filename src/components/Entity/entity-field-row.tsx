@@ -104,8 +104,6 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
                   placeholder={toolTip || 'default'}
                   toolTip={toolTip}
                   inputFieldContainerProps={{ marginBottom: 8 }}
-                  // error={!!errors["defaultValue"]}
-                  // errorMessage={errors[field.name]}
                   inputMask={MaskInput}
                 />
               ) : (

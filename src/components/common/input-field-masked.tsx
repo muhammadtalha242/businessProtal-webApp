@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Tooltip } from 'antd';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { MaskedInput } from 'antd-mask-input';
+import InputMask from 'react-input-mask';
 
 import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, WHITE, BLUE_TERTIARY } from '../../styles/colors';
 
@@ -144,18 +144,17 @@ export const Label = styled.div`
   color: ${GREY_SECONDARY};
   margin-bottom: 8px;
 `;
+const OPS: { [key: string]: number } = { yy: 8760, MM: 730, dd: 24, hh: 1, mm: 0.0166667, ss: 0.000277778 };
 
 const InputFieldMask: React.FC<Props> = (props) => {
-  const [iconActive, setIconActive] = useState(false);
   const inputProps = { ...props };
-  const { maskStructure } = props.inputMask;
 
-  const onChange = (event: { maskedValue: string; unmaskedValue: string }): void => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>): void => {
+
     if (props.setValue)
       props.setValue({
         name: props.name,
-        value: event.maskedValue,
-        storeValue: 'SAD',
+        value: (e.target as HTMLInputElement).value,
       });
   };
 
@@ -169,7 +168,7 @@ const InputFieldMask: React.FC<Props> = (props) => {
           </div>
         )}
         <div>
-          <MaskedInput
+          <InputMask
             mask={props.inputMask.maskValue}
             className={classNames({ error: props.error })}
             placeholder={props.placeholder}
@@ -177,12 +176,9 @@ const InputFieldMask: React.FC<Props> = (props) => {
             onChange={onChange}
             bordered={props.bordered}
             autoComplete="off"
-            maskOptions={{
-              lazy: false,
-            }}
             {...inputProps}
           />
-          {props.activeIcon && props.deactiveIcon && <img src={iconActive ? props.deactiveIcon : props.activeIcon} onClick={() => setIconActive(!iconActive)} className="icon" alt="input-icon" />}
+
           {props.icon && <img src={props.icon} className="icon" alt="input-icon" />}
         </div>
         {props.errorMessage && <div className="error-message">{props.errorMessage}</div>}

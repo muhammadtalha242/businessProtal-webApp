@@ -28,6 +28,7 @@
     "react-dom": "^18.1.0",
     "react-google-recaptcha": "^2.1.0",
     "react-highlight-words": "^0.18.0",
+    "react-input-mask": "^2.0.4",
     "react-query": "^3.39.2",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
@@ -62,6 +63,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-highlight-words": "^0.16.4"
+    "@types/react-highlight-words": "^0.16.4",
+    "@types/react-input-mask": "^3.0.1"
   }
 }

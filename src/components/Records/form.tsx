@@ -18,6 +18,8 @@ import { DATA_TYPES } from '../../constants/entiy';
 import InputFieldMask, { IInputMask } from '../common/input-field-masked';
 import FileUpload, { FILES_TYPES } from '../common/file-upload';
 import InputRange from '../common/slider-input';
+import { MaskedInput } from 'antd-mask-input';
+import InputMask from 'react-input-mask';
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -52,10 +54,17 @@ const RecordForm: React.FC<props> = (props) => {
 
   const onInputChange =
     (fieldName: string) =>
-    ({ name, value, storeValue }: { name: string; value: string; storeValue: string }) => {
-      console.log(' name, value, storeValue : ', name, value, storeValue);
-
+    ({ name, value }: { name: string; value: string }) => {
       validateInput({ fieldName, name, value });
+      const updateState: any = { ...values };
+      updateState[fieldName] = value;
+      setValues(updateState);
+    };
+
+  const onInputFileChange =
+    (fieldName: string) =>
+    ({ name, value }: { name: string; value: File[] }) => {
+      // validateInput({ fieldName, name, value });
       const updateState: any = { ...values };
       updateState[fieldName] = value;
       setValues(updateState);
@@ -89,7 +98,6 @@ const RecordForm: React.FC<props> = (props) => {
     });
     return isValid;
   };
-
   const onSave = () => {
     try {
       console.log(values);
@@ -198,7 +206,7 @@ const RecordForm: React.FC<props> = (props) => {
                       text="Images"
                       label={fieldData.name}
                       name={fieldData.name}
-                      setValue={onInputChange(fieldCode)}
+                      setValue={onInputFileChange(fieldCode)}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
                     />
@@ -212,7 +220,7 @@ const RecordForm: React.FC<props> = (props) => {
                       text="Documents"
                       label={fieldData.name}
                       name={fieldData.name}
-                      setValue={onInputChange(fieldCode)}
+                      setValue={onInputFileChange(fieldCode)}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
                     />
@@ -226,42 +234,27 @@ const RecordForm: React.FC<props> = (props) => {
                 } else if (fieldData.dataType === DATA_TYPES.DURATION) {
                   const x: { maskValue: string[]; maskStruct: string[] } = { maskValue: [], maskStruct: [] };
                   if (!!fieldData.settings.isYear && fieldData.settings.isYear) {
-                    x.maskValue.push('00');
+                    x.maskValue.push('99');
                     x.maskStruct.push('yy');
                   }
                   if (!!fieldData.settings.isMonths && fieldData.settings.isMonths) {
-                    x.maskValue.push('00');
+                    x.maskValue.push('99');
                     x.maskStruct.push('MM');
                   }
                   if (!!fieldData.settings.isDays && fieldData.settings.isDays) {
-                    x.maskValue.push('000');
+                    x.maskValue.push('999');
                     x.maskStruct.push('ddd');
                   }
                   if (!!fieldData.settings.isHours && fieldData.settings.isHours) {
-                    x.maskValue.push('00');
+                    x.maskValue.push('99');
                     x.maskStruct.push('hh');
                   }
                   if (!!fieldData.settings.isSeconds && fieldData.settings.isSeconds) {
-                    x.maskValue.push('00');
+                    x.maskValue.push('99');
                     x.maskStruct.push('ss');
                   }
                   mask = x.maskValue.join(':');
                   toolTip = x.maskStruct.join(':');
-
-                  console.log('mask: ', mask);
-                  console.log('toolTip: ', toolTip);
-
-                  // const maskTemp = `${!!fieldData.settings.isYear && fieldData.settings.isYear ? {x.maskValue.push('00'), x.maskValue.push('00')} : ''}${
-                  //   !!fieldData.settings.isMonths && fieldData.settings.isMonths ? x.push(['00'], ['MM']) : ''
-                  // }${!!fieldData.settings.isDays && fieldData.settings.isDays ? x.push(['000'], ['ddd']) : ''}${
-                  //    : ''
-                  // }${!!fieldData.settings.isMints && fieldData.settings.isMints ? x.push(['00'], ['mm']) : ''}${
-                  //    ? x.push(['00'], ['ss']) : ''
-                  // }`;
-
-                  // // toolTip = `${!!fieldData.settings.isYear ? 'yy' : ''}${!!fieldData.settings.isMonths ? ':MM' : ''}${!!fieldData.settings.isDays ? ':ddd' : ''}${
-                  //   !!fieldData.settings.isHours ? ':hh' : ''
-                  // }${!!fieldData.settings.isMints ? ':mm' : ''}${!!fieldData.settings.isSeconds ? ':ss' : ''}`;
                 }
                 const MaskInput: IInputMask = {
                   maskValue: mask,
@@ -274,13 +267,31 @@ const RecordForm: React.FC<props> = (props) => {
                       value={values[fieldCode]}
                       name={fieldData.name}
                       label={fieldData.name}
-                      defaultValue={fieldData.defaultValue}
                       placeholder={MaskInput.maskStructure}
+                      defaultValue={fieldData.defaultValue}
                       inputFieldContainerProps={{ marginBottom: 8 }}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
-                      toolTip={toolTip}
+                      toolTip={MaskInput.maskStructure}
                       inputMask={MaskInput}
+                    />
+                  </Col>
+                );
+              } else if (fieldData.dataType === DATA_TYPES.TEXT_MULTI_LINE) {
+                return (
+                  <Col span={8}>
+                    <InputField
+                      type="TextArea"
+                      setValue={onInputChange(fieldCode)}
+                      value={values[fieldCode]}
+                      name={fieldData.name}
+                      label={fieldData.name}
+                      defaultValue={fieldData.defaultValue}
+                      inputFieldContainerProps={{ marginBottom: 8 }}
+                      showCount={!!fieldData.settings.fieldLength && parseInt(fieldData.settings.fieldLength) > 0}
+                      maxLength={!!fieldData.settings.fieldLength && parseInt(fieldData.settings.fieldLength) > 0 && fieldData.settings.fieldLength}
+                      error={!!errors[fieldData.name]}
+                      errorMessage={errors[fieldData.name]}
                     />
                   </Col>
                 );
