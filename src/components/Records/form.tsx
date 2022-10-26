@@ -63,10 +63,14 @@ const RecordForm: React.FC<props> = (props) => {
 
   const onInputFileChange =
     (fieldName: string) =>
-    ({ name, value }: { name: string; value: File[] }) => {
+    ({ name, value }: { name: string; value: any }) => {
       // validateInput({ fieldName, name, value });
+
+      console.log("{ name, value }: ", { value });
+      
       const updateState: any = { ...values };
-      updateState[fieldName] = value;
+      updateState['file'] = value;
+      
       setValues(updateState);
     };
 

@@ -27,8 +27,19 @@ const deleteEntity = async (entityId: number) => {
   return res.data;
 };
 
-const addEntityRecord = async (entityName: string, entityRecords: {}) => {
-  const res = await axios.post(`${REACT_APP_API_URL}/entity/${entityName}/record`, entityRecords);
+const addEntityRecord = async (entityName: string, entityRecords: any) => {
+  console.log('entityRecords: ', entityRecords);
+  
+  const test = new FormData()
+  const {file, ...rest} =entityRecords 
+  test.set("data", JSON.stringify(rest))
+  console.log('file: ', file);
+  file.forEach((e: any) => {
+    test.append("file", file)
+  });
+  console.log('file: ', test.getAll('file'));
+
+  const res = await axios.post(`${REACT_APP_API_URL}/entity/${entityName}/record`, test);
   return res.data;
 };
 

@@ -161,7 +161,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     ],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
-    defaultDataType: 'uploadFile',
+    defaultDataType: 'file',
   },
   [DATA_TYPES.IMAGE]: {
     defaultCheckBoxes: [
@@ -171,7 +171,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     ],
     isDisplayForRecords: true,
     isDefaultFieldVisible: true,
-    defaultDataType: 'uploadFile',
+    defaultDataType: 'file',
   },
   [DATA_TYPES.SECTION]: {
     defaultCheckBoxes: [

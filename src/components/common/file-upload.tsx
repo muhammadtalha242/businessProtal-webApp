@@ -43,17 +43,22 @@ const FileUpload: React.FC<props> = (props) => {
   const name = props.name || 'files';
 
   const setUploadFile = (files: UploadFile[]) => {
-    const formData = new FormData();
+   
+    // const formData = new FormData();
+    // formData.append('file', files );
     try {
-      files.forEach((file) => {
-        formData.append('files[]', file as RcFile);
+      const udatedFiles =files.map((file) => {
+        return file as RcFile
+        // formData.append('file', file as RcFile);
       });
+    // console.log(formData.getAll('file')[0]);
+
       setUploading(true);
 
       if (props.setValue)
         props.setValue({
           name,
-          value: formData.getAll('files[]'),
+          value: udatedFiles,
         });
       setUploading(false);
     } catch (error) {
@@ -73,7 +78,7 @@ const FileUpload: React.FC<props> = (props) => {
     const newFileList = fileList.slice();
     newFileList.splice(index, 1);
     setFileList(newFileList);
-    setUploadFile(newFileList);
+    // setUploadFile(newFileList);
   };
 
   const propsUpload: UploadProps = {
