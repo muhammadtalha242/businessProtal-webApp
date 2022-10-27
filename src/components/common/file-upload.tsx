@@ -16,6 +16,7 @@ interface props extends INPUT_PROPS_COMMON {
   text?: string;
   multiple?: boolean;
 }
+
 const FileUploadContainer = styled.div`
   .error-message {
     position: absolute;
@@ -40,25 +41,20 @@ const FileUpload: React.FC<props> = (props) => {
   let accept = '.xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf';
   accept = props.type === FILES_TYPES.images ? 'image/*' : '.xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf';
 
-  const name = props.name || 'files';
 
   const setUploadFile = (files: UploadFile[]) => {
-   
-    // const formData = new FormData();
-    // formData.append('file', files );
+    const formData = new FormData();
     try {
-      const udatedFiles =files.map((file) => {
-        return file as RcFile
-        // formData.append('file', file as RcFile);
+      fileList.forEach((file, index) => {
+        formData.append(`${props.name}`, file as RcFile);
       });
-    // console.log(formData.getAll('file')[0]);
 
       setUploading(true);
 
       if (props.setValue)
         props.setValue({
-          name,
-          value: udatedFiles,
+          name: props.name,
+          value: fileList,
         });
       setUploading(false);
     } catch (error) {
@@ -78,11 +74,11 @@ const FileUpload: React.FC<props> = (props) => {
     const newFileList = fileList.slice();
     newFileList.splice(index, 1);
     setFileList(newFileList);
-    // setUploadFile(newFileList);
+    setUploadFile(newFileList);
   };
 
   const propsUpload: UploadProps = {
-    name,
+    name: 'files',
     accept,
     onRemove,
     beforeUpload: (file) => {

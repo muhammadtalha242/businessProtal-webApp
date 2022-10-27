@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams, useLocation } from 'react-router';
 import { SearchOutlined } from '@ant-design/icons';
-import type { InputRef } from 'antd';
+import { Image, InputRef } from 'antd';
 import { Button, Input, Space } from 'antd';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import type { FilterConfirmProps } from 'antd/es/table/interface';
@@ -22,6 +22,7 @@ import { sortData, transformData } from '../../utils/filters';
 import { UserContext } from '../../context/user.context';
 import { EntityContext } from '../../context/entity.context';
 import { IEntity, IFeild } from '../Entity/form';
+import { DATA_TYPES } from '../../constants/entiy';
 
 interface props {}
 
@@ -151,13 +152,6 @@ const Records: React.FC<props> = (props) => {
         setTimeout(() => searchInput.current?.select(), 1);
       }
     },
-    render: (text) => {
-      return searchedColumn === dataIndex ? (
-        <Highlighter highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }} searchWords={[searchText]} autoEscape textToHighlight={text ? text.toString() : ''} />
-      ) : (
-        text
-      );
-    },
     sorter: {
       compare: (record_1, record_2) => {
         const res = record_1[dataIndex] - record_2[dataIndex] ? record_1[dataIndex] - record_2[dataIndex] : ('' + record_1[dataIndex]).localeCompare(record_2[dataIndex]);
@@ -168,15 +162,36 @@ const Records: React.FC<props> = (props) => {
   });
 
   const getTableColumns = () => {
-    const columns: ColumnsType<IDataType> = Object.entries(currentEntity.fields).map((field: [any, IFeild], index: number) => {
+    const columns: any = Object.entries(currentEntity.fields).map((field: [any, IFeild], index: number) => {
       const fieldCode = field[0];
       const fieldData = field[1];
-
       return {
-        title: ` ${fieldData.name}`,
+        title: `${fieldData.name}`,
         dataIndex: fieldCode,
         key: fieldCode,
-        ...getColumnSearchProps(fieldCode, fieldData.name),
+        render: (theImageURLS: any) => {
+          if (fieldData.dataType === DATA_TYPES.IMAGE) {
+            return theImageURLS.map((imageUrl: any) => {
+              // https://storage.cloud.google.com/pit-dev3/WIN_20220803_06_44_30_Pro - Copy-1666881760589.jpg
+              const splittedName = imageUrl.split('/');
+              const fileName = splittedName[splittedName.length - 1];
+              return <Image width={150} alt={fileName} src={imageUrl} />;
+            });
+          } else if (fieldData.dataType === DATA_TYPES.DOCUMENT) {
+            return theImageURLS.map((imageUrl: any) => {
+              const splittedName = imageUrl.split('/');
+              const fileName = splittedName[splittedName.length - 1];
+
+              return (
+                <a href={imageUrl} download target="_blank" rel="noreferrer">
+                  {fileName}
+                </a>
+              );
+            });
+          } else {
+            return theImageURLS;
+          }
+        },
       };
     });
 
@@ -200,15 +215,19 @@ const Records: React.FC<props> = (props) => {
   };
   const getTableData = async (response: any) => {
     const rowData: IDataType[] = response.map((value: any, index: number) => {
-      // Object.entries(currentEntity.fields).forEach((field: [string, IFeild]) => {
-      //   const [fieldCode, fieldData] = field;
-      //   const { settings: fieldSettings } = fieldData;
-      //   if (fieldSettings.prefix && value[fieldCode]) {
-      //     value[fieldCode] = `${fieldSettings.prefix} ${value[fieldCode]}`;
-      //   }
-      // });
+      Object.entries(currentEntity.fields).forEach((field: [string, IFeild]) => {
+        const [fieldCode, fieldData] = field;
+        const { dataType } = fieldData;
+        // if ((dataType === DATA_TYPES.DOCUMENT || dataType === DATA_TYPES.IMAGE) && value[fieldCode]) {
+        //   value[fieldCode] = <img alt="" src="../../../public/images/Polaris-Logo.jpg" />;
+        // }
+      });
+      console.log('INSIDE. ', value);
 
-      return { index: index + 1, ...value };
+      return {
+        index: index + 1,
+        ...value,
+      };
     });
     setTableData([...rowData]);
   };
@@ -221,8 +240,11 @@ const Records: React.FC<props> = (props) => {
         await EntityServices.updateEntityRecord(entityName, entityRecords.id, datesAdd);
         getData();
       } else if (entityName) {
+        entityRecords.set('createdAt', moment().toDate());
+        entityRecords.set('updatedAt', moment().toDate());
         const datesAdd = { ...entityRecords, createdAt: moment().toDate(), updatedAt: moment().toDate() };
-        await EntityServices.addEntityRecord(entityName, datesAdd);
+        // await EntityServices.addEntityRecord(entityName, datesAdd);
+        await EntityServices.addEntityRecord(entityName, entityRecords);
         getData();
       }
     } catch (error: any) {}
@@ -281,7 +303,7 @@ const Records: React.FC<props> = (props) => {
       </DashboardHeader>
       {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={entityState.selectEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
       <FilterCollapes entityFields={entityState.selectEntity.fields} getFilterData={getFilterData} />
-      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} scroll={{ x: '100vw' }}/>}
+      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} scroll={{ x: '100vw' }} />}
     </EntityRecordDisplayContainer>
   );
 };

@@ -1,5 +1,5 @@
 import { Alert, Col, Divider, Row } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { GREEN_PRIMARY, RED_PRIMARY } from '../../styles/colors';
 import { OutlinedButton } from '../common/button';
@@ -37,6 +37,8 @@ const YES_NO_OPTIONS: IOptionType[] = [
 
 const RecordForm: React.FC<props> = (props) => {
   const [values, setValues] = useState(props.isEdit ? props.recordSelected : {});
+  const [currentFormData, setFormData] = useState<FormData>(new FormData());
+  // const currentFormData = useRef<FormData>(new FormData());
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -44,9 +46,12 @@ const RecordForm: React.FC<props> = (props) => {
     if (props.isEdit) setValues(props.recordSelected);
     else {
       const state: any = {};
+      const updateFormData: any = currentFormData;
       Object.entries(props.formData).forEach((field: [string, IFeild], index: number) => {
         state[field[0]] = field[1].defaultValue;
+        updateFormData.set(field[0], field[1].defaultValue);
       });
+      setFormData(updateFormData);
 
       setValues({ ...state });
     }
@@ -56,6 +61,11 @@ const RecordForm: React.FC<props> = (props) => {
     (fieldName: string) =>
     ({ name, value }: { name: string; value: string }) => {
       validateInput({ fieldName, name, value });
+
+      const updateFormData: any = currentFormData;
+      updateFormData.set(fieldName, value);
+      setFormData(updateFormData);
+
       const updateState: any = { ...values };
       updateState[fieldName] = value;
       setValues(updateState);
@@ -66,11 +76,17 @@ const RecordForm: React.FC<props> = (props) => {
     ({ name, value }: { name: string; value: any }) => {
       // validateInput({ fieldName, name, value });
 
-      console.log("{ name, value }: ", { value });
-      
+      const updateFormData: any = currentFormData;
+      updateFormData.delete(fieldName);
+      value.forEach((file: File) => {
+        updateFormData.append(fieldName, file);
+      });
+
+      setFormData(updateFormData);
+
       const updateState: any = { ...values };
-      updateState['file'] = value;
-      
+      updateState[fieldName] = value;
+
       setValues(updateState);
     };
 
@@ -107,7 +123,7 @@ const RecordForm: React.FC<props> = (props) => {
       console.log(values);
       console.log(props.formData);
       if (validateValues()) {
-        props.onSave(values);
+        props.onSave(currentFormData);
         props.setShowForm(false);
         props.setIsEdit(false);
       }
@@ -209,7 +225,7 @@ const RecordForm: React.FC<props> = (props) => {
                       type={FILES_TYPES.images}
                       text="Images"
                       label={fieldData.name}
-                      name={fieldData.name}
+                      name={fieldCode}
                       setValue={onInputFileChange(fieldCode)}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
@@ -223,7 +239,7 @@ const RecordForm: React.FC<props> = (props) => {
                       type={FILES_TYPES.documents}
                       text="Documents"
                       label={fieldData.name}
-                      name={fieldData.name}
+                      name={fieldCode}
                       setValue={onInputFileChange(fieldCode)}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
