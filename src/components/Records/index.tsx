@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams, useLocation } from 'react-router';
 import { SearchOutlined } from '@ant-design/icons';
-import { Image, InputRef } from 'antd';
+import { Avatar, Image, InputRef, List } from 'antd';
 import { Button, Input, Space } from 'antd';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import type { FilterConfirmProps } from 'antd/es/table/interface';
@@ -23,6 +23,7 @@ import { UserContext } from '../../context/user.context';
 import { EntityContext } from '../../context/entity.context';
 import { IEntity, IFeild } from '../Entity/form';
 import { DATA_TYPES } from '../../constants/entiy';
+import { error, success } from '../common/message';
 
 interface props {}
 
@@ -46,7 +47,7 @@ const Records: React.FC<props> = (props) => {
   const [recordSelected, setRecordSelected] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [filterData, setFilterData] = useState<IFilter>();
-
+  const [loading, setLoading] = useState(false);
   const { state: userState } = useContext(UserContext);
   const { state: entityState } = useContext(EntityContext);
 
@@ -94,8 +95,9 @@ const Records: React.FC<props> = (props) => {
         setEntityData(res.entity);
         return res.entity;
       }
-    } catch (error: any) {
-      console.log(error);
+    } catch (err: any) {
+      console.log(err);
+      error('Error');
     }
   };
 
@@ -170,24 +172,46 @@ const Records: React.FC<props> = (props) => {
         dataIndex: fieldCode,
         key: fieldCode,
         render: (theImageURLS: any) => {
-          if (fieldData.dataType === DATA_TYPES.IMAGE) {
-            return theImageURLS.map((imageUrl: any) => {
-              // https://storage.cloud.google.com/pit-dev3/WIN_20220803_06_44_30_Pro - Copy-1666881760589.jpg
-              const splittedName = imageUrl.split('/');
-              const fileName = splittedName[splittedName.length - 1];
-              return <Image width={150} alt={fileName} src={imageUrl} />;
-            });
-          } else if (fieldData.dataType === DATA_TYPES.DOCUMENT) {
-            return theImageURLS.map((imageUrl: any) => {
-              const splittedName = imageUrl.split('/');
-              const fileName = splittedName[splittedName.length - 1];
+          if (fieldData.dataType === DATA_TYPES.IMAGE && !!theImageURLS && theImageURLS.length > 0) {
+            return (
+              <List
+                itemLayout="horizontal"
+                dataSource={theImageURLS}
+                renderItem={(item: any) => {
+                  const splittedName = item.split('/');
+                  const fileName = splittedName[splittedName.length - 1];
+                  return (
+                    <>
+                      <List.Item>
+                        <Image width={300} height={150} alt={fileName} src={item} />
+                      </List.Item>
+                    </>
+                  );
+                }}
+              />
+            );
+          } else if (fieldData.dataType === DATA_TYPES.DOCUMENT && !!theImageURLS && theImageURLS.length > 0) {
+            return (
+              <List
+                itemLayout="horizontal"
+                dataSource={theImageURLS}
+                renderItem={(item: any) => {
+                  console.log('item: ', item);
+                  const splittedName = item.split('/');
+                  const fileName = splittedName[splittedName.length - 1];
+                  return (
+                    <>
+                      <List.Item>
+                        <List.Item.Meta
+                          avatar={<Avatar src="/images/icons/doc.png" />}
 
-              return (
-                <a href={imageUrl} download target="_blank" rel="noreferrer">
-                  {fileName}
-                </a>
-              );
-            });
+                        />
+                      </List.Item>
+                    </>
+                  );
+                }}
+              />
+            );
           } else {
             return theImageURLS;
           }
@@ -215,14 +239,14 @@ const Records: React.FC<props> = (props) => {
   };
   const getTableData = async (response: any) => {
     const rowData: IDataType[] = response.map((value: any, index: number) => {
-      Object.entries(currentEntity.fields).forEach((field: [string, IFeild]) => {
-        const [fieldCode, fieldData] = field;
-        const { dataType } = fieldData;
-        // if ((dataType === DATA_TYPES.DOCUMENT || dataType === DATA_TYPES.IMAGE) && value[fieldCode]) {
-        //   value[fieldCode] = <img alt="" src="../../../public/images/Polaris-Logo.jpg" />;
-        // }
-      });
-      console.log('INSIDE. ', value);
+      // Object.entries(currentEntity.fields).forEach((field: [string, IFeild]) => {
+      //   const [fieldCode, fieldData] = field;
+      //   const { dataType } = fieldData;
+      //   // if ((dataType === DATA_TYPES.DOCUMENT || dataType === DATA_TYPES.IMAGE) && value[fieldCode]) {
+      //   //   value[fieldCode] = <img alt="" src="../../../public/images/Polaris-Logo.jpg" />;
+      //   // }
+      // });
+      // console.log('INSIDE. ', value);
 
       return {
         index: index + 1,
@@ -234,20 +258,32 @@ const Records: React.FC<props> = (props) => {
 
   const onSave = async (entityRecords: any) => {
     try {
+      setLoading(true);
       if (isEdit && entityName) {
         const { index, ...restVal } = entityRecords;
         const datesAdd = { ...restVal, updatedAt: moment().toDate() };
-        await EntityServices.updateEntityRecord(entityName, entityRecords.id, datesAdd);
-        getData();
+        const res = await EntityServices.updateEntityRecord(entityName, entityRecords.id, datesAdd);
+        success(res.message);
+        await getData();
+        setShowForm(false);
+        setIsEdit(false);
+        setLoading(false);
       } else if (entityName) {
         entityRecords.set('createdAt', moment().toDate());
         entityRecords.set('updatedAt', moment().toDate());
-        const datesAdd = { ...entityRecords, createdAt: moment().toDate(), updatedAt: moment().toDate() };
+        // const datesAdd = { ...entityRecords, createdAt: moment().toDate(), updatedAt: moment().toDate() };
         // await EntityServices.addEntityRecord(entityName, datesAdd);
-        await EntityServices.addEntityRecord(entityName, entityRecords);
-        getData();
+        const res = await EntityServices.addEntityRecord(entityName, entityRecords);
+        success(res.message);
+        await getData();
+        setShowForm(false);
+        setIsEdit(false);
+        setLoading(false);
       }
-    } catch (error: any) {}
+    } catch (err: any) {
+      setLoading(false);
+      error('Error');
+    }
   };
 
   const handleSearch = (selectedKeys: string[], confirm: (param?: FilterConfirmProps) => void, dataIndex: DataIndex) => {
@@ -301,9 +337,11 @@ const Records: React.FC<props> = (props) => {
             </FilledButton>
           )}
       </DashboardHeader>
-      {showForm && <Form setShowForm={setShowForm} onSave={onSave} formData={entityState.selectEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} />}
+      {showForm && (
+        <Form setShowForm={setShowForm} onSave={onSave} formData={entityState.selectEntity.fields} recordSelected={recordSelected} isEdit={isEdit} setIsEdit={setIsEdit} loading={loading} />
+      )}
       <FilterCollapes entityFields={entityState.selectEntity.fields} getFilterData={getFilterData} />
-      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} scroll={{ x: '100vw' }} />}
+      {tableData && columnData && <TableDraggable data={tableData} columns={columnData} rowSelection={rowSelection} scroll={{ x: '100vw' }} tableLayout={'auto'} />}
     </EntityRecordDisplayContainer>
   );
 };

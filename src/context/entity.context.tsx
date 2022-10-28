@@ -5,6 +5,7 @@ interface IState {
   allEntities: IEntity[];
   selectEntity: IEntity;
   currentEntity: IEntity;
+  currentRecord: any;
 }
 
 export const defaultEntityValues: IEntity = {
@@ -23,6 +24,7 @@ const initialState: IState = {
   allEntities: [],
   selectEntity: { ...defaultEntityValues },
   currentEntity: { ...defaultEntityValues },
+  currentRecord: {},
 };
 
 type IActions = {
@@ -35,6 +37,7 @@ const ACTION_TYPES = {
   SET_CURRENT_ENTITY: 'SET_CURRENT_ENTITY',
   SET_ALL_ENTITIES: 'SET_ALL_ENTITIES',
   UPDATE_ENTITY_PERMISSIONS: 'UPDATE_ENTITY_PERMISSIONS',
+  SET_CURRENT_RECORD: 'SET_CURRENT_RECORD',
 };
 
 const entityReducer = (state: IState, action: IActions): IState => {
@@ -59,6 +62,11 @@ const entityReducer = (state: IState, action: IActions): IState => {
         ...state,
         currentEntity: { ...action.payload },
       };
+    case ACTION_TYPES.SET_CURRENT_RECORD:
+      return {
+        ...state,
+        currentRecord: { ...action.payload },
+      };
 
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -79,6 +87,10 @@ export const setAllEntities = (dispatch: React.Dispatch<IActions> | undefined) =
 
 export const updateEntityPermissions = (dispatch: React.Dispatch<IActions> | undefined) => (entity: IEntity) => {
   if (dispatch) dispatch({ type: ACTION_TYPES.UPDATE_ENTITY_PERMISSIONS, payload: entity });
+};
+
+export const setCurrentEntityRecord = (dispatch: React.Dispatch<IActions> | undefined) => (record: any) => {
+  if (dispatch) dispatch({ type: ACTION_TYPES.SET_CURRENT_RECORD, payload: record });
 };
 
 const Context = () => {

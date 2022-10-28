@@ -39,8 +39,7 @@ const FileUpload: React.FC<props> = (props) => {
   const [uploading, setUploading] = useState(false);
 
   let accept = '.xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf';
-  accept = props.type === FILES_TYPES.images ? 'image/*' : '.xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf';
-
+  accept = props.type === FILES_TYPES.images ? 'image/*' : '.xlsx,.xls, .doc, .docx,.ppt, .pptx,.txt,.pdf';
 
   const setUploadFile = (files: UploadFile[]) => {
     const formData = new FormData();
@@ -92,7 +91,7 @@ const FileUpload: React.FC<props> = (props) => {
   return (
     <FileUploadContainer>
       {props.label && <div>{props.label && <Label>{props.label}</Label>}</div>}
-      <Upload {...propsUpload}>
+      <Upload {...propsUpload} multiple>
         <Button icon={<UploadOutlined />} loading={uploading}>
           {`Select ${props.text}` || 'Select File'}
         </Button>

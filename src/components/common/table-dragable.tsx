@@ -49,7 +49,7 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }: Dr
   return <tr ref={ref} className={`${className}${isOver ? dropClassName : ''}`} style={{ cursor: 'move', ...style }} {...restProps} />;
 };
 
-const App: React.FC<props> = ({ columns, data, rowSelection, scroll, tableLayout }) => {
+const CustomTable: React.FC<props> = ({ columns, data, rowSelection, scroll, tableLayout }) => {
   const [tableData, setTableData] = useState<any>();
   const [tableColumns, setTableColumns] = useState();
 
@@ -101,4 +101,4 @@ const App: React.FC<props> = ({ columns, data, rowSelection, scroll, tableLayout
   );
 };
 
-export default App;
+export default CustomTable;

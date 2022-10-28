@@ -17,6 +17,7 @@ import NewPassword from '../pages/auth/new-password';
 import Dashboard from '../pages/home';
 import Entity from '../pages/entity';
 import EntityRecords from '../pages/records';
+import EntityRecordView from '../pages/record-view';
 import EntityPermission from '../pages/permission';
 import Administartion from '../pages/administration';
 
@@ -47,18 +48,18 @@ const PAGES: IPage[] = [
     component: Entity,
   },
   {
-    key: 'entity',
+    key: 'entityRecord',
     path: '/entity/:entityName',
     exact: true,
     isProtected: true,
     component: EntityRecords,
   },
   {
-    key: 'entity',
+    key: 'entityRecordView',
     path: '/entity/:entityName/:recordId',
     exact: true,
     isProtected: true,
-    component: EntityRecords,
+    component: EntityRecordView,
   },
   {
     key: 'permissions',
