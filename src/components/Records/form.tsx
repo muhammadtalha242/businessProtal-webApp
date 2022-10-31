@@ -20,6 +20,7 @@ import FileUpload, { FILES_TYPES } from '../common/file-upload';
 import InputRange from '../common/slider-input';
 import { MaskedInput } from 'antd-mask-input';
 import InputMask from 'react-input-mask';
+import GoogleMaps from '../common/google-maps';
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -39,7 +40,6 @@ const YES_NO_OPTIONS: IOptionType[] = [
 const RecordForm: React.FC<props> = (props) => {
   const [values, setValues] = useState(props.isEdit ? props.recordSelected : {});
   const [currentFormData, setFormData] = useState<FormData>(new FormData());
-  // const currentFormData = useRef<FormData>(new FormData());
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -64,8 +64,26 @@ const RecordForm: React.FC<props> = (props) => {
     ({ name, value }: { name: string; value: string }) => {
       validateInput({ fieldName, name, value });
 
+      console.log('name, value', name, value);
+
       const updateFormData: any = currentFormData;
       updateFormData.set(fieldName, value);
+      setFormData(updateFormData);
+
+      const updateState: any = { ...values };
+      updateState[fieldName] = value;
+      setValues(updateState);
+    };
+
+  const onInputLocationChange =
+    (fieldName: string) =>
+    ({ name, value }: { name: string; value: string }) => {
+      validateInput({ fieldName, name, value });
+
+      console.log('name, value', name, JSON.stringify(value));
+
+      const updateFormData: any = currentFormData;
+      updateFormData.set(fieldName, JSON.stringify(value));
       setFormData(updateFormData);
 
       const updateState: any = { ...values };
@@ -76,8 +94,6 @@ const RecordForm: React.FC<props> = (props) => {
   const onInputFileChange =
     (fieldName: string) =>
     ({ name, value }: { name: string; value: any }) => {
-      // validateInput({ fieldName, name, value });
-
       const updateFormData: any = currentFormData;
       updateFormData.delete(fieldName);
       value.forEach((file: File) => {
@@ -317,6 +333,12 @@ const RecordForm: React.FC<props> = (props) => {
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
                     />
+                  </Col>
+                );
+              } else if (fieldData.dataType === DATA_TYPES.LOCATION) {
+                return (
+                  <Col span={8}>
+                    <GoogleMaps setValue={onInputLocationChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} />
                   </Col>
                 );
               } else if (DATA_TYPES_MAPPER[fieldData.dataType] === 'string') {

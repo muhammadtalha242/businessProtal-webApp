@@ -9,6 +9,7 @@ import { EntityContext } from '../../context/entity.context';
 import { IFeild } from '../Entity/form';
 import { DATA_TYPES } from '../../constants/entiy';
 import { error } from '../common/message';
+import GoogleMaps from '../common/google-maps';
 
 interface props {}
 
@@ -62,7 +63,7 @@ const RecordView: React.FC<props> = (props) => {
   return (
     <EntityRecordDisplayContainer>
       <DashboardHeader title={`${entityState.selectEntity.name} Record`} />
-      <EntityRecordHeaderContainer >
+      <EntityRecordHeaderContainer>
         <div className="left">Feild Name</div>
         <div className="right">Values</div>
       </EntityRecordHeaderContainer>
@@ -71,7 +72,11 @@ const RecordView: React.FC<props> = (props) => {
         const { name } = fieldData;
         const DisplayData = () => {
           const data: any = entityRecordata[fieldCode];
-          if (fieldData.dataType === DATA_TYPES.IMAGE && !!data && data.length > 0) {
+          if (fieldData.dataType === DATA_TYPES.LOCATION && !!data && data.length > 0) {
+            console.log(data);
+            const location = JSON.parse(data);
+            return <GoogleMaps value={location} />;
+          } else if (fieldData.dataType === DATA_TYPES.IMAGE && !!data && data.length > 0) {
             return (
               <List
                 itemLayout="horizontal"
