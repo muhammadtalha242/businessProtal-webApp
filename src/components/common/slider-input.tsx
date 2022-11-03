@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { GREY_PRIMARY, GREY_SEPTENARY, GREEN_PRIMARY, WHITE, GREY_SECONDARY, RED_PRIMARY, BLUE_SECONDARY } from '../../styles/colors';
 
 interface Props {
-  label?: string;
+  label?: React.ReactNode | string;
   min: string;
   max: string;
   defaultValue?: number;

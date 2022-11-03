@@ -134,3 +134,11 @@ export const EntityRecordValuesContainer = styled.div`
   color: ${BLACK};
   width: 100%;
 `;
+
+export const FieldLabelContainer = styled.div`
+  display: flex;
+
+  .title {
+    margin-right: 4px;
+  }
+`;

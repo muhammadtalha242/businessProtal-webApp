@@ -12,7 +12,7 @@ export interface IOptionType {
 }
 
 interface Props {
-  label?: string;
+  label?: React.ReactNode | string;
   value?: any;
   setValue?: Function;
   placeholder?: string;

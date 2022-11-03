@@ -4,7 +4,7 @@ import { Avatar, Col, Image, List, Row } from 'antd';
 
 import EntityServices from '../../services/entity';
 import DashboardHeader from '../common/dashboard-header';
-import { EntityRecordDisplayContainer, EntityRecordHeaderContainer, EntityRecordValuesContainer, FieldNameContainer, FieldValueContainer } from './container';
+import { EntityRecordDisplayContainer, EntityRecordHeaderContainer, EntityRecordValuesContainer, FieldLabelContainer, FieldNameContainer, FieldValueContainer } from './container';
 import { EntityContext } from '../../context/entity.context';
 import { IFeild } from '../Entity/form';
 import { DATA_TYPES } from '../../constants/entiy';
@@ -19,13 +19,14 @@ export interface IDataType {
   record: any;
 }
 
+const PublicIcon: React.FC<{ isPublic: boolean }> = ({ isPublic }) => {
+  return <>{isPublic && <img src={`/images/icons/public_icon.svg`} width={20} height={20} alt="public" />}</>;
+};
+
 const RecordView: React.FC<props> = (props) => {
   const [entityRecordata, setEntityRecordata] = useState([]);
-
   const { state: entityState } = useContext(EntityContext);
-
   const { entityName, recordId } = useParams();
-
   const { selectEntity: currentEntity } = entityState;
 
   useEffect(() => {
@@ -125,7 +126,12 @@ const RecordView: React.FC<props> = (props) => {
         };
         return (
           <EntityRecordValuesContainer>
-            <FieldNameContainer>{name}</FieldNameContainer>
+            <FieldNameContainer>
+              <FieldLabelContainer>
+                <div className="title">{name}</div>
+                <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+              </FieldLabelContainer>
+            </FieldNameContainer>
             <FieldValueContainer>
               <DisplayData />
             </FieldValueContainer>

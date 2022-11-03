@@ -97,3 +97,11 @@ export const SortRecordsHeaderContainer = styled.div`
   color: ${BLACK};
   text-align: start;
 `;
+
+export const FieldLabelContainer = styled.div`
+  display: flex;
+  
+  .title {
+    margin-right: 4px;
+  }
+`;

@@ -1,4 +1,4 @@
-import { Alert, Col, Divider, Row } from 'antd';
+import { Alert, Col, Divider, Row, Tooltip } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { GREEN_PRIMARY, RED_PRIMARY } from '../../styles/colors';
@@ -6,7 +6,7 @@ import { OutlinedButton } from '../common/button';
 import InputField from '../common/input-field';
 import { VerticalSpace } from '../common/space';
 import { IFeild, IFeilds } from '../Entity/form';
-import { EntityRecordFormContainer } from './container';
+import { EntityRecordFormContainer, FieldLabelContainer } from './container';
 import InputDate from '../common/date-input';
 import SelectField, { IOptionType } from '../common/select';
 import SliderInput from '../common/slider-input';
@@ -36,6 +36,10 @@ const YES_NO_OPTIONS: IOptionType[] = [
   { label: 'Yes', value: 'Yes' },
   { label: 'No', value: 'No' },
 ];
+
+const PublicIcon: React.FC<{ isPublic: boolean }> = ({ isPublic }) => {
+  return <>{isPublic && <img src={`/images/icons/public_icon.svg`} width={20} height={20} alt="public" />}</>;
+};
 
 const RecordForm: React.FC<props> = (props) => {
   const [values, setValues] = useState(props.isEdit ? props.recordSelected : {});
@@ -186,14 +190,20 @@ const RecordForm: React.FC<props> = (props) => {
             .map((field: [string, IFeild], index: number) => {
               const fieldCode = field[0];
               const fieldData = field[1];
-
+              let displayedField = <></>;
               if (fieldData.dataType === DATA_TYPES.YES_NO) {
-                return (
+                displayedField = (
                   <Col span={4}>
                     <SelectField
                       options={YES_NO_OPTIONS}
                       value={values[fieldCode]}
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       setValue={onInputChange(fieldCode)}
                       placeholder="Choose options"
                       name={fieldData.name}
@@ -206,13 +216,19 @@ const RecordForm: React.FC<props> = (props) => {
                   </Col>
                 );
               } else if (fieldData.dataType === DATA_TYPES.DATE) {
-                return (
+                displayedField = (
                   <Col span={4}>
                     <InputDate
                       setValue={onInputChange(fieldCode)}
                       value={values[fieldCode]}
                       name={fieldData.name}
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       placeholder={fieldData.defaultValue}
                       datePickerContainerProps={{ marginBottom: 0 }}
                       error={!!errors[fieldData.name]}
@@ -221,7 +237,7 @@ const RecordForm: React.FC<props> = (props) => {
                   </Col>
                 );
               } else if (fieldData.dataType === DATA_TYPES.PROGRESS) {
-                return (
+                displayedField = (
                   <Col span={8}>
                     <InputRange
                       setValue={onInputChange(fieldCode)}
@@ -230,19 +246,31 @@ const RecordForm: React.FC<props> = (props) => {
                       max="100"
                       defaultValue={0}
                       name={fieldData.name}
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
                     />
                   </Col>
                 );
               } else if (fieldData.dataType === DATA_TYPES.IMAGE) {
-                return (
+                displayedField = (
                   <Col span={8}>
                     <FileUpload
                       type={FILES_TYPES.images}
                       text="Images"
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       name={fieldCode}
                       multiple
                       setValue={onInputFileChange(fieldCode)}
@@ -252,12 +280,18 @@ const RecordForm: React.FC<props> = (props) => {
                   </Col>
                 );
               } else if (fieldData.dataType === DATA_TYPES.DOCUMENT) {
-                return (
+                displayedField = (
                   <Col span={8}>
                     <FileUpload
                       type={FILES_TYPES.documents}
                       text="Documents"
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       name={fieldCode}
                       multiple
                       setValue={onInputFileChange(fieldCode)}
@@ -300,13 +334,19 @@ const RecordForm: React.FC<props> = (props) => {
                   maskValue: mask,
                   maskStructure: toolTip,
                 };
-                return (
+                displayedField = (
                   <Col span={8}>
                     <InputFieldMask
                       setValue={onInputChange(fieldCode)}
                       value={values[fieldCode]}
                       name={fieldData.name}
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       placeholder={MaskInput.maskStructure}
                       defaultValue={fieldData.defaultValue}
                       inputFieldContainerProps={{ marginBottom: 8 }}
@@ -318,14 +358,20 @@ const RecordForm: React.FC<props> = (props) => {
                   </Col>
                 );
               } else if (fieldData.dataType === DATA_TYPES.TEXT_MULTI_LINE) {
-                return (
+                displayedField = (
                   <Col span={8}>
                     <InputField
                       type="TextArea"
                       setValue={onInputChange(fieldCode)}
                       value={values[fieldCode]}
                       name={fieldData.name}
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       defaultValue={fieldData.defaultValue}
                       inputFieldContainerProps={{ marginBottom: 8 }}
                       showCount={!!fieldData.settings.fieldLength && parseInt(fieldData.settings.fieldLength) > 0}
@@ -336,20 +382,26 @@ const RecordForm: React.FC<props> = (props) => {
                   </Col>
                 );
               } else if (fieldData.dataType === DATA_TYPES.LOCATION) {
-                return (
+                displayedField = (
                   <Col span={8}>
                     <GoogleMaps setValue={onInputLocationChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} />
                   </Col>
                 );
               } else if (DATA_TYPES_MAPPER[fieldData.dataType] === 'string') {
-                return (
+                displayedField = (
                   <Col span={8}>
                     <InputField
                       type="input"
                       setValue={onInputChange(fieldCode)}
                       value={values[fieldCode]}
                       name={fieldData.name}
-                      label={fieldData.name}
+                      label={
+                        <FieldLabelContainer>
+                          <div className="title">{fieldData.name}</div>
+
+                          <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                        </FieldLabelContainer>
+                      }
                       defaultValue={fieldData.defaultValue}
                       inputFieldContainerProps={{ marginBottom: 8 }}
                       showCount={!!fieldData.settings.fieldLength && parseInt(fieldData.settings.fieldLength) > 0}
@@ -360,26 +412,35 @@ const RecordForm: React.FC<props> = (props) => {
                   </Col>
                 );
               } else if (DATA_TYPES_MAPPER[fieldData.dataType] === 'number') {
-                return (
-                  <Col span={8}>
-                    <InputFieldNumber
-                      type="input"
-                      precision={fieldData.settings && fieldData.settings.decimals}
-                      setValue={onInputChange(fieldCode)}
-                      value={values[fieldCode]}
-                      name={fieldData.name}
-                      label={fieldData.name}
-                      defaultValue={parseInt(fieldData.defaultValue)}
-                      inputFieldContainerProps={{ marginBottom: 8 }}
-                      error={!!errors[fieldData.name]}
-                      errorMessage={errors[fieldData.name]}
-                      addonBefore={!!fieldData.settings.prefix && fieldData.settings.prefix}
-                    />
-                  </Col>
+                displayedField = (
+                  <InputFieldNumber
+                    type="input"
+                    precision={fieldData.settings && fieldData.settings.decimals}
+                    setValue={onInputChange(fieldCode)}
+                    value={values[fieldCode]}
+                    name={fieldData.name}
+                    label={
+                      <FieldLabelContainer>
+                        <div className="title">{fieldData.name}</div>
+
+                        <PublicIcon isPublic={fieldData.settings && fieldData.settings.isPublic} />
+                      </FieldLabelContainer>
+                    }
+                    defaultValue={parseInt(fieldData.defaultValue)}
+                    inputFieldContainerProps={{ marginBottom: 8 }}
+                    error={!!errors[fieldData.name]}
+                    errorMessage={errors[fieldData.name]}
+                    addonBefore={!!fieldData.settings.prefix && fieldData.settings.prefix}
+                  />
                 );
               } else {
                 return <>{fieldData.dataType} to be implemented</>;
               }
+              return (
+                <Tooltip title={fieldData.settings && fieldData.settings.helpText}>
+                  <Col span={8}>{displayedField} </Col>
+                </Tooltip>
+              );
             })}
       </Row>
 

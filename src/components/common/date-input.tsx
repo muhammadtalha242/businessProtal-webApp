@@ -6,7 +6,7 @@ import moment from 'moment';
 import { GREY_PRIMARY, GREEN_PRIMARY, GREY_SECONDARY, RED_PRIMARY, GREY_TERIARY } from '../../styles/colors';
 
 interface Props {
-  label?: string;
+  label?: React.ReactNode | string;
   value?: any;
   setValue?: Function;
   placeholder?: string;
@@ -90,6 +90,7 @@ const CustomDateTimePicker: React.FC<Props> = (props) => {
           placeholder={props.placeholder}
           name={props.name}
           size={'small'}
+          showTime={{ format: 'HH:mm' }}
           bordered={props.bordered}
           suffixIcon={null}
           value={props.value && moment(props.value, dateFormat)}
