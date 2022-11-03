@@ -1,5 +1,5 @@
 import { Alert, Col, Divider, Row, Tooltip } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { GREEN_PRIMARY, RED_PRIMARY } from '../../styles/colors';
 import { OutlinedButton } from '../common/button';
@@ -9,7 +9,6 @@ import { IFeild, IFeilds } from '../Entity/form';
 import { EntityRecordFormContainer, FieldLabelContainer } from './container';
 import InputDate from '../common/date-input';
 import SelectField, { IOptionType } from '../common/select';
-import SliderInput from '../common/slider-input';
 import { DATA_TYPES_MAPPER } from '../../constants';
 import InputFieldNumber from '../common/input-field-number';
 import { error } from '../common/message';
@@ -18,9 +17,8 @@ import { DATA_TYPES } from '../../constants/entiy';
 import InputFieldMask, { IInputMask } from '../common/input-field-masked';
 import FileUpload, { FILES_TYPES } from '../common/file-upload';
 import InputRange from '../common/slider-input';
-import { MaskedInput } from 'antd-mask-input';
-import InputMask from 'react-input-mask';
 import GoogleMaps from '../common/google-maps';
+
 interface props {
   setShowForm: (e: boolean) => void;
   onSave: (entityRecords: {}) => void;
@@ -58,7 +56,6 @@ const RecordForm: React.FC<props> = (props) => {
         updateFormData.set(field[0], field[1].defaultValue);
       });
       setFormData(updateFormData);
-
       setValues({ ...state });
     }
   }, [props.recordSelected]);
@@ -67,8 +64,6 @@ const RecordForm: React.FC<props> = (props) => {
     (fieldName: string) =>
     ({ name, value }: { name: string; value: string }) => {
       validateInput({ fieldName, name, value });
-
-      console.log('name, value', name, value);
 
       const updateFormData: any = currentFormData;
       updateFormData.set(fieldName, value);
@@ -83,8 +78,6 @@ const RecordForm: React.FC<props> = (props) => {
     (fieldName: string) =>
     ({ name, value }: { name: string; value: string }) => {
       validateInput({ fieldName, name, value });
-
-      console.log('name, value', name, JSON.stringify(value));
 
       const updateFormData: any = currentFormData;
       updateFormData.set(fieldName, JSON.stringify(value));
