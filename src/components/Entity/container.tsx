@@ -161,6 +161,10 @@ export const IFieldRowContainer = styled.div`
         width: 32.5%;
       }
 
+      .field-is-default{
+        width: 7%;
+      }
+
       .field-settings {
         width: 2%;
       }

@@ -164,60 +164,59 @@ const Records: React.FC<props> = (props) => {
   });
 
   const getTableColumns = () => {
-    const columns: any = Object.entries(currentEntity.fields).map((field: [any, IFeild], index: number) => {
-      const fieldCode = field[0];
-      const fieldData = field[1];
-      return {
-        title: `${fieldData.name}`,
-        dataIndex: fieldCode,
-        key: fieldCode,
-        render: (theImageURLS: any) => {
-          if (fieldData.dataType === DATA_TYPES.IMAGE && !!theImageURLS && theImageURLS.length > 0) {
-            return (
-              <List
-                itemLayout="horizontal"
-                dataSource={theImageURLS}
-                renderItem={(item: any) => {
-                  const splittedName = item.split('/');
-                  const fileName = splittedName[splittedName.length - 1];
-                  return (
-                    <>
-                      <List.Item>
-                        <Image width={300} height={150} alt={fileName} src={item} />
-                      </List.Item>
-                    </>
-                  );
-                }}
-              />
-            );
-          } else if (fieldData.dataType === DATA_TYPES.DOCUMENT && !!theImageURLS && theImageURLS.length > 0) {
-            return (
-              <List
-                itemLayout="horizontal"
-                dataSource={theImageURLS}
-                renderItem={(item: any) => {
-                  console.log('item: ', item);
-                  const splittedName = item.split('/');
-                  const fileName = splittedName[splittedName.length - 1];
-                  return (
-                    <>
-                      <List.Item>
-                        <List.Item.Meta
-                          avatar={<Avatar src="/images/icons/doc.png" />}
-
-                        />
-                      </List.Item>
-                    </>
-                  );
-                }}
-              />
-            );
-          } else {
-            return theImageURLS;
-          }
-        },
-      };
-    });
+    const columns: any = Object.entries(currentEntity.fields)
+      .filter((field: [string, IFeild]) => field[1].isDefault === true)
+      .map((field: [any, IFeild], index: number) => {
+        const fieldCode = field[0];
+        const fieldData = field[1];
+        return {
+          title: `${fieldData.name}`,
+          dataIndex: fieldCode,
+          key: fieldCode,
+          render: (theImageURLS: any) => {
+            if (fieldData.dataType === DATA_TYPES.IMAGE && !!theImageURLS && theImageURLS.length > 0) {
+              return (
+                <List
+                  itemLayout="horizontal"
+                  dataSource={theImageURLS}
+                  renderItem={(item: any) => {
+                    const splittedName = item.split('/');
+                    const fileName = splittedName[splittedName.length - 1];
+                    return (
+                      <>
+                        <List.Item>
+                          <Image width={300} height={150} alt={fileName} src={item} />
+                        </List.Item>
+                      </>
+                    );
+                  }}
+                />
+              );
+            } else if (fieldData.dataType === DATA_TYPES.DOCUMENT && !!theImageURLS && theImageURLS.length > 0) {
+              return (
+                <List
+                  itemLayout="horizontal"
+                  dataSource={theImageURLS}
+                  renderItem={(item: any) => {
+                    console.log('item: ', item);
+                    const splittedName = item.split('/');
+                    const fileName = splittedName[splittedName.length - 1];
+                    return (
+                      <>
+                        <List.Item>
+                          <List.Item.Meta avatar={<Avatar src="/images/icons/doc.png" />} />
+                        </List.Item>
+                      </>
+                    );
+                  }}
+                />
+              );
+            } else {
+              return theImageURLS;
+            }
+          },
+        };
+      });
 
     setColumnData([
       { title: 'Index', dataIndex: 'index', key: 'index' },

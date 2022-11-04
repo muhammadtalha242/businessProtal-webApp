@@ -12,7 +12,7 @@ import { UserContext } from '../../context/user.context';
 import { USER_GROUP_MAP } from '../../constants/userGroups';
 import FieldRows from './entity-field-row';
 import { error } from '../common/message';
-import { EntityContext, setCurrentEntity } from '../../context/entity.context';
+import { defaultEntityValues, EntityContext, setCurrentEntity } from '../../context/entity.context';
 
 interface Props {
   setShowForm: (e: boolean) => void;
@@ -40,6 +40,7 @@ export interface IFeild {
   defaultValue: string;
   settings: ISettings;
   values: IValues[];
+  isDefault: boolean;
   isEditable?: boolean;
   isDisplayForRecords: boolean;
   isDefaultFieldVisible: boolean;
@@ -78,23 +79,11 @@ export const defaultField: IFeild = {
   name: '',
   dataType: DATA_TYPES_OPTIONS[0].value,
   defaultValue: '',
+  isDefault: false,
   settings: {},
   values: [defaultValue],
   isDisplayForRecords: false,
   isDefaultFieldVisible: false,
-};
-
-export const defaultEntityValues: IEntity = {
-  name: '',
-  description: '',
-  databaseName: '',
-  fields: {},
-  isDisplayonMenu: false,
-  isPublish: false,
-  entityPermissionsCreate: [1],
-  entityPermissionsNone: [],
-  entityPermissionsRead: [1],
-  entityPermissionsDelete: [1],
 };
 
 type IEntityKeys = 'name' | 'despription';
@@ -183,7 +172,11 @@ const EntityForm: React.FC<Props> = (props) => {
     } else if (Object.values(values.fields).some((field: IFeild) => field.name === '')) {
       isValid = false;
       setIsError(true);
-      setErr('field is required.');
+      setErr('field name is required.');
+    } else if (Object.values(values.fields).every((field: IFeild) => field.isDefault === false)) {
+      isValid = false;
+      setIsError(true);
+      setErr('At least one default field is required.');
     }
     return isValid;
   };

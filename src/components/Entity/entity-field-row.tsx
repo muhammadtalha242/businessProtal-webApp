@@ -8,6 +8,7 @@ import InputField from '../common/input-field';
 import { HorizontalSpace } from '../common/space';
 import SelectField from '../common/select';
 import InputFieldMask, { IInputMask } from '../common/input-field-masked';
+import CustomCheckbox from '../common/checkbox';
 
 type IEntityFieldKeys = 'name' | 'dataType';
 
@@ -120,6 +121,10 @@ const FieldRows: React.FC<IFeildRowProps> = ({ field, index, onInputChange, onFi
             ) : (
               <></>
             )}
+          </div>
+          <HorizontalSpace width={8} />
+          <div className="field-is-default">
+            <CustomCheckbox setValue={onInputChange} value={field.isDefault} label="Is Default" name={`isDefault`} />
           </div>
           <HorizontalSpace width={8} />
 

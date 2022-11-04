@@ -20,6 +20,7 @@ export const defaultEntityValues: IEntity = {
   entityPermissionsRead: [1],
   entityPermissionsDelete: [1],
 };
+
 const initialState: IState = {
   allEntities: [],
   selectEntity: { ...defaultEntityValues },
