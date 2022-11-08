@@ -165,7 +165,6 @@ const Records: React.FC<props> = (props) => {
 
   const getTableColumns = () => {
     const columns: any = Object.entries(currentEntity.fields)
-      .filter((field: [string, IFeild]) => field[1].isDefault === true)
       .map((field: [any, IFeild], index: number) => {
         const fieldCode = field[0];
         const fieldData = field[1];
@@ -180,12 +179,13 @@ const Records: React.FC<props> = (props) => {
                   itemLayout="horizontal"
                   dataSource={theImageURLS}
                   renderItem={(item: any) => {
-                    const splittedName = item.split('/');
-                    const fileName = splittedName[splittedName.length - 1];
+
+                    // const splittedName = item.split('/');
+                    // const fileName = splittedName[splittedName.length - 1];
                     return (
                       <>
                         <List.Item>
-                          <Image width={300} height={150} alt={fileName} src={item} />
+                          <Image width={300} height={150} alt={item.fileName} src={item.url} />
                         </List.Item>
                       </>
                     );
@@ -199,8 +199,8 @@ const Records: React.FC<props> = (props) => {
                   dataSource={theImageURLS}
                   renderItem={(item: any) => {
                     console.log('item: ', item);
-                    const splittedName = item.split('/');
-                    const fileName = splittedName[splittedName.length - 1];
+                    // const splittedName = item.split('/');
+                    // const fileName = splittedName[splittedName.length - 1];
                     return (
                       <>
                         <List.Item>
@@ -259,9 +259,8 @@ const Records: React.FC<props> = (props) => {
     try {
       setLoading(true);
       if (isEdit && entityName) {
-        const { index, ...restVal } = entityRecords;
-        const datesAdd = { ...restVal, updatedAt: moment().toDate() };
-        const res = await EntityServices.updateEntityRecord(entityName, entityRecords.id, datesAdd);
+        // entityRecords.set('updatedAt', moment().toDate());
+        const res = await EntityServices.updateEntityRecord(entityName, entityRecords.get('id'), entityRecords);
         success(res.message);
         await getData();
         setShowForm(false);
@@ -282,6 +281,7 @@ const Records: React.FC<props> = (props) => {
     } catch (err: any) {
       setLoading(false);
       error('Error');
+      console.log('Error', err);
     }
   };
 

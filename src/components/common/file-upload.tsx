@@ -1,7 +1,7 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Upload } from 'antd';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { INPUT_PROPS_COMMON } from '../../interfaces';
 import { GREY_SECONDARY, RED_PRIMARY } from '../../styles/colors';
@@ -15,6 +15,7 @@ interface props extends INPUT_PROPS_COMMON {
   type: FILES_TYPES;
   text?: string;
   multiple?: boolean;
+  value?: any
 }
 
 const FileUploadContainer = styled.div`
@@ -40,6 +41,15 @@ const FileUpload: React.FC<props> = (props) => {
 
   let accept = '.xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf';
   accept = props.type === FILES_TYPES.images ? 'image/*' : '.xlsx,.xls, .doc, .docx,.ppt, .pptx,.txt,.pdf';
+  console.log("props:",props);
+
+  useEffect(() => {
+    
+    if(props.value){
+      setFileList(props.value)
+    }
+  }, [props.value])
+  
 
   const setUploadFile = (files: UploadFile[]) => {
     const formData = new FormData();

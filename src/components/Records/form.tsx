@@ -41,14 +41,21 @@ const PublicIcon: React.FC<{ isPublic: boolean }> = ({ isPublic }) => {
 
 const RecordForm: React.FC<props> = (props) => {
   const [values, setValues] = useState(props.isEdit ? props.recordSelected : {});
-  const [currentFormData, setFormData] = useState<FormData>(new FormData());
+  const [currentFormData, setFormData] = useState<FormData>(props.isEdit ? props.recordSelected : new FormData());
   const [isError, setIsError] = useState(false);
   const [err, setErr] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    if (props.isEdit) setValues(props.recordSelected);
-    else {
+    if (props.isEdit) {
+      setValues(props.recordSelected);
+      const editFormData: any = new FormData();
+      Object.entries(props.recordSelected).forEach((field: [string, any], index: number) => {
+        editFormData.set(field[0], field[1]);
+      });
+      editFormData.delete('index');
+      setFormData(editFormData);
+    } else {
       const state: any = {};
       const updateFormData: any = currentFormData;
       Object.entries(props.formData).forEach((field: [string, IFeild], index: number) => {
@@ -265,7 +272,8 @@ const RecordForm: React.FC<props> = (props) => {
                         </FieldLabelContainer>
                       }
                       name={fieldCode}
-                      multiple
+                      multiple={true}
+                      value={values[fieldCode]}
                       setValue={onInputFileChange(fieldCode)}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}
@@ -286,7 +294,8 @@ const RecordForm: React.FC<props> = (props) => {
                         </FieldLabelContainer>
                       }
                       name={fieldCode}
-                      multiple
+                      multiple={true}
+                      value={values[fieldCode]}
                       setValue={onInputFileChange(fieldCode)}
                       error={!!errors[fieldData.name]}
                       errorMessage={errors[fieldData.name]}

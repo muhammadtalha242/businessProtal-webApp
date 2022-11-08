@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
-import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from '@reach/combobox';
+// import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from '@reach/combobox';
+import { AutoComplete } from 'antd';
 
 const GoogleMapComponentContainter = styled.div`
   .places-container {
@@ -33,13 +34,14 @@ interface IPlacesAutocomplete {
 }
 
 const PlacesAutocomplete: React.FC<IPlacesAutocomplete> = ({ setSelected }) => {
+  const [options, setOptions] = useState<{ value: string }[]>([]);
   const {
     ready,
     value,
     setValue,
     suggestions: { status, data },
     clearSuggestions,
-  } = usePlacesAutocomplete({ debounce: 300 });
+  } = usePlacesAutocomplete({ debounce: 30 });
 
   const handleSelect = async (address: any) => {
     setValue(address, false);
@@ -53,15 +55,26 @@ const PlacesAutocomplete: React.FC<IPlacesAutocomplete> = ({ setSelected }) => {
     const { lat, lng } = await getLatLng(results[0]);
     // const test = await getDetails({ lat, lng });
     setSelected({ lat, lng });
+    setOptions([]);
   };
 
+  const handleChange = (searchTerm: string) => {
+    console.log('searchTerm: ', searchTerm);
+    console.log('status, data: ', status, data);
+
+    setValue(searchTerm);
+
+    console.log('data is okay: ', data);
+
+    const opts = data.map(({ place_id, description }) => {
+      return { value: description };
+    });
+    setOptions(opts);
+  };
   return (
-    <Combobox onSelect={handleSelect}>
-      <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} disabled={!ready} className="combobox-input" placeholder="Search an address" />
-      <ComboboxPopover>
-        <ComboboxList>{status === 'OK' && data.map(({ place_id, description }) => <ComboboxOption key={place_id} value={description} />)}</ComboboxList>
-      </ComboboxPopover>
-    </Combobox>
+    <>
+      <AutoComplete style={{ width: 200 }} options={options} onSelect={handleSelect} onChange={handleChange} value={value} disabled={!ready} placeholder="input here" allowClear />
+    </>
   );
 };
 
@@ -82,7 +95,7 @@ const GoogleMapComponent: React.FC<props> = (props) => {
       mapx.panTo(selected);
       setCenter(selected);
       if (props.value) {
-        console.log("props.value: ",props.value);
+        console.log('props.value: ', props.value);
         mapx.panTo(props.value);
         setCenter(props.value);
       }

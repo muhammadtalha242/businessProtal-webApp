@@ -73,6 +73,7 @@ export const DATA_FIELD_SETTINGS: IDatatypeFieldSettings = {
     input: [
       { name: 'prefix', label: 'Prefix' },
       { name: 'digits', label: 'Digits', type: 'number' },
+      { name: 'subStringDigits', label: 'subStringDigits', type: 'number' },
     ],
     select: [{ name: 'prefixCol', label: 'Column' }],
     isDisplayForRecords: false,
