@@ -87,7 +87,7 @@ const RecordForm: React.FC<props> = (props) => {
       validateInput({ fieldName, name, value });
 
       const updateFormData: any = currentFormData;
-      updateFormData.set(fieldName, JSON.stringify(value));
+      updateFormData.set(fieldName, value);
       setFormData(updateFormData);
 
       const updateState: any = { ...values };
@@ -386,7 +386,7 @@ const RecordForm: React.FC<props> = (props) => {
               } else if (fieldData.dataType === DATA_TYPES.LOCATION) {
                 displayedField = (
                   <Col span={8}>
-                    <GoogleMaps setValue={onInputLocationChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} />
+                    <GoogleMaps isEditable={true} setValue={onInputLocationChange(fieldCode)} value={values[fieldCode]} name={fieldData.name} />
                   </Col>
                 );
               } else if (DATA_TYPES_MAPPER[fieldData.dataType] === 'string') {
@@ -440,7 +440,7 @@ const RecordForm: React.FC<props> = (props) => {
               }
               return (
                 <Tooltip title={fieldData.settings && fieldData.settings.helpText}>
-                  <Col span={8}>{displayedField} </Col>
+                  <>{displayedField} </>
                 </Tooltip>
               );
             })}

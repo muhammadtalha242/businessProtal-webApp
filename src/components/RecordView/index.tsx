@@ -47,6 +47,8 @@ const RecordView: React.FC<props> = (props) => {
           try {
             return rec.id === parseInt(recordId);
           } catch (err) {
+            console.log('err: ', err);
+
             error('ERROR');
             return [];
           }
@@ -72,23 +74,24 @@ const RecordView: React.FC<props> = (props) => {
         const [fieldCode, fieldData] = field;
         const { name } = fieldData;
         const DisplayData = () => {
+          console.log("fieldCode, fieldData", fieldCode, fieldData);
+          
           const data: any = entityRecordata[fieldCode];
-          if (fieldData.dataType === DATA_TYPES.LOCATION && !!data && data.length > 0) {
-            console.log(data);
-            const location = JSON.parse(data);
-            return <GoogleMaps value={location} />;
+          console.log('data: ', data);
+
+          if (fieldData.dataType === DATA_TYPES.LOCATION && !!data) {
+            
+            return <GoogleMaps value={data} isEditable={false}/>;
           } else if (fieldData.dataType === DATA_TYPES.IMAGE && !!data && data.length > 0) {
             return (
               <List
                 itemLayout="horizontal"
                 dataSource={data}
                 renderItem={(item: any) => {
-                  const splittedName = item.split('/');
-                  const fileName = splittedName[splittedName.length - 1];
                   return (
                     <>
                       <List.Item>
-                        <Image width={300} height={150} alt={fileName} src={item} />
+                        <Image width={300} height={150} alt={item.fileName} src={item.url} />
                       </List.Item>
                     </>
                   );
@@ -101,16 +104,14 @@ const RecordView: React.FC<props> = (props) => {
                 itemLayout="horizontal"
                 dataSource={data}
                 renderItem={(item: any) => {
-                  const splittedName = item.split('/');
-                  const fileName = splittedName[splittedName.length - 1];
                   return (
                     <>
                       <List.Item>
                         <List.Item.Meta
                           avatar={<Avatar src="/images/icons/doc.png" />}
                           title={
-                            <a href={item} download target="_blank" rel="noreferrer">
-                              {fileName}
+                            <a href={item.url} download target="_blank" rel="noreferrer">
+                              {item.fileName}
                             </a>
                           }
                         />

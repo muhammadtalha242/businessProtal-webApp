@@ -27,14 +27,34 @@ interface props {
   setValue?: Function;
   value?: any;
   searchTerm?: any;
+  isEditable: boolean;
+}
+
+interface ILocation {
+  lat: number;
+  lng: number;
 }
 
 interface IPlacesAutocomplete {
   setSelected: Function;
+  setCenter: Function;
+  center: ILocation;
+  selected: string;
+  isEditable: boolean;
 }
 
-const PlacesAutocomplete: React.FC<IPlacesAutocomplete> = ({ setSelected }) => {
+const PlacesAutocomplete: React.FC<IPlacesAutocomplete> = ({ setSelected, setCenter, center, selected, isEditable }) => {
   const [options, setOptions] = useState<{ value: string }[]>([]);
+
+  useEffect(() => {
+    console.log('PlacesAutocomplete center: ', center);
+    console.log('PlacesAutocomplete selected: ', selected);
+    if (center && selected) {
+      setValue(selected);
+      setCenter(center);
+    }
+  }, []);
+
   const {
     ready,
     value,
@@ -53,29 +73,21 @@ const PlacesAutocomplete: React.FC<IPlacesAutocomplete> = ({ setSelected }) => {
     console.log('results: ', results);
 
     const { lat, lng } = await getLatLng(results[0]);
-    // const test = await getDetails({ lat, lng });
-    setSelected({ lat, lng });
+    setSelected(results[0].formatted_address);
+    setCenter({ lat, lng });
     setOptions([]);
   };
 
   const handleChange = (searchTerm: string) => {
     console.log('searchTerm: ', searchTerm);
     console.log('status, data: ', status, data);
-
     setValue(searchTerm);
-
-    console.log('data is okay: ', data);
-
     const opts = data.map(({ place_id, description }) => {
       return { value: description };
     });
     setOptions(opts);
   };
-  return (
-    <>
-      <AutoComplete style={{ width: 200 }} options={options} onSelect={handleSelect} onChange={handleChange} value={value} disabled={!ready} placeholder="input here" allowClear />
-    </>
-  );
+  return <AutoComplete style={{ width: 200 }} options={options} onSelect={handleSelect} onChange={handleChange} value={value} disabled={!ready || !isEditable} placeholder="input here" allowClear />;
 };
 
 const GoogleMapComponent: React.FC<props> = (props) => {
@@ -86,26 +98,46 @@ const GoogleMapComponent: React.FC<props> = (props) => {
   });
 
   const [map, setMap] = useState(null);
-  const [selected, setSelected] = useState(null);
-  const [center, setCenter] = useState<{ lat: 0; lng: 0 }>();
+  const [selected, setSelected] = useState<string>('');
+  const [center, setCenter] = useState<ILocation>({ lat: 0, lng: 0 });
 
   useEffect(() => {
-    if (selected && map) {
-      const mapx: any = map;
-      mapx.panTo(selected);
-      setCenter(selected);
-      if (props.value) {
-        console.log('props.value: ', props.value);
-        mapx.panTo(props.value);
-        setCenter(props.value);
-      }
-      if (props.setValue) props.setValue({ name: props.name, value: selected });
+    console.log('props: ', props);
+    if (props.value) {
+      console.log('props.value: ', props.value);
+      setSelected(props.value);
     }
+  }, [props.value]);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      console.log('GoogleMapComponent center: ', center);
+      console.log('GoogleMapComponent selmapected: ', selected);
+      console.log('GoogleMapComponent map: ', map);
+      const results = await getGeocode({ address: selected });
+      console.log('results: ', results);
+
+      const { lat, lng } = await getLatLng(results[0]);
+
+      setCenter({ lat, lng });
+      if (selected && map) {
+        console.log('GoogleMapComponent center: in ', center);
+        console.log('GoogleMapComponent selected: in', selected);
+        const mapx: any = map;
+
+        mapx.panTo(center);
+
+        if (props.setValue) props.setValue({ name: props.name, value: selected });
+      }
+    };
+    fetchLocation();
   }, [selected]);
 
   const onLoad = React.useCallback(function callback(map: any) {
     const bounds = new window.google.maps.LatLngBounds(center);
     map.fitBounds(bounds);
+    console.log('map: ', map);
+
     setMap(map);
   }, []);
 
@@ -115,14 +147,14 @@ const GoogleMapComponent: React.FC<props> = (props) => {
 
   return (
     <GoogleMapComponentContainter>
-      {isLoaded ? (
+      {isLoaded  ? (
         <>
-          <div className="places-containerx">
-            <PlacesAutocomplete setSelected={setSelected} />
+          <div>
+            <PlacesAutocomplete setSelected={setSelected} setCenter={setCenter} selected={selected} center={center} isEditable={props.isEditable} />
           </div>
 
           <GoogleMap mapContainerStyle={{ width: GOOGLE_MAP_WIDTH, height: GOOGLE_MAP_HEIGHT }} center={center} zoom={12} onLoad={onLoad} onUnmount={onUnmount}>
-            {selected && <Marker position={selected} />}
+            {center && <Marker position={center} />}
           </GoogleMap>
         </>
       ) : (
